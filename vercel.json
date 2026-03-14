@@ -1,4 +1,3 @@
-{
-  "cleanUrls": true,
-  "trailingSlash": false
-}
+git add vercel.json
+git commit -m "Fix routing 404"
+git push
