@@ -11,7 +11,7 @@
   <meta property="og:type" content="website"/>
 
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"ProfessionalService","name":"BFood Consultoría Alimentaria","description":"Consultora especializada en industria alimentaria en Argentina.","url":"https://www.bfood.com.ar","telephone":"+54-9-11-3648-8741","email":"lucia@bfood.com.ar","areaServed":"AR","serviceType":["Consultoría alimentaria","Habilitación RNPA","Implementación HACCP","Director técnico alimentos","Exportación FDA","Bromatología"],"knowsAbout":["RNPA","RNE","RNEE","BPM","HACCP","PCQI","FDA","Código Alimentario Argentino","ANMAT","SENASA"]}
+  {"@context":"https://schema.org","@type":"ProfessionalService","name":"BFood Consultoría Alimentaria","description":"Consultora especializada en industria alimentaria en Argentina.","url":"https://www.bfood.com.ar","telephone":"+54-9-11-3648-8741","email":"lucia@bfood.com.ar","areaServed":"AR","serviceType":["Consultoría alimentaria","Habilitación RNPA","Habilitación RNE","Registro RNEE","Implementación HACCP","Director técnico alimentos","Exportación FDA","Bromatología","Rotulado nutricional","Desarrollo de productos alimentarios"],"knowsAbout":["RNPA","RNE","RNEE","RNPE","BPM","HACCP","PCQI","FDA","Código Alimentario Argentino","ANMAT","SENASA","Art. 17 bis CAA"]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Qué es el RNPA y cuándo lo necesita una empresa alimentaria en Argentina?","acceptedAnswer":{"@type":"Answer","text":"El RNPA es el registro obligatorio ante ANMAT para comercializar alimentos en Argentina. Sin RNPA, el producto no puede circular legalmente en el mercado."}},{"@type":"Question","name":"¿Qué es el RNE y para qué sirve?","acceptedAnswer":{"@type":"Answer","text":"El RNE es la habilitación obligatoria del establecimiento donde se elaboran, fraccionan o almacenan alimentos. Es requisito previo para gestionar el RNPA."}},{"@type":"Question","name":"¿Cómo exportar alimentos a Estados Unidos desde Argentina?","acceptedAnswer":{"@type":"Answer","text":"Para exportar alimentos a EE.UU. desde Argentina se debe cumplir con la FDA bajo la ley FSMA, incluyendo contar con un PCQI certificado y un plan de controles preventivos."}}]}
@@ -166,6 +166,8 @@
     .tl-desc{font-size:.95rem;line-height:1.82;color:#555;margin-bottom:1.2rem}
     .tl-tags{display:flex;flex-wrap:wrap;gap:.4rem}
     .tl-tag{font-size:.74rem;font-weight:500;background:var(--gl);color:var(--gdp);padding:.3rem .82rem;border-radius:1px}
+    .tl-cta{display:inline-flex;align-items:center;gap:.4rem;margin-top:1.2rem;font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g);text-decoration:none;transition:gap .2s}
+    .tl-cta:hover{gap:.7rem}
 
     /* GUIDE */
     .guide{padding:7rem 8%;background:var(--ch);position:relative;overflow:hidden}
@@ -290,6 +292,36 @@
       .form-row{grid-template-columns:1fr}
       .hero-left{padding:5rem 6% 4rem}
     }
+
+    /* DROPDOWN NAV */
+    .nav-dropdown{position:relative}
+    .nav-drop-btn{background:none;border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-size:.92rem;font-weight:500;color:rgba(255,255,255,.85);display:flex;align-items:center;gap:.35rem;padding-bottom:2px;border-bottom:2px solid transparent;transition:color .2s,border-color .2s}
+    .nav-drop-btn:hover,.nav-drop-btn[aria-expanded="true"]{color:#fff;border-bottom-color:#209d5c}
+    .drop-arrow{font-size:.65rem;transition:transform .2s;display:inline-block}
+    .nav-drop-btn[aria-expanded="true"] .drop-arrow{transform:rotate(180deg)}
+    .nav-drop-menu{position:absolute;top:calc(100% + 18px);left:50%;transform:translateX(-50%);background:#1e1e1e;border:1px solid rgba(32,157,92,.2);border-radius:4px;padding:1.2rem 0 .8rem;min-width:580px;box-shadow:0 16px 48px rgba(0,0,0,.45);z-index:1000;display:none;grid-template-columns:1fr 1fr;gap:0}
+    .nav-drop-menu.open{display:grid}
+    .drop-group{padding:.4rem 1.4rem 1rem}
+    .drop-group-label{font-size:.62rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#209d5c;margin-bottom:.5rem;opacity:.8}
+    .drop-item{display:block;font-size:.85rem;color:rgba(255,255,255,.62);text-decoration:none;padding:.3rem 0;transition:color .15s;line-height:1.35}
+    .drop-item:hover{color:#fff}
+    .drop-footer{grid-column:1/-1;border-top:1px solid rgba(255,255,255,.07);padding:.8rem 1.4rem 0;margin-top:.2rem}
+    .drop-all{font-size:.8rem;font-weight:700;color:#209d5c;text-decoration:none;letter-spacing:.04em}
+    .drop-all:hover{color:#4ec98a}
+    @media(max-width:700px){.nav-drop-menu{min-width:calc(100vw - 2rem);left:auto;right:0;transform:none;grid-template-columns:1fr}}
+
+    /* SERVICIOS LISTA LIMPIA */
+    .svc-list-section{padding:6rem 8%;background:var(--ow);border-top:1px solid var(--bd)}
+    .svc-list-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--bd);border-radius:2px;overflow:hidden;margin-top:3rem}
+    @media(max-width:700px){.svc-list-grid{grid-template-columns:1fr}}
+    .svc-list-item{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;padding:1.25rem 1.6rem;background:var(--wh);border-bottom:1px solid var(--bd);border-right:1px solid var(--bd);text-decoration:none;color:inherit;transition:background .18s}
+    .svc-list-item:nth-child(even){border-right:none}
+    .svc-list-item:hover{background:var(--gl)}
+    .svc-list-item:hover .svc-arrow{color:var(--g);transform:translateX(3px)}
+    .svc-list-left{display:flex;flex-direction:column;gap:.2rem}
+    .svc-list-cat{font-size:.61rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--g);opacity:.8}
+    .svc-list-name{font-size:.96rem;font-weight:600;color:var(--bk);line-height:1.3}
+    .svc-arrow{font-size:.85rem;color:#ccc;transition:color .18s,transform .18s;flex-shrink:0}
   </style>
 </head>
 <body>
@@ -301,7 +333,37 @@
     <span class="brand-sub">Consultoría Alimentaria</span>
   </a>
   <div class="nav-right">
-    <a href="#servicios" class="lnk">Servicios</a>
+    <div class="nav-dropdown">
+      <button class="lnk nav-drop-btn" aria-expanded="false" aria-haspopup="true">
+        Servicios <span class="drop-arrow">▾</span>
+      </button>
+      <div class="nav-drop-menu" role="menu">
+        <div class="drop-group">
+          <p class="drop-group-label">Establecimiento y Habilitaciones</p>
+          <a href="/registro-rne/" class="drop-item" role="menuitem">RNE — Registro Nacional de Establecimiento</a>
+          <a href="/registro-rnee/" class="drop-item" role="menuitem">RNEE — Establecimientos de Envases</a>
+        </div>
+        <div class="drop-group">
+          <p class="drop-group-label">Registro de Productos</p>
+          <a href="/registro-rnpa/" class="drop-item" role="menuitem">RNPA / RNPE — Registro de Productos</a>
+          <a href="/rotulado-nutricional/" class="drop-item" role="menuitem">Rotulado Nutricional</a>
+        </div>
+        <div class="drop-group">
+          <p class="drop-group-label">Calidad y Procesos</p>
+          <a href="/bpm-buenas-practicas-manufactura/" class="drop-item" role="menuitem">BPM — Buenas Prácticas de Manufactura</a>
+          <a href="/implementacion-haccp/" class="drop-item" role="menuitem">HACCP y Sistemas de Gestión</a>
+          <a href="/direccion-tecnica/" class="drop-item" role="menuitem">Dirección Técnica de Alimentos</a>
+        </div>
+        <div class="drop-group">
+          <p class="drop-group-label">Desarrollo y Exportación</p>
+          <a href="/desarrollo-productos-alimentos/" class="drop-item" role="menuitem">Desarrollo de Productos Alimentarios</a>
+          <a href="/exportar-alimentos-usa/" class="drop-item" role="menuitem">Exportar a EE.UU. — FDA / PCQI</a>
+        </div>
+        <div class="drop-footer">
+          <a href="/servicios/" class="drop-all">Ver todos los servicios →</a>
+        </div>
+      </div>
+    </div>
     <a href="#proceso" class="lnk">Proceso</a>
     <a href="#faq" class="lnk">Preguntas frecuentes</a>
     <a href="https://wa.me/5491136488741" target="_blank" rel="noopener" class="cta-btn">Agendar consulta gratuita</a>
@@ -374,7 +436,7 @@
   </div>
 </section>
 
-<!-- SERVICES -->
+<!-- SERVICIOS -->
 <section class="services" id="servicios" aria-labelledby="serv-h2">
   <div class="services-header">
     <p class="eyebrow rv">Nuestros servicios</p>
@@ -387,7 +449,7 @@
       <div class="tl-dot"></div>
       <div class="tl-body">
         <p class="tl-phase">Origen</p>
-        <h3 class="tl-title"><a href="/desarrollo-productos-alimentos" style="color:inherit;text-decoration:none">Desarrollo de Producto y Factibilidad Industrial</a></h3>
+        <h3 class="tl-title"><a href="/desarrollo-productos-alimentos/" style="color:inherit;text-decoration:none">Desarrollo de Producto y Factibilidad Industrial</a></h3>
         <p class="tl-intro">Antes de invertir, validamos la idea.</p>
         <p class="tl-desc">Formulamos el producto, evaluamos su viabilidad industrial y diseñamos el proceso productivo. Para que tu negocio nazca sobre bases técnicas sólidas —no sobre suposiciones.</p>
         <div class="tl-tags">
@@ -396,7 +458,7 @@
           <span class="tl-tag">Diseño de procesos productivos</span>
           <span class="tl-tag">Rotulado y tablas nutricionales</span>
         </div>
-        <a href="/desarrollo-productos-alimentos" style="display:inline-flex;align-items:center;gap:.4rem;margin-top:1.2rem;font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g);text-decoration:none;">Ver servicio →</a>
+        <a href="/desarrollo-productos-alimentos/" class="tl-cta">Ver servicio →</a>
       </div>
     </div>
 
@@ -404,15 +466,19 @@
       <div class="tl-dot"></div>
       <div class="tl-body">
         <p class="tl-phase">Establecimiento</p>
-        <h3 class="tl-title"><a href="/registro-rne" style="color:inherit;text-decoration:none">Habilitación del Establecimiento: RNE y RNEE</a></h3>
+        <h3 class="tl-title"><a href="/servicios/#establecimiento" style="color:inherit;text-decoration:none">Habilitación del Establecimiento: RNE y RNEE</a></h3>
         <p class="tl-intro">Para producir alimentos necesitás un establecimiento habilitado ante ANMAT.</p>
         <p class="tl-desc">Gestionamos el RNE (Registro Nacional de Establecimiento) y el RNEE (Registro Nacional de Establecimiento Elaborador). Te guiamos en infraestructura, documentación y requisitos regulatorios para que el proceso sea claro y sin demoras innecesarias.</p>
         <div class="tl-tags">
-          <span class="tl-tag">RNE</span><span class="tl-tag">RNEE</span>
+          <span class="tl-tag">RNE</span>
+          <span class="tl-tag">RNEE</span>
           <span class="tl-tag">Adecuación de instalaciones</span>
           <span class="tl-tag">Gestión ante ANMAT y SENASA</span>
         </div>
-        <a href="/registro-rne" style="display:inline-flex;align-items:center;gap:.4rem;margin-top:1.2rem;font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g);text-decoration:none;">Ver servicio →</a>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.2rem">
+          <a href="/registro-rne/" class="tl-cta">RNE →</a>
+          <a href="/registro-rnee/" class="tl-cta">RNEE →</a>
+        </div>
       </div>
     </div>
 
@@ -420,16 +486,17 @@
       <div class="tl-dot"></div>
       <div class="tl-body">
         <p class="tl-phase">Cumplimiento del Código Alimentario Argentino</p>
-        <h3 class="tl-title"><a href="/registro-rnpa" style="color:inherit;text-decoration:none">RNPA, RNPE, BPM y Director Técnico de Alimentos</a></h3>
+        <h3 class="tl-title"><a href="/registro-rnpa/" style="color:inherit;text-decoration:none">RNPA, RNPE, BPM y Director Técnico de Alimentos</a></h3>
         <p class="tl-intro">Para vender alimentos en Argentina necesitás cumplir con el CAA.</p>
         <p class="tl-desc">Gestionamos el RNPA (Registro Nacional de Producto Alimenticio) y el RNPE (Registro Nacional de Producto de Envase). Implementamos Buenas Prácticas de Manufactura (BPM), proveemos el servicio de Director Técnico habilitado y dictamos la capacitación oficial de manipuladores de alimentos.</p>
         <div class="tl-tags">
-          <span class="tl-tag">RNPA</span><span class="tl-tag">RNPE</span>
+          <span class="tl-tag">RNPA</span>
+          <span class="tl-tag">RNPE</span>
           <span class="tl-tag">Implementación de BPM</span>
           <span class="tl-tag">Director Técnico de alimentos y envases</span>
           <span class="tl-tag">Capacitación oficial de manipuladores</span>
         </div>
-        <a href="/registro-rnpa" style="display:inline-flex;align-items:center;gap:.4rem;margin-top:1.2rem;font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g);text-decoration:none;">Ver servicio →</a>
+        <a href="/registro-rnpa/" class="tl-cta">Ver servicio →</a>
       </div>
     </div>
 
@@ -437,7 +504,7 @@
       <div class="tl-dot"></div>
       <div class="tl-body">
         <p class="tl-phase">Crecimiento</p>
-        <h3 class="tl-title"><a href="/implementacion-haccp" style="color:inherit;text-decoration:none">Implementación de HACCP y Sistemas de Gestión de Calidad</a></h3>
+        <h3 class="tl-title"><a href="/implementacion-haccp/" style="color:inherit;text-decoration:none">Implementación de HACCP y Sistemas de Gestión de Calidad</a></h3>
         <p class="tl-intro">Cuando el negocio crece, los estándares también suben.</p>
         <p class="tl-desc">Diseñamos e implementamos el sistema HACCP y Sistemas de Gestión de Calidad (SGC). Preparamos tu empresa para auditorías de grandes compradores, supermercados y cadenas —y te ayudamos a ampliar capacidad productiva sin perder el control.</p>
         <div class="tl-tags">
@@ -448,7 +515,7 @@
           <span class="tl-tag">Nuevos productos</span>
           <span class="tl-tag">Optimización de procesos</span>
         </div>
-        <a href="/implementacion-haccp" style="display:inline-flex;align-items:center;gap:.4rem;margin-top:1.2rem;font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g);text-decoration:none;">Ver servicio →</a>
+        <a href="/implementacion-haccp/" class="tl-cta">Ver servicio →</a>
       </div>
     </div>
 
@@ -456,7 +523,7 @@
       <div class="tl-dot"></div>
       <div class="tl-body">
         <p class="tl-phase">Mercados Internacionales</p>
-        <h3 class="tl-title"><a href="/exportar-alimentos-usa" style="color:inherit;text-decoration:none">Exportar Alimentos a EE.UU. (FDA/PCQI) e Importación Regulada</a></h3>
+        <h3 class="tl-title"><a href="/exportar-alimentos-usa/" style="color:inherit;text-decoration:none">Exportar Alimentos a EE.UU. (FDA/PCQI) e Importación Regulada</a></h3>
         <p class="tl-intro">Llevar tu producto al exterior requiere cumplir nuevas reglas.</p>
         <p class="tl-desc">Para exportar alimentos a Estados Unidos debés cumplir con la FDA y la ley FSMA, incluyendo la certificación PCQI. También gestionamos importaciones de productos e ingredientes a Argentina mediante los trámites ante SENASA y ANMAT.</p>
         <div class="tl-tags">
@@ -466,7 +533,7 @@
           <span class="tl-tag">Gestión de importaciones</span>
           <span class="tl-tag">Trámites SENASA y ANMAT</span>
         </div>
-        <a href="/exportar-alimentos-usa" style="display:inline-flex;align-items:center;gap:.4rem;margin-top:1.2rem;font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g);text-decoration:none;">Ver servicio →</a>
+        <a href="/exportar-alimentos-usa/" class="tl-cta">Ver servicio →</a>
       </div>
     </div>
 
@@ -474,7 +541,7 @@
       <div class="tl-dot"></div>
       <div class="tl-body">
         <p class="tl-phase">Servicio Especializado · Gastronomía</p>
-        <h3 class="tl-title"><a href="/bpm-buenas-practicas-manufactura" style="color:inherit;text-decoration:none">Habilitación Bromatológica para Restaurantes y Locales Gastronómicos</a></h3>
+        <h3 class="tl-title"><a href="/bpm-buenas-practicas-manufactura/" style="color:inherit;text-decoration:none">Habilitación Bromatológica para Restaurantes y Locales Gastronómicos</a></h3>
         <p class="tl-intro">Los locales gastronómicos también necesitan sistemas de inocuidad.</p>
         <p class="tl-desc">Gestionamos habilitaciones bromatológicas, diseñamos planes de higiene y saneamiento, y capacitamos al equipo de trabajo. Que cada inspección sanitaria sea un trámite rutinario, no una sorpresa.</p>
         <div class="tl-tags">
@@ -483,12 +550,14 @@
           <span class="tl-tag">Capacitación de personal</span>
           <span class="tl-tag">Auditorías sanitarias preventivas</span>
         </div>
-        <a href="/bpm-buenas-practicas-manufactura" style="display:inline-flex;align-items:center;gap:.4rem;margin-top:1.2rem;font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g);text-decoration:none;">Ver servicio →</a>
+        <a href="/bpm-buenas-practicas-manufactura/" class="tl-cta">Ver servicio →</a>
       </div>
     </div>
 
   </div>
 </section>
+
+
 
 <!-- GUIDE / NOSOTROS -->
 <section class="guide" id="nosotros" aria-labelledby="guide-h2">
@@ -653,16 +722,35 @@
 </section>
 
 <!-- FOOTER -->
-<footer>
-  <div class="f-logo">BFood<span>.</span></div>
-  <p class="f-copy">© 2025 BFood Consultoría Alimentaria · Argentina · <a href="/cdn-cgi/l/email-protection#7f130a1c161e3f1d1910101b511c1012511e0d" style="color:inherit;text-decoration:none"><span class="__cf_email__" data-cfemail="1d71687e747c5d7f7b727279337e7270337c6f">[email&#160;protected]</span></a></p>
-  <nav class="f-nav" aria-label="Pie de página">
+<footer style="flex-wrap:wrap;gap:2rem;align-items:flex-start;padding:3rem 8%;">
+  <div>
+    <div class="f-logo">BFood<span>.</span></div>
+    <p style="font-size:.72rem;color:rgba(255,255,255,.28);margin-top:.5rem">Consultoría Alimentaria · Argentina</p>
+  </div>
+  <nav aria-label="Servicios">
+    <p style="font-size:.65rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.22);margin-bottom:.8rem">Servicios</p>
+    <div style="display:flex;flex-direction:column;gap:.4rem">
+      <a href="/desarrollo-productos-alimentos/" style="font-size:.78rem;color:rgba(255,255,255,.38);text-decoration:none;transition:color .2s" onmouseover="this.style.color='#209d5c'" onmouseout="this.style.color='rgba(255,255,255,.38)'">Desarrollo de Producto</a>
+      <a href="/registro-rne/" style="font-size:.78rem;color:rgba(255,255,255,.38);text-decoration:none;transition:color .2s" onmouseover="this.style.color='#209d5c'" onmouseout="this.style.color='rgba(255,255,255,.38)'">Habilitación RNE</a>
+      <a href="/registro-rnee/" style="font-size:.78rem;color:rgba(255,255,255,.38);text-decoration:none;transition:color .2s" onmouseover="this.style.color='#209d5c'" onmouseout="this.style.color='rgba(255,255,255,.38)'">Registro RNEE</a>
+      <a href="/registro-rnpa/" style="font-size:.78rem;color:rgba(255,255,255,.38);text-decoration:none;transition:color .2s" onmouseover="this.style.color='#209d5c'" onmouseout="this.style.color='rgba(255,255,255,.38)'">RNPA / RNPE / BPM</a>
+      <a href="/implementacion-haccp/" style="font-size:.78rem;color:rgba(255,255,255,.38);text-decoration:none;transition:color .2s" onmouseover="this.style.color='#209d5c'" onmouseout="this.style.color='rgba(255,255,255,.38)'">HACCP y Calidad</a>
+      <a href="/exportar-alimentos-usa/" style="font-size:.78rem;color:rgba(255,255,255,.38);text-decoration:none;transition:color .2s" onmouseover="this.style.color='#209d5c'" onmouseout="this.style.color='rgba(255,255,255,.38)'">Exportación EE.UU.</a>
+      <a href="/bpm-buenas-practicas-manufactura/" style="font-size:.78rem;color:rgba(255,255,255,.38);text-decoration:none;transition:color .2s" onmouseover="this.style.color='#209d5c'" onmouseout="this.style.color='rgba(255,255,255,.38)'">Habilitación Bromatológica</a>
+      <a href="/rotulado-nutricional/" style="font-size:.78rem;color:rgba(255,255,255,.38);text-decoration:none;transition:color .2s" onmouseover="this.style.color='#209d5c'" onmouseout="this.style.color='rgba(255,255,255,.38)'">Rotulado Nutricional</a>
+      <a href="/direccion-tecnica/" style="font-size:.78rem;color:rgba(255,255,255,.38);text-decoration:none;transition:color .2s" onmouseover="this.style.color='#209d5c'" onmouseout="this.style.color='rgba(255,255,255,.38)'">Dirección Técnica</a>
+    </div>
+  </nav>
+  <nav class="f-nav" aria-label="Pie de página" style="flex-direction:column;align-items:flex-start;gap:.4rem">
+    <p style="font-size:.65rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.22);margin-bottom:.8rem">Navegación</p>
     <a href="#servicios">Servicios</a>
+    <a href="/servicios/">Catálogo</a>
     <a href="#proceso">Proceso</a>
     <a href="#nosotros">Nosotros</a>
     <a href="#faq">FAQ</a>
     <a href="#contacto">Contacto</a>
   </nav>
+  <p class="f-copy" style="width:100%;border-top:1px solid rgba(255,255,255,.05);padding-top:1.5rem;margin-top:.5rem">© 2025 BFood Consultoría Alimentaria · Argentina · lucia@bfood.com.ar</p>
 </footer>
 
 <!-- WA -->
@@ -695,4 +783,33 @@
         btn.classList.add('open');
         btn.setAttribute('aria-expanded', 'true');
         btn.nextElementSibling.classList.add('open');
-  
+        }
+    });
+  });
+
+  // Dropdown nav
+  const dropBtn = document.querySelector('.nav-drop-btn');
+  const dropMenu = document.querySelector('.nav-drop-menu');
+  if(dropBtn && dropMenu){
+    dropBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = dropMenu.classList.contains('open');
+      dropMenu.classList.toggle('open');
+      dropBtn.setAttribute('aria-expanded', String(!isOpen));
+    });
+    document.addEventListener('click', () => {
+      dropMenu.classList.remove('open');
+      dropBtn.setAttribute('aria-expanded', 'false');
+    });
+    dropMenu.addEventListener('click', e => e.stopPropagation());
+    document.addEventListener('keydown', e => {
+      if(e.key === 'Escape'){
+        dropMenu.classList.remove('open');
+        dropBtn.setAttribute('aria-expanded', 'false');
+        dropBtn.focus();
+      }
+    });
+  }
+</script>
+</body>
+</html>
