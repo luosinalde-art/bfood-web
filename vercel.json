@@ -1,3 +1,39 @@
-git add vercel.json
-git commit -m "Fix routing 404"
-git push
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/servicios", "destination": "/servicios/index.html" },
+    { "source": "/registro-rne", "destination": "/registro-rne/index.html" },
+    { "source": "/registro-rnee", "destination": "/registro-rnee/index.html" },
+    { "source": "/registro-rnpa", "destination": "/registro-rnpa/index.html" },
+    { "source": "/registro-rnpe", "destination": "/registro-rnpe/index.html" },
+    { "source": "/implementacion-haccp", "destination": "/implementacion-haccp/index.html" },
+    { "source": "/bpm-buenas-practicas-manufactura", "destination": "/bpm-buenas-practicas-manufactura/index.html" },
+    { "source": "/rotulado-nutricional", "destination": "/rotulado-nutricional/index.html" },
+    { "source": "/desarrollo-productos-alimentos", "destination": "/desarrollo-productos-alimentos/index.html" },
+    { "source": "/direccion-tecnica", "destination": "/direccion-tecnica/index.html" },
+    { "source": "/exportar-alimentos-usa", "destination": "/exportar-alimentos-usa/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+      ]
+    },
+    {
+      "source": "/(.*)\\.(html|css|js|png|jpg|jpeg|svg|ico|woff|woff2)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/(.*)\\.html",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+      ]
+    }
+  ]
+}
