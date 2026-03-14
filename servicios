@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Servicios de Consultoría Alimentaria | BFood Argentina</title>
+  <meta name="description" content="Todos los servicios de BFood: RNE, RNEE, RNPA, BPM, HACCP, Rotulado, Dirección Técnica, Exportación FDA. Consultoría alimentaria en Argentina."/>
+  <link rel="canonical" href="https://www.bfood.com.ar/servicios/"/>
+  <meta property="og:title" content="Servicios de Consultoría Alimentaria | BFood Argentina"/>
+  <meta property="og:description" content="RNE, RNEE, RNPA, BPM, HACCP, Rotulado, Dirección Técnica, Exportación FDA. Todo lo que necesitás para habilitar, registrar y escalar tu empresa alimentaria."/>
+  <meta property="og:type" content="website"/>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"ItemList","name":"Servicios BFood Consultoría Alimentaria","description":"Servicios de consultoría para la industria alimentaria en Argentina","url":"https://www.bfood.com.ar/servicios/","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"Habilitación RNE","url":"https://www.bfood.com.ar/registro-rne/"},
+    {"@type":"ListItem","position":2,"name":"Registro RNEE","url":"https://www.bfood.com.ar/registro-rnee/"},
+    {"@type":"ListItem","position":3,"name":"RNPA y RNPE — Registro de Productos","url":"https://www.bfood.com.ar/registro-rnpa/"},
+    {"@type":"ListItem","position":4,"name":"Rotulado Nutricional","url":"https://www.bfood.com.ar/rotulado-nutricional/"},
+    {"@type":"ListItem","position":5,"name":"BPM — Buenas Prácticas de Manufactura","url":"https://www.bfood.com.ar/bpm-buenas-practicas-manufactura/"},
+    {"@type":"ListItem","position":6,"name":"Implementación HACCP","url":"https://www.bfood.com.ar/implementacion-haccp/"},
+    {"@type":"ListItem","position":7,"name":"Dirección Técnica de Alimentos","url":"https://www.bfood.com.ar/direccion-tecnica/"},
+    {"@type":"ListItem","position":8,"name":"Desarrollo de Productos Alimentarios","url":"https://www.bfood.com.ar/desarrollo-productos-alimentos/"},
+    {"@type":"ListItem","position":9,"name":"Exportar Alimentos a EE.UU. — FDA/PCQI","url":"https://www.bfood.com.ar/exportar-alimentos-usa/"}
+  ]}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--g:#209d5c;--gd:#167a47;--gdp:#0d5230;--gl:#d8f3e5;--bk:#0f0f0f;--ch:#1e1e1e;--wh:#fff;--ow:#f6f9f7;--bd:rgba(32,157,92,.13);--tx:#3a3a3a}
+    html{scroll-behavior:smooth}
+    body{font-family:'Outfit',sans-serif;font-size:17px;background:var(--wh);color:var(--ch);-webkit-font-smoothing:antialiased}
+    ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--g)}
+    a{color:inherit}
+
+    /* NAV */
+    #topnav{position:fixed;top:0;left:0;right:0;z-index:9999;height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 6%;background:#555;border-bottom:2px solid #209d5c;box-shadow:0 2px 16px rgba(0,0,0,.35)}
+    #topnav a.brand{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;color:#fff;text-decoration:none;letter-spacing:-.02em;line-height:1}
+    #topnav a.brand span{color:#209d5c}
+    .brand-sub{font-size:.58rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-top:.18rem;display:block}
+    .nav-right{display:flex;align-items:center;gap:2rem}
+    .nav-right a.lnk{font-size:.92rem;font-weight:500;color:rgba(255,255,255,.85);text-decoration:none;border-bottom:2px solid transparent;padding-bottom:2px;transition:color .2s,border-color .2s}
+    .nav-right a.lnk:hover{color:#fff;border-bottom-color:#209d5c}
+    .nav-right a.cta-btn{background:#209d5c;color:#fff;padding:.6rem 1.4rem;border-radius:2px;font-size:.9rem;font-weight:700;text-decoration:none;white-space:nowrap;transition:background .2s}
+    .nav-right a.cta-btn:hover{background:#167a47}
+    @media(max-width:700px){.nav-right a.lnk{display:none}}
+
+    /* DROPDOWN */
+    .nav-dropdown{position:relative}
+    .nav-drop-btn{background:none;border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-size:.92rem;font-weight:500;color:rgba(255,255,255,.85);display:flex;align-items:center;gap:.35rem;padding-bottom:2px;border-bottom:2px solid transparent;transition:color .2s,border-color .2s}
+    .nav-drop-btn:hover,.nav-drop-btn[aria-expanded="true"]{color:#fff;border-bottom-color:#209d5c}
+    .drop-arrow{font-size:.65rem;transition:transform .2s}
+    .nav-drop-btn[aria-expanded="true"] .drop-arrow{transform:rotate(180deg)}
+    .nav-drop-menu{position:absolute;top:calc(100% + 18px);left:50%;transform:translateX(-50%);background:#1e1e1e;border:1px solid rgba(32,157,92,.2);border-radius:4px;padding:1.2rem 0 .8rem;min-width:580px;box-shadow:0 16px 48px rgba(0,0,0,.45);z-index:1000;display:none;grid-template-columns:1fr 1fr}
+    .nav-drop-menu.open{display:grid}
+    .drop-group{padding:.4rem 1.4rem 1rem}
+    .drop-group-label{font-size:.62rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#209d5c;margin-bottom:.5rem;opacity:.8}
+    .drop-item{display:block;font-size:.85rem;color:rgba(255,255,255,.62);text-decoration:none;padding:.3rem 0;line-height:1.35;transition:color .15s}
+    .drop-item:hover{color:#fff}
+    .drop-footer{grid-column:1/-1;border-top:1px solid rgba(255,255,255,.07);padding:.8rem 1.4rem 0}
+    .drop-all{font-size:.8rem;font-weight:700;color:#209d5c;text-decoration:none}
+    .drop-all:hover{color:#4ec98a}
+    @media(max-width:700px){.nav-drop-menu{min-width:calc(100vw - 2rem);left:auto;right:0;transform:none;grid-template-columns:1fr}}
+
+    /* BREADCRUMB */
+    .breadcrumb{padding:calc(76px + 1.8rem) 8% 0;background:var(--wh)}
+    .breadcrumb nav{font-size:.78rem;color:#999;display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+    .breadcrumb a{color:#999;text-decoration:none}
+    .breadcrumb a:hover{color:var(--g)}
+
+    /* HERO */
+    .page-hero{padding:2rem 8% 4rem;background:var(--wh)}
+    .eyebrow{font-size:.72rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--g);margin-bottom:.8rem;display:flex;align-items:center;gap:.6rem}
+    .eyebrow::before{content:'';display:block;width:20px;height:1.5px;background:var(--g)}
+    .page-hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.4rem,4vw,3.8rem);font-weight:700;line-height:1.08;color:var(--bk);letter-spacing:-.025em;margin-bottom:1rem;max-width:700px}
+    .page-hero .lead{font-size:1.02rem;font-weight:300;line-height:1.9;color:#555;max-width:620px}
+
+    /* GRUPOS DE SERVICIOS */
+    .services-body{padding:3rem 8% 7rem;background:var(--wh)}
+    .svc-group{margin-bottom:3.5rem}
+    .svc-group:last-child{margin-bottom:0}
+    .svc-group-title{font-size:.68rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--g);margin-bottom:1rem;padding-bottom:.7rem;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:.6rem}
+    .svc-group-title::before{content:'';display:block;width:16px;height:1.5px;background:var(--g)}
+    .svc-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1px;background:var(--bd);border:1px solid var(--bd);border-radius:2px;overflow:hidden}
+    .svc-card{display:flex;align-items:flex-start;justify-content:space-between;gap:1.2rem;padding:1.4rem 1.6rem;background:var(--wh);text-decoration:none;color:inherit;transition:background .18s}
+    .svc-card:hover{background:var(--ow)}
+    .svc-card:hover .sc-arrow{color:var(--g);transform:translateX(3px)}
+    .sc-left{display:flex;flex-direction:column;gap:.25rem}
+    .sc-code{font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--g);opacity:.75}
+    .sc-name{font-size:.97rem;font-weight:600;color:var(--bk);line-height:1.3}
+    .sc-desc{font-size:.83rem;color:#777;line-height:1.6;margin-top:.3rem}
+    .sc-arrow{font-size:.9rem;color:#ddd;flex-shrink:0;margin-top:3px;transition:color .18s,transform .18s}
+
+    /* CTA FINAL */
+    .cta-strip{background:var(--g);padding:4rem 8%;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap}
+    .cta-strip h2{font-family:'Cormorant Garamond',serif;font-size:clamp(1.6rem,2.5vw,2.2rem);font-weight:700;color:#fff;line-height:1.2;max-width:480px}
+    .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.9rem 2rem;border-radius:2px;font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:700;letter-spacing:.06em;text-decoration:none;text-transform:uppercase;transition:all .25s;border:none;cursor:pointer;white-space:nowrap}
+    .btn-white{background:#fff;color:var(--gdp)}
+    .btn-white:hover{background:var(--gl);transform:translateY(-2px)}
+    .btn-outline-white{background:transparent;color:rgba(255,255,255,.85);border:1.5px solid rgba(255,255,255,.4)}
+    .btn-outline-white:hover{border-color:#fff;color:#fff}
+
+    /* FOOTER */
+    footer{background:var(--bk);padding:2.4rem 8%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;border-top:1px solid rgba(255,255,255,.05)}
+    .f-logo{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:#fff}
+    .f-logo span{color:var(--g)}
+    .f-copy{font-size:.78rem;color:rgba(255,255,255,.28)}
+    .f-nav{display:flex;gap:1.5rem;flex-wrap:wrap}
+    .f-nav a{font-size:.78rem;color:rgba(255,255,255,.38);text-decoration:none;transition:color .2s}
+    .f-nav a:hover{color:var(--g)}
+
+    /* WA */
+    .wa{position:fixed;bottom:1.8rem;right:1.8rem;z-index:300;width:52px;height:52px;border-radius:50%;background:#25d366;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(37,211,102,.35);transition:transform .2s;text-decoration:none}
+    .wa:hover{transform:scale(1.1)}
+    .wa svg{width:26px;height:26px;fill:white}
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="topnav">
+  <a href="/" class="brand">
+    BFood<span>.</span>
+    <span class="brand-sub">Consultoría Alimentaria</span>
+  </a>
+  <div class="nav-right">
+    <div class="nav-dropdown">
+      <button class="nav-drop-btn" aria-expanded="false" aria-haspopup="true">
+        Servicios <span class="drop-arrow">▾</span>
+      </button>
+      <div class="nav-drop-menu" role="menu">
+        <div class="drop-group">
+          <p class="drop-group-label">Establecimiento y Habilitaciones</p>
+          <a href="/registro-rne/" class="drop-item">RNE — Registro Nacional de Establecimiento</a>
+          <a href="/registro-rnee/" class="drop-item">RNEE — Establecimientos de Envases</a>
+        </div>
+        <div class="drop-group">
+          <p class="drop-group-label">Registro de Productos</p>
+          <a href="/registro-rnpa/" class="drop-item">RNPA / RNPE — Registro de Productos</a>
+          <a href="/rotulado-nutricional/" class="drop-item">Rotulado Nutricional</a>
+        </div>
+        <div class="drop-group">
+          <p class="drop-group-label">Calidad y Procesos</p>
+          <a href="/bpm-buenas-practicas-manufactura/" class="drop-item">BPM — Buenas Prácticas de Manufactura</a>
+          <a href="/implementacion-haccp/" class="drop-item">HACCP y Sistemas de Gestión</a>
+          <a href="/direccion-tecnica/" class="drop-item">Dirección Técnica de Alimentos</a>
+        </div>
+        <div class="drop-group">
+          <p class="drop-group-label">Desarrollo y Exportación</p>
+          <a href="/desarrollo-productos-alimentos/" class="drop-item">Desarrollo de Productos Alimentarios</a>
+          <a href="/exportar-alimentos-usa/" class="drop-item">Exportar a EE.UU. — FDA / PCQI</a>
+        </div>
+        <div class="drop-footer">
+          <a href="/servicios/" class="drop-all">Ver todos los servicios →</a>
+        </div>
+      </div>
+    </div>
+    <a href="/#proceso" class="lnk">Proceso</a>
+    <a href="/#faq" class="lnk">Preguntas frecuentes</a>
+    <a href="https://wa.me/5491136488741" target="_blank" rel="noopener" class="cta-btn">Agendar consulta gratuita</a>
+  </div>
+</nav>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb">
+  <nav aria-label="Breadcrumb">
+    <a href="/">BFood</a>
+    <span>›</span>
+    <span>Servicios</span>
+  </nav>
+</div>
+
+<!-- HERO -->
+<header class="page-hero">
+  <p class="eyebrow">Consultoría Alimentaria · Argentina</p>
+  <h1>Todos nuestros servicios</h1>
+  <p class="lead">Desde el primer trámite hasta la exportación. Cada servicio está pensado para acompañarte en la etapa exacta que necesitás —sin vueltas innecesarias.</p>
+</header>
+
+<!-- SERVICIOS POR GRUPOS -->
+<main class="services-body">
+
+  <div class="svc-group">
+    <p class="svc-group-title">Habilitación del Establecimiento</p>
+    <div class="svc-cards">
+      <a href="/registro-rne/" class="svc-card">
+        <div class="sc-left">
+          <span class="sc-code">RNE · ANMAT / INAL</span>
+          <span class="sc-name">Registro Nacional de Establecimiento</span>
+          <span class="sc-desc">Para plantas que elaboran, fraccionan o almacenan alimentos. Requisito previo para el RNPA.</span>
+        </div>
+        <span class="sc-arrow">→</span>
+      </a>
+      <a href="/registro-rnee/" class="svc-card">
+        <div class="sc-left">
+          <span class="sc-code">RNEE · Art. 17 bis CAA</span>
+          <span class="sc-name">Registro Nacional de Establ. Elaborador de Envases</span>
+          <span class="sc-desc">Para fabricantes de envases en contacto con alimentos. Nuevo requisito del Código Alimentario Argentino.</span>
+        </div>
+        <span class="sc-arrow">→</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="svc-group">
+    <p class="svc-group-title">Registro de Productos</p>
+    <div class="svc-cards">
+      <a href="/registro-rnpa/" class="svc-card">
+        <div class="sc-left">
+          <span class="sc-code">RNPA / RNPE · ANMAT</span>
+          <span class="sc-name">Registro Nacional de Productos Alimentarios y de Envases</span>
+          <span class="sc-desc">Obligatorio para comercializar alimentos en Argentina. Gestionamos el trámite completo ante ANMAT.</span>
+        </div>
+        <span class="sc-arrow">→</span>
+      </a>
+      <a href="/rotulado-nutricional/" class="svc-card">
+        <div class="sc-left">
+          <span class="sc-code">Rotulado · CAA</span>
+          <span class="sc-name">Rotulado Nutricional y Declaraciones de Propiedades</span>
+          <span class="sc-desc">Diseño y validación de tablas nutricionales, declaraciones de propiedades saludables y obligaciones de etiquetado.</span>
+        </div>
+        <span class="sc-arrow">→</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="svc-group">
+    <p class="svc-group-title">Inocuidad, Calidad y Cumplimiento</p>
+    <div class="svc-cards">
+      <a href="/bpm-buenas-practicas-manufactura/" class="svc-card">
+        <div class="sc-left">
+          <span class="sc-code">BPM · CAA</span>
+          <span class="sc-name">Buenas Prácticas de Manufactura</span>
+          <span class="sc-desc">Implementación de BPM para establecimientos elaboradores y locales gastronómicos. Habilitación bromatológica incluida.</span>
+        </div>
+        <span class="sc-arrow">→</span>
+      </a>
+      <a href="/implementacion-haccp/" class="svc-card">
+        <div class="sc-left">
+          <span class="sc-code">HACCP · SGC</span>
+          <span class="sc-name">HACCP y Sistemas de Gestión de Calidad</span>
+          <span class="sc-desc">Para empresas que quieren escalar, exportar o proveer a grandes cadenas. Auditorías internas y SGC incluidos.</span>
+        </div>
+        <span class="sc-arrow">→</span>
+      </a>
+      <a href="/direccion-tecnica/" class="svc-card">
+        <div class="sc-left">
+          <span class="sc-code">Dirección Técnica · Servicio permanente</span>
+          <span class="sc-name">Director Técnico de Alimentos</span>
+          <span class="sc-desc">Profesional habilitado responsable técnico ante ANMAT. Servicio mensual para establecimientos que lo requieran.</span>
+        </div>
+        <span class="sc-arrow">→</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="svc-group">
+    <p class="svc-group-title">Desarrollo y Mercados Internacionales</p>
+    <div class="svc-cards">
+      <a href="/desarrollo-productos-alimentos/" class="svc-card">
+        <div class="sc-left">
+          <span class="sc-code">I+D · Innovación</span>
+          <span class="sc-name">Desarrollo de Productos Alimentarios</span>
+          <span class="sc-desc">Formulación, factibilidad industrial y diseño de proceso. Para que el producto nazca sobre bases técnicas sólidas.</span>
+        </div>
+        <span class="sc-arrow">→</span>
+      </a>
+      <a href="/exportar-alimentos-usa/" class="svc-card">
+        <div class="sc-left">
+          <span class="sc-code">FDA / FSMA · PCQI</span>
+          <span class="sc-name">Exportar Alimentos a EE.UU.</span>
+          <span class="sc-desc">Certificación PCQI, cumplimiento FDA/FSMA y gestión de importaciones ante SENASA y ANMAT.</span>
+        </div>
+        <span class="sc-arrow">→</span>
+      </a>
+    </div>
+  </div>
+
+</main>
+
+<!-- CTA -->
+<section class="cta-strip">
+  <h2>¿No sabés por dónde empezar?<br/>La primera consulta es gratuita.</h2>
+  <div style="display:flex;gap:1rem;flex-wrap:wrap">
+    <a href="https://wa.me/5491136488741" target="_blank" rel="noopener" class="btn btn-white">Agendar consulta →</a>
+    <a href="/" class="btn btn-outline-white">Volver al inicio</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-logo">BFood<span>.</span></div>
+  <p class="f-copy">© 2025 BFood Consultoría Alimentaria · Argentina</p>
+  <nav class="f-nav" aria-label="Pie de página">
+    <a href="/servicios/">Servicios</a>
+    <a href="/#proceso">Proceso</a>
+    <a href="/#nosotros">Nosotros</a>
+    <a href="/#faq">FAQ</a>
+    <a href="/#contacto">Contacto</a>
+  </nav>
+</footer>
+
+<!-- WA -->
+<a href="https://wa.me/5491136488741" target="_blank" rel="noopener" class="wa" aria-label="Contactar por WhatsApp">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<script>
+  const dropBtn = document.querySelector('.nav-drop-btn');
+  const dropMenu = document.querySelector('.nav-drop-menu');
+  if(dropBtn && dropMenu){
+    dropBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      const isOpen = dropMenu.classList.contains('open');
+      dropMenu.classList.toggle('open');
+      dropBtn.setAttribute('aria-expanded', String(!isOpen));
+    });
+    document.addEventListener('click', () => {
+      dropMenu.classList.remove('open');
+      dropBtn.setAttribute('aria-expanded','false');
+    });
+    dropMenu.addEventListener('click', e => e.stopPropagation());
+    document.addEventListener('keydown', e => {
+      if(e.key==='Escape'){ dropMenu.classList.remove('open'); dropBtn.setAttribute('aria-expanded','false'); dropBtn.focus(); }
+    });
+  }
+</script>
+</body>
+</html>
