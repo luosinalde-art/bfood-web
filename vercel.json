@@ -3,6 +3,8 @@
   "trailingSlash": false,
   "rewrites": [
     { "source": "/servicios", "destination": "/servicios/index.html" },
+    { "source": "/recursos", "destination": "/recursos/index.html" },
+    { "source": "/recursos/que-es-rnpe", "destination": "/recursos/que-es-rnpe/index.html" },
     { "source": "/registro-rne", "destination": "/registro-rne/index.html" },
     { "source": "/registro-rnee", "destination": "/registro-rnee/index.html" },
     { "source": "/registro-rnpa", "destination": "/registro-rnpa/index.html" },
