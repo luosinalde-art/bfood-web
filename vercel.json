@@ -3,8 +3,6 @@
   "trailingSlash": false,
   "rewrites": [
     { "source": "/servicios", "destination": "/servicios/index.html" },
-    { "source": "/recursos", "destination": "/recursos/index.html" },
-    { "source": "/recursos/que-es-rnpe", "destination": "/recursos/que-es-rnpe/index.html" },
     { "source": "/registro-rne", "destination": "/registro-rne/index.html" },
     { "source": "/registro-rnee", "destination": "/registro-rnee/index.html" },
     { "source": "/registro-rnpa", "destination": "/registro-rnpa/index.html" },
@@ -14,7 +12,8 @@
     { "source": "/rotulado-nutricional", "destination": "/rotulado-nutricional/index.html" },
     { "source": "/desarrollo-productos-alimentos", "destination": "/desarrollo-productos-alimentos/index.html" },
     { "source": "/direccion-tecnica", "destination": "/direccion-tecnica/index.html" },
-    { "source": "/exportar-alimentos-usa", "destination": "/exportar-alimentos-usa/index.html" }
+    { "source": "/exportar-alimentos-usa", "destination": "/exportar-alimentos-usa/index.html" },
+    { "source": "/recursos/rne", "destination": "/recursos/rne/index.html" }
   ],
   "headers": [
     {
