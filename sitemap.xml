@@ -8,18 +8,6 @@
   </url>
 
   <url>
-    <loc>https://www.bfood.com.ar/recursos/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-
-  <url>
-    <loc>https://www.bfood.com.ar/recursos/que-es-rnpe/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-
-  <url>
     <loc>https://www.bfood.com.ar/carnet-manipulacion-alimentos/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
@@ -83,6 +71,18 @@
     <loc>https://www.bfood.com.ar/exportar-alimentos-usa/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://www.bfood.com.ar/recursos/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.bfood.com.ar/recursos/importacion-alimentos/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
   </url>
 
 </urlset>
