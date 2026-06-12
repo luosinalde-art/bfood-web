@@ -1,0 +1,86 @@
+name: Auto-corrección SEO
+
+# Se ejecuta cuando la auditoría SEO/GEO falla (o manualmente desde Actions).
+# Claude corrige los errores reportados y abre un pull request con los cambios.
+#
+# Requiere el secret ANTHROPIC_API_KEY (Settings → Secrets and variables → Actions).
+# Si no está configurado, el workflow se omite sin fallar.
+
+on:
+  workflow_run:
+    workflows: ["Auditoría SEO/GEO"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  HAS_KEY: ${{ secrets.ANTHROPIC_API_KEY != '' }}
+
+jobs:
+  autofix:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'failure'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Avisar si falta la API key
+        if: env.HAS_KEY != 'true'
+        run: echo "::notice::ANTHROPIC_API_KEY no está configurada. Se omite la auto-corrección. Configurala en Settings → Secrets para habilitarla."
+
+      - uses: actions/checkout@v4
+        if: env.HAS_KEY == 'true'
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v4
+        if: env.HAS_KEY == 'true'
+        with:
+          node-version: 20
+
+      - name: Verificar si ya hay un PR de corrección abierto
+        if: env.HAS_KEY == 'true'
+        id: existing
+        run: echo "open=$(gh pr list --head seo-autofix --state open --json number --jq length)" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Corregir errores con Claude
+        if: env.HAS_KEY == 'true' && steps.existing.outputs.open == '0'
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Ejecutá `node scripts/seo-audit.mjs` para ver los problemas de SEO/GEO del sitio.
+            Corregí TODOS los errores de la sección "❌ Errores" editando los archivos HTML,
+            el sitemap.xml o lo que corresponda.
+
+            Reglas:
+            - No cambies el diseño ni el contenido visible de las páginas más allá de lo
+              estrictamente necesario para corregir el error de SEO.
+            - No modifiques scripts/seo-audit.mjs ni los archivos de .github/workflows.
+            - Si agregás o detectás páginas nuevas, sumalas también a sitemap.xml y llms.txt.
+            - Volvé a ejecutar la auditoría hasta que reporte 0 errores.
+            - NO hagas commit ni push: el workflow se encarga de eso después.
+          claude_args: --max-turns 30
+
+      - name: Crear pull request con las correcciones
+        if: env.HAS_KEY == 'true' && steps.existing.outputs.open == '0'
+        run: |
+          if git diff --quiet && [ -z "$(git status --porcelain)" ]; then
+            echo "Claude no hizo cambios; no se crea PR."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c seo-autofix
+          git add -A
+          git commit -m "fix: correcciones automáticas de SEO/GEO"
+          git push -u origin seo-autofix --force
+          gh pr create \
+            --title "🔧 Correcciones automáticas de SEO/GEO" \
+            --body "Correcciones generadas automáticamente a partir del reporte de la auditoría SEO/GEO. Revisar y mergear para publicar." \
+            --base main \
+            --head seo-autofix
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

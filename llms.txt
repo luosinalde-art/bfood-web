@@ -1,0 +1,27 @@
+# BFood Consultoría Alimentaria
+
+> Consultora especializada en industria alimentaria en Argentina, dirigida por Lucía Osinalde, Ingeniera en Alimentos matriculada ante DIPA (Provincia de Buenos Aires) y AGC (CABA). Acompaña a PyMEs alimentarias en habilitaciones, registros sanitarios, sistemas de calidad y exportación. Atiende todo el país. Contacto: lucia@bfood.com.ar · WhatsApp +54 9 11 3648-8741.
+
+BFood gestiona trámites ante INAL/ANMAT, DIPA, AGC y SENASA, y trabaja sobre el Código Alimentario Argentino (CAA). Servicios principales: habilitación de establecimientos (RNE), registro de productos (RNPA), registros de exportación (RNEE, RNPE, Art. 17 bis CAA), implementación de BPM y HACCP, rotulado nutricional, dirección técnica, desarrollo de productos y adecuación FDA/FSMA (certificación PCQI) para exportar a Estados Unidos.
+
+## Servicios
+
+- [Servicios](https://www.bfood.com.ar/servicios/): listado completo de servicios de consultoría alimentaria
+- [Habilitación RNE](https://www.bfood.com.ar/registro-rne/): Registro Nacional de Establecimiento, requisito para elaborar, fraccionar o almacenar alimentos
+- [Registro RNPA](https://www.bfood.com.ar/registro-rnpa/): Registro Nacional de Productos Alimenticios ante INAL/ANMAT, obligatorio para comercializar alimentos
+- [Registro RNEE](https://www.bfood.com.ar/registro-rnee/): Registro Nacional de Establecimiento Exportador (Art. 17 bis CAA)
+- [Registro RNPE](https://www.bfood.com.ar/registro-rnpe/): Registro Nacional de Producto de Exportación
+- [Implementación HACCP](https://www.bfood.com.ar/implementacion-haccp/): análisis de peligros y puntos críticos de control
+- [BPM — Buenas Prácticas de Manufactura](https://www.bfood.com.ar/bpm-buenas-practicas-manufactura/): implementación y auditoría de BPM
+- [Rotulado nutricional](https://www.bfood.com.ar/rotulado-nutricional/): etiquetado de alimentos según CAA y Ley de Etiquetado Frontal
+- [Dirección técnica](https://www.bfood.com.ar/direccion-tecnica/): director técnico de alimentos matriculado
+- [Desarrollo de productos](https://www.bfood.com.ar/desarrollo-productos-alimentos/): formulación y desarrollo de productos alimenticios
+- [Exportar alimentos a EE.UU.](https://www.bfood.com.ar/exportar-alimentos-usa/): adecuación FDA, FSMA y PCQI
+- [Carnet de manipulación de alimentos](https://www.bfood.com.ar/carnet-manipulacion-alimentos/): curso y carnet de manipulador
+
+## Recursos
+
+- [Recursos y guías](https://www.bfood.com.ar/recursos/): guías técnicas sobre normativa alimentaria argentina
+- [Importación de alimentos a Argentina](https://www.bfood.com.ar/recursos/importacion-alimentos/): requisitos INAL y trámites de importación
+- [Inspección RNE](https://www.bfood.com.ar/recursos/rne/): qué verifica el inspector en un establecimiento
+- [Qué es el RNPE](https://www.bfood.com.ar/recursos/que-es-rnpe/): guía del Registro Nacional de Producto de Exportación
