@@ -22,6 +22,8 @@ BFood gestiona trámites ante INAL/ANMAT, DIPA, AGC y SENASA, y trabaja sobre el
 ## Recursos
 
 - [Recursos y guías](https://www.bfood.com.ar/recursos/): guías técnicas sobre normativa alimentaria argentina
+- [Cómo habilitar una empresa de alimentos](https://www.bfood.com.ar/recursos/habilitar-empresa-alimentos/): la ruta completa paso a paso — habilitación del local, RNE, RNPA y requisitos en paralelo
+- [RNPA: costos y plazos](https://www.bfood.com.ar/recursos/rnpa-costos-plazos/): de qué se compone el costo del RNPA, qué determina el plazo y los errores que demoran el trámite
 - [Importación de alimentos a Argentina](https://www.bfood.com.ar/recursos/importacion-alimentos/): requisitos INAL y trámites de importación
 - [Inspección RNE](https://www.bfood.com.ar/recursos/rne/): qué verifica el inspector en un establecimiento
 - [Qué es el RNPE](https://www.bfood.com.ar/recursos/que-es-rnpe/): guía del Registro Nacional de Producto de Exportación
