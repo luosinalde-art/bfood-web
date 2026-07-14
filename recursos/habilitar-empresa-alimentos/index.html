@@ -292,6 +292,48 @@
       <p>No toda, pero sí varias categorías (libre de gluten, suplementos, aguas, envases, entre otras). Verificarlo antes de armar el expediente evita demoras.</p>
 
 
+      <div class="lead-magnet" id="consulta">
+        <span class="lm-tag">Consulta orientativa · Respuesta de Lucía</span>
+        <h2>Contanos tu caso y te decimos el camino</h2>
+        <p>Con estas respuestas ya podemos orientarte: qué trámites necesita tu empresa, en qué orden y por dónde empezar. El mensaje llega directo al WhatsApp de Lucía.</p>
+        <form id="fit-hab" style="display:flex;flex-direction:column;gap:.9rem;max-width:440px">
+          <input type="text" id="fit-hab-nombre" placeholder="Tu nombre" required style="padding:.85rem 1.1rem;border:1.5px solid rgba(255,255,255,.2);border-radius:2px;background:rgba(255,255,255,.08);color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;outline:none;transition:border-color .2s" onfocus="this.style.borderColor='rgba(255,255,255,.6)'" onblur="this.style.borderColor='rgba(255,255,255,.2)'"/>
+          <input type="text" id="fit-hab-empresa" placeholder="Empresa o proyecto" style="padding:.85rem 1.1rem;border:1.5px solid rgba(255,255,255,.2);border-radius:2px;background:rgba(255,255,255,.08);color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;outline:none;transition:border-color .2s" onfocus="this.style.borderColor='rgba(255,255,255,.6)'" onblur="this.style.borderColor='rgba(255,255,255,.2)'"/>
+          <select id="fit-hab-etapa" required style="padding:.85rem 1.1rem;border:1.5px solid rgba(255,255,255,.2);border-radius:2px;background:rgba(255,255,255,.08);color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;outline:none;cursor:pointer" onfocus="this.style.borderColor='rgba(255,255,255,.6)'" onblur="this.style.borderColor='rgba(255,255,255,.2)'">
+            <option value="" disabled selected style="color:#1e1e1e">¿En qué etapa estás?</option>
+            <option value="Todavía no tengo local" style="color:#1e1e1e">Todavía no tengo local</option>
+            <option value="Tengo local, falta habilitarlo" style="color:#1e1e1e">Tengo local, falta habilitarlo</option>
+            <option value="Local habilitado, necesito el RNE" style="color:#1e1e1e">Local habilitado, necesito el RNE</option>
+            <option value="Tengo RNE, necesito registrar productos" style="color:#1e1e1e">Tengo RNE, necesito registrar productos</option>
+          </select>
+          <select id="fit-hab-ubicacion" required style="padding:.85rem 1.1rem;border:1.5px solid rgba(255,255,255,.2);border-radius:2px;background:rgba(255,255,255,.08);color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;outline:none;cursor:pointer" onfocus="this.style.borderColor='rgba(255,255,255,.6)'" onblur="this.style.borderColor='rgba(255,255,255,.2)'">
+            <option value="" disabled selected style="color:#1e1e1e">¿Dónde está (o estará) el establecimiento?</option>
+            <option value="Provincia de Buenos Aires" style="color:#1e1e1e">Provincia de Buenos Aires</option>
+            <option value="CABA" style="color:#1e1e1e">CABA</option>
+            <option value="Otra provincia" style="color:#1e1e1e">Otra provincia</option>
+          </select>
+          <input type="text" id="fit-hab-producto" placeholder="¿Qué producto elaborás o vas a elaborar?" required style="padding:.85rem 1.1rem;border:1.5px solid rgba(255,255,255,.2);border-radius:2px;background:rgba(255,255,255,.08);color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;outline:none;transition:border-color .2s" onfocus="this.style.borderColor='rgba(255,255,255,.6)'" onblur="this.style.borderColor='rgba(255,255,255,.2)'"/>
+          <button type="submit"
+            style="display:inline-flex;align-items:center;justify-content:center;gap:.6rem;background:#25d366;color:#fff;font-family:'Outfit',sans-serif;font-weight:700;font-size:.95rem;letter-spacing:.04em;border:none;cursor:pointer;padding:1rem 2rem;border-radius:2px;box-shadow:0 4px 18px rgba(37,211,102,.35);transition:transform .2s"
+            onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Enviar consulta por WhatsApp
+          </button>
+        </form>
+        <script>
+          document.getElementById('fit-hab').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var lines = ['Hola! Vengo desde la guía de habilitación de bfood.com.ar.'];
+            var v_nombre = document.getElementById('fit-hab-nombre').value.trim(); if (v_nombre) lines.push('Nombre: ' + v_nombre);
+            var v_empresa = document.getElementById('fit-hab-empresa').value.trim(); if (v_empresa) lines.push('Empresa: ' + v_empresa);
+            var v_etapa = document.getElementById('fit-hab-etapa').value.trim(); if (v_etapa) lines.push('Etapa: ' + v_etapa);
+            var v_ubicacion = document.getElementById('fit-hab-ubicacion').value.trim(); if (v_ubicacion) lines.push('Ubicación: ' + v_ubicacion);
+            var v_producto = document.getElementById('fit-hab-producto').value.trim(); if (v_producto) lines.push('Producto: ' + v_producto);
+            window.open('https://wa.me/5491178204883?text=' + encodeURIComponent(lines.join('\n')), '_blank');
+          });
+        </script>
+      </div>
+
       <div class="author-box">
         <div class="author-avatar">L</div>
         <div class="author-info">
@@ -314,13 +356,14 @@
           <a href="#paralelos">Requisitos en paralelo</a>
           <a href="#errores">Errores que demoran todo</a>
           <a href="#faq">Preguntas frecuentes</a>
+          <a href="#consulta">Consultar mi caso</a>
         </nav>
       </div>
 
       <div class="sidebar-card">
         <h3>¿Estás por habilitar tu empresa?</h3>
-        <p>Hacemos el diagnóstico inicial: revisamos tu local, tu producto y tu documentación, y armamos la hoja de ruta completa con el orden correcto de trámites. Sabés desde el día uno qué necesitás y cuánto falta.</p>
-        <a href="https://wa.me/5491178204883?text=Hola!%20Vengo%20desde%20bfood.com.ar.%20Estoy%20por%20habilitar%20mi%20empresa%20de%20alimentos%20y%20quiero%20hacer%20una%20consulta." target="_blank" rel="noopener" class="btn btn-primary">💬 Consultar por WhatsApp</a>
+        <p>Contanos en qué etapa estás y qué producto elaborás, y te decimos exactamente qué necesita tu empresa y en qué orden. Respuesta directa de Lucía por WhatsApp.</p>
+        <a href="#consulta" class="btn btn-primary">📋 Contanos tu caso</a>
       </div>
 
       <div class="sidebar-card sidebar-services">
@@ -341,7 +384,7 @@
   <h2>De la idea al producto en góndola, sin retrocesos.</h2>
   <p>Diagnóstico, hoja de ruta y gestión completa de habilitaciones y registros. Con Ingeniera en Alimentos matriculada.</p>
   <div class="cta-actions">
-    <a href="https://wa.me/5491178204883?text=Hola!%20Vengo%20desde%20bfood.com.ar.%20Quiero%20consultar%20por%20la%20habilitaci%C3%B3n%20completa%20de%20mi%20empresa%20de%20alimentos." target="_blank" rel="noopener" class="btn-cta btn-white">💬 Hablar con Lucía</a>
+    <a href="#consulta" class="btn-cta btn-white">📋 Contanos tu caso</a>
     <a href="/servicios" class="btn-cta btn-outline-white">Ver todos los servicios</a>
   </div>
 </section>
