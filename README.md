@@ -4,6 +4,10 @@ Sitio web de BFood Consultoría Alimentaria — https://www.bfood.com.ar
 
 Sitio estático (HTML) desplegado en Vercel.
 
+## Design system
+
+[`docs/design-system.md`](docs/design-system.md) — colores, tipografía, logo y voz de marca de BFood. Es la referencia única a usar al pedirle a Claude que genere cualquier pieza nueva (páginas del sitio, presupuestos en Word, presentaciones, emails), para que todo mantenga la misma identidad visual y de tono.
+
 ## Auditoría automática de SEO/GEO
 
 El repositorio incluye un auditor de SEO y GEO (optimización para motores de IA) que revisa todas las páginas:
