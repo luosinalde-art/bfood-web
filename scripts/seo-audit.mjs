@@ -31,10 +31,15 @@ function warn(page, msg) { warnings.push({ page, msg }); }
 
 // ---------- utilidades ----------
 
+// Herramientas internas: no se publican (ver .vercelignore) y por lo tanto no son
+// páginas del sitio — quedan fuera de la auditoría y del sitemap.
+const NO_PUBLICADAS = new Set(['gestion.html']);
+
 function findHtmlFiles(dir) {
   const out = [];
   for (const name of readdirSync(dir)) {
     if (name.startsWith('.') || name === 'node_modules' || name === 'scripts' || name === 'git') continue;
+    if (dir === ROOT && NO_PUBLICADAS.has(name)) continue;
     const full = join(dir, name);
     if (statSync(full).isDirectory()) out.push(...findHtmlFiles(full));
     else if (name.endsWith('.html')) out.push(full);
