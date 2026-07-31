@@ -19,7 +19,7 @@ Qué incluye:
 - **Embudo** con los estados reales de la planilla de seguimiento (primer contacto → discovery → presupuesto enviado → verbal → ganado, más no califica, alianza, no contesta y perdido), cada uno con su probabilidad de cierre. Calcula el **ticket anual en dólares** (×12 para los servicios mensuales) y el **ponderado** con las mismas fórmulas de la planilla, y filtra por fuente, servicio y texto.
 - **Importación del embudo**: *Datos → Importar embudo (CSV)* lee la planilla exportada tal como está. Muestra una vista previa, no duplica lo ya cargado (clave: cliente + fecha + servicio) y opcionalmente da de alta cliente, proyecto y factura por cada lead ganado.
 - **Presupuestos** armados desde un catálogo de 16 servicios, con alcance, entregables, plan de trabajo, hitos de pago y vista imprimible que se exporta a PDF con `Ctrl+P`. Cotiza por monto fijo, por horas o por planes, en pesos o dólares.
-- **Alta de cliente**: al aceptar un presupuesto se crean el cliente, el proyecto, las tareas de cada fase y el plan de facturación de cada hito.
+- **Alta de cliente**: al aceptar un presupuesto se crean el cliente, el proyecto, las tareas de cada fase y el plan de facturación de cada hito. Marcar un lead como *Ganado* ofrece el mismo alta sin pasar por un presupuesto, y el embudo avisa si quedó algún ganado sin cliente activo.
 - **Mi mes**: checklist mensual por cliente. Los servicios recurrentes (Dirección Técnica, auditorías, SGC) regeneran sus tareas y su abono cada mes.
 - **Facturación**: se registra el comprobante emitido en ARCA y después el cobro; controla vencimientos y totales por moneda.
 

@@ -1721,6 +1721,7 @@ function vistaLeads(){
   const cerrados = DB.leads.filter(l => ['ganado','perdido','no_contesto'].includes(l.estado));
   const tasa = cerrados.length ? Math.round(ganados.length / cerrados.length * 100) : null;
   const ticketProm = ganados.length ? ganados.reduce((a,l) => a + ticketUSD(l), 0) / ganados.length : 0;
+  const pendientesAlta = ganadosSinCliente();
   const fuentes  = [...new Set(DB.leads.map(l => l.fuente).filter(Boolean))].sort();
   const servicios = [...new Set(DB.leads.map(l => l.servicio).filter(Boolean))].sort();
 
@@ -1761,6 +1762,13 @@ function vistaLeads(){
     <button class="${filtroLead==='todos'?'on':''}" onclick="filtroLead='todos';router()">
       <span class="e">Todos</span><span class="v">${DB.leads.length}</span><span class="e">&nbsp;</span></button>
   </div>
+
+  ${pendientesAlta.length ? `<div class="aviso warn" style="display:flex;gap:.8rem;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:1rem">
+    <span><b>${pendientesAlta.length}</b> lead${pendientesAlta.length===1?'':'s'} ganado${pendientesAlta.length===1?'':'s'}
+      todavía no ${pendientesAlta.length===1?'es cliente activo':'son clientes activos'}:
+      ${pendientesAlta.slice(0,6).map(l => esc(l.nombre)).join(' · ')}${pendientesAlta.length>6?` y ${pendientesAlta.length-6} más`:''}.</span>
+    <button class="btn mini" onclick="darDeAltaGanados()">Dar de alta ${pendientesAlta.length===1?'':'a todos'}</button>
+  </div>` : ''}
 
   <div class="filtros">
     <input type="text" placeholder="Buscar cliente, servicio o motivo…" value="${esc(textoLead)}"
@@ -1815,6 +1823,7 @@ function vistaLeads(){
             <td class="acc">
               <button class="btn-txt" onclick="verLead('${l.id}')">Abrir</button>
               ${esAbierto(l) ? `<button class="btn-txt" onclick="nuevoPresupuesto('${l.id}')">Presupuestar</button>` : ''}
+              ${l.estado==='ganado' && !l.clienteId ? `<button class="btn-txt" onclick="formAltaDesdeLead('${l.id}')">Dar de alta</button>` : ''}
             </td>
           </tr>`;
         }).join('')}
@@ -1891,8 +1900,17 @@ function formLead(id){
       if(d.notaInicial) lead.notas.unshift({fecha:hoy(), texto:d.notaInicial});
       refrescar();
       toast(id ? 'Lead actualizado.' : 'Lead creado.');
+      ofrecerAlta(lead);
     }
   });
+}
+
+/* Si el lead quedó ganado y todavía no es cliente, abre el alta.
+   Va con setTimeout porque guardarModal() cierra el modal después del callback. */
+function ofrecerAlta(lead){
+  if(lead.estado === 'ganado' && !lead.clienteId){
+    setTimeout(() => formAltaDesdeLead(lead.id), 0);
+  }
 }
 
 /* Agrega una fuente nueva a la lista y la deja elegida. */
@@ -1944,11 +1962,14 @@ function verLead(id){
         `<div class="nota"><div class="f">${fmtFecha(n.fecha)}</div>${nl2br(n.texto)}</div>`).join('')
         : '<p class="sec" style="color:var(--gris2);font-size:.85rem">Sin notas todavía.</p>'}
     </div>`;
+  const puedeAlta = l.estado === 'ganado' && !l.clienteId;
   abrirModal(l.nombre, html, {
     botones:[
       {et:'Eliminar', accion:`eliminarLead('${l.id}')`, peligro:true, izq:true},
       {et:'Editar', accion:`cerrarModal();formLead('${l.id}')`},
-      {et:'Nuevo presupuesto', accion:`cerrarModal();nuevoPresupuesto('${l.id}')`, pri:true}
+      puedeAlta
+        ? {et:'Dar de alta como cliente', accion:`cerrarModal();formAltaDesdeLead('${l.id}')`, pri:true}
+        : {et:'Nuevo presupuesto', accion:`cerrarModal();nuevoPresupuesto('${l.id}')`, pri:true}
     ]
   });
 }
@@ -1968,6 +1989,7 @@ function agregarNotaLead(id){
       l.estado = d.estado;
       refrescar();
       toast('Nota agregada.');
+      ofrecerAlta(l);
     }
   });
 }
@@ -4002,8 +4024,10 @@ function confirmarImporte(){
 }
 
 /* Crea cliente + proyecto + factura a partir de un lead ganado. */
+/* Alta silenciosa: crea cliente, proyecto y —si hay importe— la factura.
+   La usan la importación y el alta en bloque desde el embudo. */
 function altaDesdeLead(lead){
-  if(!num(lead.monto)) return false;
+  if(lead.clienteId) return false;
   const cliente = {
     id:uid(), razonSocial:lead.nombre, nombreFantasia:lead.empresa || lead.nombre,
     cuit:'', contacto:'', telefono:lead.telefono||'', email:lead.email||'',
@@ -4027,16 +4051,143 @@ function altaDesdeLead(lead){
   };
   DB.proyectos.push(proyecto);
 
-  DB.facturas.push({
-    id:uid(), clienteId:cliente.id, proyectoId:proyecto.id,
-    concepto: mensual ? 'Abono ' + etiquetaMes(mesDe(inicio)) : 'Total del servicio',
-    mesServicio: mensual ? mesDe(inicio) : undefined,
-    moneda:lead.moneda || 'ARS', monto:num(lead.monto), pct:100,
-    estado:'por_emitir', numero:'', fechaEmision:'', vencimiento:'', fechaCobro:''
-  });
+  if(num(lead.monto)){
+    DB.facturas.push({
+      id:uid(), clienteId:cliente.id, proyectoId:proyecto.id,
+      concepto: mensual ? 'Abono ' + etiquetaMes(mesDe(inicio)) : 'Total del servicio',
+      mesServicio: mensual ? mesDe(inicio) : undefined,
+      moneda:lead.moneda || 'ARS', monto:num(lead.monto), pct:100,
+      estado:'por_emitir', numero:'', fechaEmision:'', vencimiento:'', fechaCobro:''
+    });
+  }
 
   lead.clienteId = cliente.id;
   return true;
+}
+
+/* Leads ganados que todavía no tienen ficha de cliente. */
+function ganadosSinCliente(){
+  return DB.leads.filter(l => l.estado === 'ganado' && !l.clienteId);
+}
+
+function darDeAltaGanados(){
+  const pendientes = ganadosSinCliente();
+  if(!pendientes.length){ toast('No hay ganados pendientes.'); return; }
+  // Con uno solo conviene el formulario, que deja revisar los datos antes de crear.
+  if(pendientes.length === 1){ formAltaDesdeLead(pendientes[0].id); return; }
+  confirmar('Dar de alta a los ganados',
+    `Se van a crear <b>${pendientes.length}</b> cliente(s) con su proyecto y su factura por el total:<br/><br/>
+     ${pendientes.slice(0,12).map(l => esc(l.nombre)).join(' · ')}${pendientes.length>12?' y '+(pendientes.length-12)+' más':''}.`,
+    () => {
+      let n = 0;
+      pendientes.forEach(l => { if(altaDesdeLead(l)) n++; });
+      refrescar();
+      toast(`Dados de alta ${n} cliente(s).`);
+    }, 'Dar de alta');
+}
+
+/* Alta guiada desde un lead: permite revisar los datos y vincular a un cliente existente. */
+function formAltaDesdeLead(id){
+  const l = buscarLead(id);
+  if(!l) return;
+  if(l.clienteId){ toast('Este lead ya tiene un cliente activo.'); return; }
+  const servicio = servicioDeEmbudo(l.servicio, l.categoria);
+  const plantilla = servicio ? buscarServicio(servicio) : null;
+  const mensual = esMensual(l) || !!(plantilla && plantilla.recurrente);
+  const inicio = l.fechaCierre || hoy();
+  const opcionesCliente = [{v:'', et:'— Crear cliente nuevo —'}].concat(
+    DB.clientes.map(c => ({v:c.id, et:c.nombreFantasia || c.razonSocial})));
+
+  abrirModal('Dar de alta a ' + l.nombre, `
+    <div class="aviso ok">Se crea el cliente y su proyecto, para empezar a seguirlo desde Mi mes y Facturación.</div>
+    <div class="seccion-form"><h3>Cliente</h3>
+      ${campo('clienteId','Vincular a un cliente existente', '', {tipo:'select', opciones:opcionesCliente,
+        ayuda:'Si ya lo tenés cargado, elegilo acá y no se duplica la ficha.'})}
+      ${campo('razonSocial','Razón social', l.nombre)}
+      <div class="fila c2">
+        ${campo('nombreFantasia','Nombre de fantasía', l.empresa || l.nombre, {opcional:true})}
+        ${campo('cuit','CUIT', '', {opcional:true})}
+      </div>
+      <div class="fila c3">
+        ${campo('contacto','Persona de contacto', '', {opcional:true})}
+        ${campo('email','Email', l.email||'', {tipo:'email', opcional:true})}
+        ${campo('telefono','Teléfono', l.telefono||'', {opcional:true})}
+      </div>
+    </div>
+    <div class="seccion-form"><h3>Proyecto</h3>
+      ${campo('nombreProyecto','Nombre del proyecto', [l.servicio, l.categoria].filter(Boolean).join(' · ') || 'Proyecto')}
+      <div class="fila c4">
+        ${campo('fechaInicio','Fecha de inicio', inicio, {tipo:'date'})}
+        ${campo('monto', mensual ? 'Abono mensual' : 'Monto total', num(l.monto)||'', {tipo:'number', opcional:true})}
+        ${campo('moneda','Moneda', l.moneda||'ARS', {tipo:'select', opciones:[{v:'ARS',et:'ARS'},{v:'USD',et:'USD'}]})}
+        ${campo('servicioId','Plantilla', servicio||'', {tipo:'select',
+          opciones:[{v:'', et:'— Sin plantilla —'}].concat(DB.catalogo.map(s => ({v:s.id, et:s.nombre})))})}
+      </div>
+      <label style="font-size:.85rem;display:flex;gap:.45rem;align-items:center;margin-bottom:.4rem">
+        <input type="checkbox" name="recurrente" ${mensual?'checked':''}/> Es un servicio mensual (abono recurrente con ajuste trimestral)</label>
+      <label style="font-size:.85rem;display:flex;gap:.45rem;align-items:center;margin-bottom:.4rem">
+        <input type="checkbox" name="crearFactura" checked/> Crear la factura por el total, en estado "por emitir"</label>
+      <label style="font-size:.85rem;display:flex;gap:.45rem;align-items:center">
+        <input type="checkbox" name="crearTareas"/> Generar las tareas del servicio
+        <span class="op" style="color:var(--gris2)">(dejalo sin marcar si el trabajo ya está avanzado)</span></label>
+    </div>
+  `, {ancho:true, alGuardar(d){
+    if(!d.clienteId && !d.razonSocial){ toast('Indicá la razón social.'); return false; }
+    let cliente = d.clienteId ? buscarCliente(d.clienteId) : null;
+    if(!cliente){
+      cliente = {
+        id:uid(), razonSocial:d.razonSocial, nombreFantasia:d.nombreFantasia || d.razonSocial,
+        cuit:d.cuit, contacto:d.contacto, telefono:d.telefono, email:d.email,
+        rne:'', domicilio:'', rubro:l.rubro||'',
+        fechaAlta:d.fechaInicio || hoy(), leadId:l.id, notas:[]
+      };
+      DB.clientes.push(cliente);
+    }
+    const recurrente = !!d.recurrente;
+    const monto = num(d.monto);
+    const arranque = d.fechaInicio || hoy();
+    const proyecto = {
+      id:uid(), clienteId:cliente.id, presupuestoId:null,
+      nombre:d.nombreProyecto || 'Proyecto', servicioId:d.servicioId || null,
+      estado:'activo', fechaInicio:arranque, moneda:d.moneda || 'ARS',
+      montoTotal:monto, recurrente:recurrente,
+      honorarioMensual: recurrente ? monto : 0,
+      diaFacturacion: recurrente ? 1 : 0,
+      proximoAjuste: recurrente ? sumarMeses(mesDe(arranque), 3) + '-01' : '',
+      ultimoMesGenerado:''
+    };
+    DB.proyectos.push(proyecto);
+
+    if(d.crearFactura && monto){
+      DB.facturas.push({
+        id:uid(), clienteId:cliente.id, proyectoId:proyecto.id,
+        concepto: recurrente ? 'Abono ' + etiquetaMes(mesDe(arranque)) : 'Total del servicio',
+        mesServicio: recurrente ? mesDe(arranque) : undefined,
+        moneda:proyecto.moneda, monto, pct:100,
+        estado:'por_emitir', numero:'', fechaEmision:'', vencimiento:'', fechaCobro:''
+      });
+    }
+    if(d.crearTareas && proyecto.servicioId){
+      if(recurrente) generarTareasDelMes(proyecto, mesDe(arranque));
+      const s = buscarServicio(proyecto.servicioId);
+      let fecha = arranque;
+      (s && s.fases || []).forEach((f, i) => {
+        fecha = sumarDias(fecha, i === 0 ? 7 : 14);
+        DB.tareas.push({
+          id:uid(), clienteId:cliente.id, proyectoId:proyecto.id,
+          titulo:f.nombre || ('Fase '+(i+1)), detalle:f.actividades || '', fase:f.nombre || '',
+          mes:mesDe(fecha), vence:fecha, estado:'pendiente', notas:'', recurrente:false
+        });
+      });
+    }
+
+    l.clienteId = cliente.id;
+    l.estado = 'ganado';
+    if(!l.fechaCierre) l.fechaCierre = arranque;
+    guardar();
+    ir('proyecto/'+proyecto.id);
+    toast('Cliente y proyecto dados de alta.');
+  }});
 }
 
 /* =======================  14. DOCUMENTO IMPRIMIBLE  ====================== */
