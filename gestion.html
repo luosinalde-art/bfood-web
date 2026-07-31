@@ -1788,7 +1788,7 @@ function vistaLeads(){
       ${lista.length ? `
       <table class="tab">
         <thead><tr>
-          <th>Cliente</th><th>Fuente</th><th>Servicio</th><th>Contacto</th>
+          <th>Lead</th><th>Fuente</th><th>Servicio</th><th>Contacto</th>
           <th class="num">Monto</th><th class="num">Ponderado</th><th>Estado</th><th>Seguimiento</th><th></th>
         </tr></thead>
         <tbody>
@@ -1801,6 +1801,7 @@ function vistaLeads(){
               <div class="prin">${esc(l.nombre)}</div>
               ${l.empresa ? `<div class="sec">${esc(l.empresa)}</div>` : ''}
               ${presus.length ? `<div class="sec">${presus.length} presupuesto${presus.length===1?'':'s'}</div>` : ''}
+              ${l.clienteId ? `<div class="sec">✓ ya es cliente activo</div>` : ''}
             </td>
             <td class="sec">${esc(l.fuente || '—')}</td>
             <td class="sec">${esc(l.servicio || '—')}${l.categoria?`<div class="sec">${esc(l.categoria)}</div>`:''}</td>
