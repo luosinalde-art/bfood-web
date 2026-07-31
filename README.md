@@ -16,7 +16,8 @@ está excluido del deploy (`.vercelignore`) y de la auditoría de SEO.
 Qué incluye:
 
 - **Panel** con lo que requiere atención: presupuestos sin respuesta, seguimientos pautados, facturas vencidas y ajustes de honorarios pendientes.
-- **Leads** con el embudo (nuevo → discovery → presupuesto → negociación → aceptado) y notas de seguimiento.
+- **Embudo** con los estados reales de la planilla de seguimiento (primer contacto → discovery → presupuesto enviado → verbal → ganado, más no califica, alianza, no contesta y perdido), cada uno con su probabilidad de cierre. Calcula el **ticket anual en dólares** (×12 para los servicios mensuales) y el **ponderado** con las mismas fórmulas de la planilla, y filtra por fuente, servicio y texto.
+- **Importación del embudo**: *Datos → Importar embudo (CSV)* lee la planilla exportada tal como está. Muestra una vista previa, no duplica lo ya cargado (clave: cliente + fecha + servicio) y opcionalmente da de alta cliente, proyecto y factura por cada lead ganado.
 - **Presupuestos** armados desde un catálogo de 16 servicios, con alcance, entregables, plan de trabajo, hitos de pago y vista imprimible que se exporta a PDF con `Ctrl+P`. Cotiza por monto fijo, por horas o por planes, en pesos o dólares.
 - **Alta de cliente**: al aceptar un presupuesto se crean el cliente, el proyecto, las tareas de cada fase y el plan de facturación de cada hito.
 - **Mi mes**: checklist mensual por cliente. Los servicios recurrentes (Dirección Técnica, auditorías, SGC) regeneran sus tareas y su abono cada mes.

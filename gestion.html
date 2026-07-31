@@ -102,6 +102,7 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
 .chip.azul{background:var(--azulL);color:var(--azul);border-color:#cfe0f1}
 .chip.ambar{background:var(--ambarL);color:var(--ambar);border-color:#f3e0bf}
 .chip.rojo{background:var(--rojoL);color:var(--rojo);border-color:#f3cfcb}
+.chip.lila{background:#f1ecfa;color:#6b4bab;border-color:#ded2f3}
 
 table.tab{width:100%;border-collapse:collapse;font-size:.87rem}
 table.tab th{
@@ -238,12 +239,13 @@ fieldset{border:none}
 .embudo{display:flex;gap:.45rem;flex-wrap:wrap;margin-bottom:1rem}
 .embudo button{
   border:1px solid var(--bd);background:var(--wh);border-radius:8px;padding:.45rem .7rem;
-  cursor:pointer;text-align:left;min-width:104px;flex:1;transition:.14s;
+  cursor:pointer;text-align:left;flex:1 1 104px;max-width:200px;transition:.14s;
 }
 .embudo button:hover{border-color:var(--g)}
 .embudo button.on{border-color:var(--g);background:var(--gll);box-shadow:inset 0 -2px 0 var(--g)}
 .embudo button .e{display:block;font-size:.72rem;color:var(--gris2);font-weight:600;line-height:1.25}
 .embudo button .v{display:block;font-size:1.15rem;font-weight:600;color:#272525;margin-top:.1rem}
+.embudo button .e:last-child{color:var(--gd);font-weight:600;font-size:.7rem}
 
 /* checklist de tareas */
 .grupo-cliente{border-bottom:1px solid var(--bd)}
@@ -1073,17 +1075,40 @@ const CATALOGO = [
 
 /* =======================  2. ESTADOS Y CONSTANTES  ======================= */
 
+/* Estados del embudo, con la probabilidad de cierre que usa la planilla.
+   `oportunidad:false` = no es una oportunidad de venta, así que no entra en la
+   tasa de conversión (descartados por no encajar, y alianzas). */
 const ESTADOS_LEAD = {
-  nuevo:                {et:'Nuevo',                color:'gris'},
-  discovery_agendado:   {et:'Discovery agendado',   color:'azul'},
-  discovery_hecho:      {et:'Discovery hecho',      color:'azul'},
-  presupuesto_enviado:  {et:'Presupuesto enviado',  color:'ambar'},
-  negociacion:          {et:'En negociación',       color:'ambar'},
-  aceptado:             {et:'Aceptado',             color:'verde'},
-  rechazado:            {et:'Rechazado',            color:'rojo'},
-  frio:                 {et:'Frío',                 color:'gris'}
+  primer_contacto:     {et:'Primer contacto',     color:'gris',  prob:10,  n:'0', abierto:true,  oportunidad:true},
+  discovery:           {et:'Discovery',           color:'azul',  prob:25,  n:'1', abierto:true,  oportunidad:true},
+  no_califica:         {et:'No califica',         color:'gris',  prob:0,   n:'2', abierto:false, oportunidad:false},
+  alianza:             {et:'Alianza',             color:'azul',  prob:0,   n:'3', abierto:false, oportunidad:false},
+  presupuesto_enviado: {et:'Presupuesto enviado', color:'ambar', prob:40,  n:'4', abierto:true,  oportunidad:true},
+  verbal:              {et:'Verbal, sin firmar',  color:'lila',  prob:85,  n:'6', abierto:true,  oportunidad:true},
+  ganado:              {et:'Ganado / Aprobado',   color:'verde', prob:100, n:'7', abierto:false, oportunidad:true},
+  no_contesto:         {et:'No contesta',         color:'gris',  prob:5,   n:'8', abierto:false, oportunidad:true},
+  perdido:             {et:'Perdido',             color:'rojo',  prob:0,   n:'9', abierto:false, oportunidad:true}
 };
-const ORDEN_LEAD = ['nuevo','discovery_agendado','discovery_hecho','presupuesto_enviado','negociacion','aceptado','rechazado','frio'];
+const ORDEN_LEAD = ['primer_contacto','discovery','presupuesto_enviado','verbal','ganado','no_contesto','perdido','no_califica','alianza'];
+const esAbierto = l => !!(ESTADOS_LEAD[l.estado] || {}).abierto;
+
+/* Equivalencias entre el servicio anotado en el embudo y el catálogo de la app.
+   La clave más específica ("RNPA|DIPA") gana sobre la general ("RNPA"). */
+const EQUIV_SERVICIO = {
+  'RNPA|AGC':'rnpa-agc', 'RNPA|DIPA':'rnpa-dipa', 'RNPA|SIFEGA':'rnpa-sifega',
+  'RNPA|IMPORTADOS':'rne-rnpa-importado', 'RNPA|DESARROLLO DE ROTULO':'rotulado',
+  'RNPA':'rnpa-dipa',
+  'RNE|AGC':'rne', 'RNE|DIPA':'rne', 'RNE':'rne',
+  'DIRECCIÓN TÉCNICA':'direccion-tecnica', 'DIRECCION TECNICA':'direccion-tecnica',
+  'AUDITORIAS':'auditorias', 'AUDITORÍAS':'auditorias',
+  'CAPACITACIÓN':'capacitacion', 'CAPACITACION':'capacitacion',
+  'DESARROLLO':'desarrollo', 'VIABILIDAD':'encuadre', 'COMPLIANCE':'sgc',
+  'BPM|MENSUAL':'sgc', 'FDA':'fda'
+};
+function servicioDeEmbudo(servicio, categoria){
+  const s = (servicio||'').trim().toUpperCase(), c = (categoria||'').trim().toUpperCase();
+  return EQUIV_SERVICIO[s+'|'+c] || EQUIV_SERVICIO[s] || null;
+}
 
 const ESTADOS_PRESU = {
   borrador:   {et:'Borrador',      color:'gris'},
@@ -1116,9 +1141,12 @@ const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto'
 const KEY = 'bfood_gestion_v1';
 let DB = null;
 
+const FUENTES_BASE = ['Web','LinkedIn','Instagram','WhatsApp','Referido','Cliente actual',
+  'Contacto','CAS','Networking','Ditella','Otra'];
+
 function dbVacia(){
   return {
-    version:1,
+    version:2,
     config:{
       profesional:'Lucía Osinalde',
       matricula:'MN 00237 * 46 * 44',
@@ -1128,7 +1156,9 @@ function dbVacia(){
       web:'www.bfood.com.ar',
       tarifaHora:0,
       validezDias:30,
-      tipoFactura:'C'
+      tipoFactura:'C',
+      cotizacionUSD:1500,
+      fuentes: FUENTES_BASE.slice()
     },
     leads:[], clientes:[], presupuestos:[], proyectos:[], tareas:[], facturas:[],
     catalogo: JSON.parse(JSON.stringify(CATALOGO)),
@@ -1141,13 +1171,36 @@ function cargarDB(){
     const crudo = localStorage.getItem(KEY);
     if(!crudo){ DB = dbVacia(); guardar(); return; }
     DB = JSON.parse(crudo);
-    // completar claves que puedan faltar (migraciones futuras)
-    const base = dbVacia();
-    for(const k in base) if(DB[k] === undefined) DB[k] = base[k];
-    for(const k in base.config) if(DB.config[k] === undefined) DB.config[k] = base.config[k];
+    completarClaves();
+    migrar();
   }catch(e){
     console.error('No se pudo leer el almacenamiento local', e);
     DB = dbVacia();
+  }
+}
+
+/* Completa las claves que falten, para que un respaldo viejo no rompa nada. */
+function completarClaves(){
+  const base = dbVacia();
+  for(const k in base) if(DB[k] === undefined) DB[k] = base[k];
+  for(const k in base.config) if(DB.config[k] === undefined) DB.config[k] = base.config[k];
+}
+
+/* v1 → v2: los estados de lead pasan a ser los del embudo de la planilla. */
+const ESTADOS_V1_A_V2 = {
+  nuevo:'primer_contacto', discovery_agendado:'discovery', discovery_hecho:'discovery',
+  presupuesto_enviado:'presupuesto_enviado', negociacion:'verbal',
+  aceptado:'ganado', rechazado:'perdido', frio:'no_contesto'
+};
+function migrar(){
+  if(!DB.version || DB.version < 2){
+    (DB.leads || []).forEach(l => {
+      if(ESTADOS_V1_A_V2[l.estado]) l.estado = ESTADOS_V1_A_V2[l.estado];
+      if(!l.fechaContacto) l.fechaContacto = l.fechaAlta || hoy();
+      if(l.origen && !l.fuente){ l.fuente = l.origen; delete l.origen; }
+    });
+    DB.version = 2;
+    guardar();
   }
 }
 
@@ -1235,6 +1288,31 @@ function nombreCliente(clienteId, fallback){
   return c ? (c.nombreFantasia || c.razonSocial) : (fallback || 'Sin cliente');
 }
 
+/* ---- cálculo del embudo (mismas fórmulas que la planilla) ----
+   Ticket anual en USD = monto ÷ cotización, ×12 si el servicio es mensual.
+   Ponderado = ticket anual × probabilidad de cierre.                        */
+function probabilidadDe(l){
+  if(l.probabilidad === '' || l.probabilidad === null || l.probabilidad === undefined)
+    return (ESTADOS_LEAD[l.estado] || {}).prob || 0;
+  return num(l.probabilidad);
+}
+function esMensual(l){ return (l.categoria || '').trim().toLowerCase() === 'mensual'; }
+function ticketUSD(l){
+  const monto = num(l.monto);
+  if(!monto) return 0;
+  const veces = esMensual(l) ? 12 : 1;
+  if(l.moneda === 'USD') return monto * veces;
+  const coti = num(l.cotizacionUSD) || num(DB.config.cotizacionUSD) || 1;
+  return monto * veces / coti;
+}
+function ponderadoUSD(l){ return ticketUSD(l) * probabilidadDe(l) / 100; }
+function diasEnCerrar(l){
+  return (l.fechaCierre && l.fechaContacto) ? diasEntre(l.fechaContacto, l.fechaCierre) : null;
+}
+function fmtUSD(v){
+  return 'US$ ' + Math.round(num(v)).toLocaleString('es-AR');
+}
+
 /* ---- cálculo de presupuestos ---- */
 function totalPresupuesto(p){
   if(p.modo === 'horas'){
@@ -1298,7 +1376,7 @@ function proyectosParaAjustar(){
 const VISTAS = [
   {sec:'Comercial'},
   {ruta:'panel',        et:'Panel',        ic:'◎'},
-  {ruta:'leads',        et:'Leads',        ic:'☏', cnt:()=>DB.leads.filter(l=>!['aceptado','rechazado','frio'].includes(l.estado)).length},
+  {ruta:'leads',        et:'Embudo',       ic:'☏', cnt:()=>DB.leads.filter(esAbierto).length},
   {ruta:'presupuestos', et:'Presupuestos', ic:'▤', cnt:()=>DB.presupuestos.filter(p=>p.estado==='enviado'||p.estado==='seguimiento').length},
   {sec:'Operación'},
   {ruta:'clientes',     et:'Clientes',     ic:'☺', cnt:()=>DB.clientes.length},
@@ -1471,7 +1549,7 @@ function vistaPanel(){
   const tasa = cerrados.length ? Math.round(aceptados.length / cerrados.length * 100) : null;
   const ajustes = proyectosParaAjustar();
   const leadsSeguir = DB.leads.filter(l => l.proximoSeguimiento && l.proximoSeguimiento <= hoy() &&
-    !['aceptado','rechazado','frio'].includes(l.estado));
+    esAbierto(l));
 
   const alertas = [];
   sinResp.filter(x => x.dias >= 7).forEach(x => alertas.push({
@@ -1491,9 +1569,12 @@ function vistaPanel(){
     ruta:'proyecto/'+p.id, et:'Ajustar', tipo:'warn'
   }));
 
-  const embudo = ORDEN_LEAD.slice(0,5).map(k => ({
-    k, et:ESTADOS_LEAD[k].et, n:DB.leads.filter(l=>l.estado===k).length
-  }));
+  const embudo = ORDEN_LEAD.filter(k => ESTADOS_LEAD[k].abierto).map(k => {
+    const enEtapa = DB.leads.filter(l => l.estado === k);
+    return {k, et:ESTADOS_LEAD[k].et, n:enEtapa.length,
+            pond:enEtapa.reduce((a,l) => a + ponderadoUSD(l), 0)};
+  });
+  const ponderadoTotal = DB.leads.filter(esAbierto).reduce((a,l) => a + ponderadoUSD(l), 0);
 
   return `
   <div class="cab">
@@ -1508,6 +1589,11 @@ function vistaPanel(){
   </div>
 
   <div class="kpis">
+    <div class="kpi">
+      <div class="et">Embudo ponderado</div>
+      <div class="val chico">${fmtUSD(ponderadoTotal)}</div>
+      <div class="pie2">${DB.leads.filter(esAbierto).length} oportunidad(es) abierta(s)</div>
+    </div>
     <div class="kpi ${sinResp.length?'':''}">
       <div class="et">Presupuestos abiertos</div>
       <div class="val">${sinResp.length}</div>
@@ -1553,7 +1639,8 @@ function vistaPanel(){
       <h2>Embudo comercial <span class="der"><button class="btn mini" onclick="ir('leads')">Ver todos</button></span></h2>
       <div class="cuerpo">
         ${DB.leads.length ? `<div class="embudo">${embudo.map(e =>
-          `<button onclick="ir('leads')"><span class="e">${esc(e.et)}</span><span class="v">${e.n}</span></button>`).join('')}</div>` :
+          `<button onclick="ir('leads')"><span class="e">${esc(e.et)}</span><span class="v">${e.n}</span>
+            <span class="e">${fmtUSD(e.pond)}</span></button>`).join('')}</div>` :
           vacio('Todavía no cargaste ningún lead.','<button class="btn pri" onclick="formLead()">Cargar el primero</button>')}
       </div>
     </div>
@@ -1605,33 +1692,95 @@ function vistaPanel(){
 /* =======================  7. LEADS  ====================================== */
 
 let filtroLead = 'abiertos';
+let filtroFuente = '';
+let filtroServicio = '';
+let textoLead = '';
+let ordenLead = 'fecha';
 
 function vistaLeads(){
   const conteo = k => DB.leads.filter(l => l.estado === k).length;
-  const abiertos = DB.leads.filter(l => !['aceptado','rechazado','frio'].includes(l.estado));
+  const pond = arr => arr.reduce((a,l) => a + ponderadoUSD(l), 0);
+  const abiertos = DB.leads.filter(esAbierto);
+
   let lista;
-  if(filtroLead === 'abiertos') lista = abiertos;
+  if(filtroLead === 'abiertos') lista = abiertos.slice();
   else if(filtroLead === 'todos') lista = DB.leads.slice();
   else lista = DB.leads.filter(l => l.estado === filtroLead);
-  lista.sort((a,b) => (a.proximoSeguimiento||'9999').localeCompare(b.proximoSeguimiento||'9999') || (b.fechaAlta||'').localeCompare(a.fechaAlta||''));
+  if(filtroFuente)  lista = lista.filter(l => (l.fuente||'') === filtroFuente);
+  if(filtroServicio) lista = lista.filter(l => (l.servicio||'') === filtroServicio);
+  if(textoLead){
+    const q = textoLead.toLowerCase();
+    lista = lista.filter(l => (l.nombre+' '+(l.empresa||'')+' '+(l.servicio||'')+' '+(l.categoria||'')+' '+(l.motivo||'')).toLowerCase().includes(q));
+  }
+  if(ordenLead === 'monto')          lista.sort((a,b) => ticketUSD(b) - ticketUSD(a));
+  else if(ordenLead === 'ponderado') lista.sort((a,b) => ponderadoUSD(b) - ponderadoUSD(a));
+  else if(ordenLead === 'seguimiento') lista.sort((a,b) => (a.proximoSeguimiento||'9999').localeCompare(b.proximoSeguimiento||'9999'));
+  else lista.sort((a,b) => (b.fechaContacto||'').localeCompare(a.fechaContacto||''));
+
+  const ganados  = DB.leads.filter(l => l.estado === 'ganado');
+  const cerrados = DB.leads.filter(l => ['ganado','perdido','no_contesto'].includes(l.estado));
+  const tasa = cerrados.length ? Math.round(ganados.length / cerrados.length * 100) : null;
+  const ticketProm = ganados.length ? ganados.reduce((a,l) => a + ticketUSD(l), 0) / ganados.length : 0;
+  const fuentes  = [...new Set(DB.leads.map(l => l.fuente).filter(Boolean))].sort();
+  const servicios = [...new Set(DB.leads.map(l => l.servicio).filter(Boolean))].sort();
 
   return `
   <div class="cab">
     <div>
-      <h1>Leads y discovery</h1>
-      <p class="sub">${abiertos.length} conversación${abiertos.length===1?'':'es'} abierta${abiertos.length===1?'':'s'} · ${DB.leads.length} en total</p>
+      <h1>Embudo</h1>
+      <p class="sub">${abiertos.length} oportunidad${abiertos.length===1?'':'es'} abierta${abiertos.length===1?'':'s'} · ${DB.leads.length} leads en total</p>
     </div>
-    <div class="acciones"><button class="btn pri" onclick="formLead()">+ Nuevo lead</button></div>
+    <div class="acciones">
+      <button class="btn" onclick="ir('datos')">Importar planilla</button>
+      <button class="btn pri" onclick="formLead()">+ Nuevo lead</button>
+    </div>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="et">Embudo ponderado</div><div class="val chico">${fmtUSD(pond(abiertos))}</div>
+      <div class="pie2">sobre ${fmtUSD(abiertos.reduce((a,l)=>a+ticketUSD(l),0))} en juego</div></div>
+    <div class="kpi ${tasa!==null && tasa>=30?'ok':''}"><div class="et">Tasa de conversión</div>
+      <div class="val">${tasa===null?'—':tasa+'%'}</div>
+      <div class="pie2">${ganados.length} ganados de ${cerrados.length} cerrados</div></div>
+    <div class="kpi"><div class="et">Ticket promedio ganado</div><div class="val chico">${fmtUSD(ticketProm)}</div>
+      <div class="pie2">anualizado, en dólares</div></div>
+    <div class="kpi"><div class="et">A seguir</div>
+      <div class="val">${DB.leads.filter(l => esAbierto(l) && l.proximoSeguimiento && l.proximoSeguimiento <= hoy()).length}</div>
+      <div class="pie2">con seguimiento vencido</div></div>
   </div>
 
   <div class="embudo">
     <button class="${filtroLead==='abiertos'?'on':''}" onclick="filtroLead='abiertos';router()">
-      <span class="e">Abiertos</span><span class="v">${abiertos.length}</span></button>
+      <span class="e">Abiertos</span><span class="v">${abiertos.length}</span>
+      <span class="e">${fmtUSD(pond(abiertos))}</span></button>
     ${ORDEN_LEAD.map(k => `
       <button class="${filtroLead===k?'on':''}" onclick="filtroLead='${k}';router()">
-        <span class="e">${esc(ESTADOS_LEAD[k].et)}</span><span class="v">${conteo(k)}</span></button>`).join('')}
+        <span class="e">${esc(ESTADOS_LEAD[k].n)}· ${esc(ESTADOS_LEAD[k].et)}</span>
+        <span class="v">${conteo(k)}</span>
+        <span class="e">${fmtUSD(pond(DB.leads.filter(l=>l.estado===k)))}</span></button>`).join('')}
     <button class="${filtroLead==='todos'?'on':''}" onclick="filtroLead='todos';router()">
-      <span class="e">Todos</span><span class="v">${DB.leads.length}</span></button>
+      <span class="e">Todos</span><span class="v">${DB.leads.length}</span><span class="e">&nbsp;</span></button>
+  </div>
+
+  <div class="filtros">
+    <input type="text" placeholder="Buscar cliente, servicio o motivo…" value="${esc(textoLead)}"
+      oninput="textoLead=this.value;clearTimeout(window._bl);window._bl=setTimeout(router,250)"/>
+    <select onchange="filtroFuente=this.value;router()">
+      <option value="">Todas las fuentes</option>
+      ${fuentes.map(f => `<option value="${esc(f)}" ${filtroFuente===f?'selected':''}>${esc(f)}</option>`).join('')}
+    </select>
+    <select onchange="filtroServicio=this.value;router()">
+      <option value="">Todos los servicios</option>
+      ${servicios.map(s => `<option value="${esc(s)}" ${filtroServicio===s?'selected':''}>${esc(s)}</option>`).join('')}
+    </select>
+    <select onchange="ordenLead=this.value;router()">
+      <option value="fecha" ${ordenLead==='fecha'?'selected':''}>Más recientes primero</option>
+      <option value="monto" ${ordenLead==='monto'?'selected':''}>Mayor monto</option>
+      <option value="ponderado" ${ordenLead==='ponderado'?'selected':''}>Mayor ponderado</option>
+      <option value="seguimiento" ${ordenLead==='seguimiento'?'selected':''}>Próximo seguimiento</option>
+    </select>
+    <span class="esp"></span>
+    <span style="font-size:.82rem;color:var(--gris2)">${lista.length} de ${DB.leads.length}</span>
   </div>
 
   <div class="tarjeta">
@@ -1639,30 +1788,37 @@ function vistaLeads(){
       ${lista.length ? `
       <table class="tab">
         <thead><tr>
-          <th>Contacto</th><th>Origen</th><th>Interés</th><th>Estado</th><th>Próximo paso</th><th></th>
+          <th>Cliente</th><th>Fuente</th><th>Servicio</th><th>Contacto</th>
+          <th class="num">Monto</th><th class="num">Ponderado</th><th>Estado</th><th>Seguimiento</th><th></th>
         </tr></thead>
         <tbody>
         ${lista.map(l => {
-          const atrasado = l.proximoSeguimiento && l.proximoSeguimiento < hoy() && !['aceptado','rechazado','frio'].includes(l.estado);
+          const atrasado = l.proximoSeguimiento && l.proximoSeguimiento < hoy() && esAbierto(l);
           const presus = DB.presupuestos.filter(p => p.leadId === l.id);
+          const dias = diasEnCerrar(l);
           return `<tr>
-            <td>
+            <td onclick="verLead('${l.id}')" style="cursor:pointer">
               <div class="prin">${esc(l.nombre)}</div>
-              <div class="sec">${esc(l.empresa || '')}${l.rubro? ' · '+esc(l.rubro):''}</div>
-              ${(l.email||l.telefono) ? `<div class="sec">${esc([l.email,l.telefono].filter(Boolean).join(' · '))}</div>` : ''}
+              ${l.empresa ? `<div class="sec">${esc(l.empresa)}</div>` : ''}
+              ${presus.length ? `<div class="sec">${presus.length} presupuesto${presus.length===1?'':'s'}</div>` : ''}
             </td>
-            <td class="sec">${esc(l.origen || '—')}</td>
-            <td class="sec">${esc(l.interes || '—')}${presus.length?`<div class="sec">${presus.length} presupuesto${presus.length===1?'':'s'}</div>`:''}</td>
+            <td class="sec">${esc(l.fuente || '—')}</td>
+            <td class="sec">${esc(l.servicio || '—')}${l.categoria?`<div class="sec">${esc(l.categoria)}</div>`:''}</td>
+            <td class="sec">${fmtFecha(l.fechaContacto)}${dias!==null?`<div class="sec">cerró en ${dias} d</div>`:''}</td>
+            <td class="num">${l.monto ? fmt(l.monto, l.moneda||'ARS') : '<span class="sec">—</span>'}
+              ${esMensual(l) ? '<div class="sec">mensual</div>' : ''}</td>
+            <td class="num">${ponderadoUSD(l) ? fmtUSD(ponderadoUSD(l)) : '<span class="sec">—</span>'}
+              <div class="sec">${probabilidadDe(l)}%</div></td>
             <td>${chip(ESTADOS_LEAD, l.estado)}</td>
-            <td class="${atrasado?'vencida':''}">${l.proximoSeguimiento ? fmtFecha(l.proximoSeguimiento) : '<span class="sec">—</span>'}</td>
+            <td class="${atrasado?'vencida':'sec'}">${l.proximoSeguimiento ? fmtFecha(l.proximoSeguimiento) : '—'}</td>
             <td class="acc">
               <button class="btn-txt" onclick="verLead('${l.id}')">Abrir</button>
-              ${!['aceptado','rechazado','frio'].includes(l.estado) ? `<button class="btn-txt" onclick="nuevoPresupuesto('${l.id}')">Presupuestar</button>` : ''}
+              ${esAbierto(l) ? `<button class="btn-txt" onclick="nuevoPresupuesto('${l.id}')">Presupuestar</button>` : ''}
             </td>
           </tr>`;
         }).join('')}
         </tbody>
-      </table>` : vacio('No hay leads en este filtro.','<button class="btn pri" onclick="formLead()">+ Nuevo lead</button>')}
+      </table>` : vacio('No hay leads con estos filtros.','<button class="btn pri" onclick="formLead()">+ Nuevo lead</button>')}
     </div>
   </div>`;
 }
@@ -1680,28 +1836,56 @@ function formLead(id){
       ${campo('telefono','Teléfono', l?l.telefono:'', {opcional:true})}
     </div>
     <div class="fila c2">
-      ${campo('origen','Cómo llegó', l?l.origen:'', {opcional:true, ph:'Instagram, referido, web, Google…'})}
-      ${campo('estado','Estado', l?l.estado:'nuevo', {tipo:'select', opciones:opcionesEstado(ESTADOS_LEAD)})}
+      <div class="campo">
+        <label>De dónde viene</label>
+        <select name="fuente" onchange="if(this.value==='__nueva__') nuevaFuente(this)">
+          <option value="">— Sin especificar —</option>
+          ${(DB.config.fuentes||[]).map(f =>
+            `<option value="${esc(f)}" ${(l&&l.fuente)===f?'selected':''}>${esc(f)}</option>`).join('')}
+          ${l && l.fuente && !(DB.config.fuentes||[]).includes(l.fuente)
+            ? `<option value="${esc(l.fuente)}" selected>${esc(l.fuente)}</option>` : ''}
+          <option value="__nueva__">+ Agregar otra…</option>
+        </select>
+      </div>
+      ${campo('fuenteDetalle','Detalle de la fuente', l?l.fuenteDetalle:'', {opcional:true, ph:'Quién lo refirió, qué evento…'})}
+    </div>
+    <div class="fila c3">
+      ${campo('estado','Estado', l?l.estado:'primer_contacto', {tipo:'select', opciones:opcionesEstado(ESTADOS_LEAD)})}
+      ${campo('servicio','Servicio', l?l.servicio:'', {opcional:true, ph:'RNPA, RNE, Desarrollo…'})}
+      ${campo('categoria','Categoría', l?l.categoria:'', {opcional:true, ph:'AGC, DIPA, Mensual, Nuevo…'})}
+    </div>
+    <div class="fila c4">
+      ${campo('monto','Monto', l&&l.monto?l.monto:'', {tipo:'number', opcional:true})}
+      ${campo('moneda','Moneda', l?l.moneda:'ARS', {tipo:'select', opciones:[{v:'ARS',et:'ARS'},{v:'USD',et:'USD'}]})}
+      ${campo('cotizacionUSD','Cotización USD', l&&l.cotizacionUSD?l.cotizacionUSD:DB.config.cotizacionUSD, {tipo:'number'})}
+      ${campo('probabilidad','Probabilidad %', l&&l.probabilidad!==undefined&&l.probabilidad!==''?l.probabilidad:'', {tipo:'number', opcional:true, ayuda:'Vacío = la del estado.'})}
     </div>
     ${campo('interes','Qué necesita', l?l.interes:'', {opcional:true, ph:'RNPA de 3 productos, habilitación de planta…'})}
-    <div class="fila c2">
-      ${campo('fechaDiscovery','Fecha del discovery', l?l.fechaDiscovery:'', {tipo:'date', opcional:true})}
-      ${campo('proximoSeguimiento','Próximo seguimiento', l?l.proximoSeguimiento:'', {tipo:'date', opcional:true, ayuda:'Aparece en el panel cuando llega la fecha.'})}
+    <div class="fila c4">
+      ${campo('fechaContacto','Primer contacto', l?(l.fechaContacto||l.fechaAlta):hoy(), {tipo:'date'})}
+      ${campo('fechaPresupuesto','Presupuesto', l?l.fechaPresupuesto:'', {tipo:'date', opcional:true})}
+      ${campo('proximoSeguimiento','Próximo seguimiento', l?l.proximoSeguimiento:'', {tipo:'date', opcional:true})}
+      ${campo('fechaCierre','Cierre', l?l.fechaCierre:'', {tipo:'date', opcional:true})}
     </div>
+    ${campo('motivo','Motivo de rechazo / observaciones', l?l.motivo:'', {tipo:'textarea', opcional:true, filas:2})}
     ${campo('notaInicial', id?'Agregar nota':'Notas del discovery', '', {tipo:'textarea', opcional:true, filas:3, ph:'Qué contó, qué necesita, contexto del proyecto…'})}
   `;
-  abrirModal(id ? 'Editar lead' : 'Nuevo lead', html, {
+  abrirModal(id ? 'Editar lead' : 'Nuevo lead', html, {ancho:true,
     alGuardar(d){
       if(!d.nombre){ toast('Poné al menos el nombre del contacto.'); return false; }
       let lead = l;
       if(!lead){
-        lead = {id:uid(), fechaAlta:hoy(), notas:[]};
+        lead = {id:uid(), notas:[]};
         DB.leads.push(lead);
       }
       Object.assign(lead, {
         nombre:d.nombre, empresa:d.empresa, rubro:d.rubro, email:d.email, telefono:d.telefono,
-        origen:d.origen, estado:d.estado, interes:d.interes,
-        fechaDiscovery:d.fechaDiscovery, proximoSeguimiento:d.proximoSeguimiento
+        fuente:d.fuente === '__nueva__' ? '' : d.fuente, fuenteDetalle:d.fuenteDetalle,
+        estado:d.estado, servicio:d.servicio, categoria:d.categoria, interes:d.interes,
+        monto:num(d.monto), moneda:d.moneda, cotizacionUSD:num(d.cotizacionUSD),
+        probabilidad:d.probabilidad === '' ? '' : num(d.probabilidad),
+        fechaContacto:d.fechaContacto || hoy(), fechaPresupuesto:d.fechaPresupuesto,
+        proximoSeguimiento:d.proximoSeguimiento, fechaCierre:d.fechaCierre, motivo:d.motivo
       });
       if(d.notaInicial) lead.notas.unshift({fecha:hoy(), texto:d.notaInicial});
       refrescar();
@@ -1710,19 +1894,41 @@ function formLead(id){
   });
 }
 
+/* Agrega una fuente nueva a la lista y la deja elegida. */
+function nuevaFuente(select){
+  const nombre = prompt('¿De dónde viene este lead?');
+  if(!nombre || !nombre.trim()){ select.value = ''; return; }
+  const limpio = nombre.trim();
+  DB.config.fuentes = DB.config.fuentes || [];
+  if(!DB.config.fuentes.includes(limpio)){
+    DB.config.fuentes.splice(Math.max(0, DB.config.fuentes.length - 1), 0, limpio);
+    guardar();
+  }
+  const opcion = document.createElement('option');
+  opcion.value = limpio; opcion.textContent = limpio;
+  select.insertBefore(opcion, select.lastElementChild);
+  select.value = limpio;
+}
+
 function verLead(id){
   const l = buscarLead(id);
   if(!l) return;
   const presus = DB.presupuestos.filter(p => p.leadId === id);
   const html = `
+    <div class="dato"><span class="k">Estado</span><span class="v">${chip(ESTADOS_LEAD, l.estado)} <span class="sec">${probabilidadDe(l)}% de probabilidad</span></span></div>
     <div class="dato"><span class="k">Empresa</span><span class="v">${esc(l.empresa||'—')}</span></div>
-    <div class="dato"><span class="k">Rubro</span><span class="v">${esc(l.rubro||'—')}</span></div>
     <div class="dato"><span class="k">Contacto</span><span class="v">${esc([l.email,l.telefono].filter(Boolean).join(' · ')||'—')}</span></div>
-    <div class="dato"><span class="k">Cómo llegó</span><span class="v">${esc(l.origen||'—')}</span></div>
+    <div class="dato"><span class="k">De dónde viene</span><span class="v">${esc(l.fuente||'—')}${l.fuenteDetalle?' · '+esc(l.fuenteDetalle):''}</span></div>
+    <div class="dato"><span class="k">Servicio</span><span class="v">${esc(l.servicio||'—')}${l.categoria?' · '+esc(l.categoria):''}</span></div>
     <div class="dato"><span class="k">Qué necesita</span><span class="v">${esc(l.interes||'—')}</span></div>
-    <div class="dato"><span class="k">Discovery</span><span class="v">${fmtFecha(l.fechaDiscovery)}</span></div>
+    ${l.monto ? `<div class="dato"><span class="k">Monto</span><span class="v">${fmt(l.monto, l.moneda||'ARS')}${esMensual(l)?' por mes':''}
+      <span class="sec">· ${fmtUSD(ticketUSD(l))} anual · ponderado ${fmtUSD(ponderadoUSD(l))}</span></span></div>` : ''}
+    <div class="dato"><span class="k">Primer contacto</span><span class="v">${fmtFecha(l.fechaContacto||l.fechaAlta)}</span></div>
+    ${l.fechaPresupuesto ? `<div class="dato"><span class="k">Presupuesto enviado</span><span class="v">${fmtFecha(l.fechaPresupuesto)}</span></div>` : ''}
     <div class="dato"><span class="k">Próximo seguimiento</span><span class="v">${fmtFecha(l.proximoSeguimiento)}</span></div>
-    <div class="dato"><span class="k">Estado</span><span class="v">${chip(ESTADOS_LEAD, l.estado)}</span></div>
+    ${l.fechaCierre ? `<div class="dato"><span class="k">Cierre</span><span class="v">${fmtFecha(l.fechaCierre)} <span class="sec">· ${diasEnCerrar(l)} días</span></span></div>` : ''}
+    ${l.motivo ? `<div class="dato"><span class="k">Motivo / observaciones</span><span class="v">${nl2br(l.motivo)}</span></div>` : ''}
+    ${l.clienteId ? `<div class="dato"><span class="k">Cliente</span><span class="v"><a href="#/cliente/${l.clienteId}" onclick="cerrarModal()">${esc(nombreCliente(l.clienteId))}</a></span></div>` : ''}
 
     ${presus.length ? `<div class="seccion-form"><h3>Presupuestos</h3>
       ${presus.map(p => `<div class="dato">
@@ -1851,26 +2057,59 @@ function nuevoPresupuesto(leadId){
   const opcionesCliente = [{v:'', et:'— Cliente nuevo o lead —'}].concat(
     DB.clientes.map(c => ({v:c.id, et:c.nombreFantasia || c.razonSocial})));
 
+  // Los leads abiertos primero, después el resto: casi siempre se presupuesta a uno abierto.
+  const orden = l => (esAbierto(l) ? '0' : '1') + (l.fechaContacto || '');
+  const leads = DB.leads.slice().sort((a,b) => orden(a).localeCompare(orden(b)) || (b.fechaContacto||'').localeCompare(a.fechaContacto||''));
+  const opcionesLead = [{v:'', et:'— Sin lead —'}].concat(leads.map(l => ({
+    v:l.id,
+    et:(esAbierto(l) ? '' : '· ') + l.nombre + (l.servicio ? ' — ' + l.servicio : '') + ' (' + ESTADOS_LEAD[l.estado].et + ')'
+  })));
+
   abrirModal('Nuevo presupuesto', `
-    ${campo('servicioId','Plantilla del catálogo', '', {tipo:'select', opciones:opcionesServicio,
+    <div class="campo">
+      <label>Lead <span class="op">(opcional)</span></label>
+      <select name="leadId" onchange="prellenarDesdeLead(this.value)">
+        ${opcionesLead.map(o => `<option value="${esc(o.v)}" ${o.v===(leadId||'')?'selected':''}>${esc(o.et)}</option>`).join('')}
+      </select>
+      <div class="ayuda">Al elegirlo se completan cliente, servicio y moneda, y el presupuesto queda vinculado a su seguimiento.</div>
+    </div>
+    ${campo('servicioId','Plantilla del catálogo', lead ? (servicioDeEmbudo(lead.servicio, lead.categoria)||'') : '', {tipo:'select', opciones:opcionesServicio,
       ayuda:'Carga alcance, entregables, fases, plazos, hitos y precio de referencia. Después ajustás todo.'})}
-    ${campo('clienteId','Cliente existente', '', {tipo:'select', opciones:opcionesCliente, opcional:true})}
+    ${campo('clienteId','Cliente existente', lead && lead.clienteId ? lead.clienteId : '', {tipo:'select', opciones:opcionesCliente, opcional:true})}
     ${campo('clienteNombre','Nombre del cliente', lead ? (lead.empresa || lead.nombre) : '', {ayuda:'Si elegiste un cliente existente, este campo se ignora.'})}
-    ${campo('proyecto','Nombre del proyecto', '', {ph:'Inscripción RNPA línea de snacks'})}
+    ${campo('proyecto','Nombre del proyecto', lead ? [lead.servicio, lead.categoria].filter(Boolean).join(' · ') : '', {ph:'Inscripción RNPA línea de snacks'})}
   `, {
     alGuardar(d){
       if(!d.clienteId && !d.clienteNombre){ toast('Indicá el cliente.'); return false; }
+      const elegido = d.leadId ? buscarLead(d.leadId) : null;
       const p = crearPresupuesto({
         servicioId:d.servicioId, clienteId:d.clienteId,
         clienteNombre:d.clienteId ? nombreCliente(d.clienteId) : d.clienteNombre,
-        proyecto:d.proyecto, leadId:leadId || null
+        proyecto:d.proyecto, leadId:d.leadId || null
       });
-      if(lead && lead.estado === 'discovery_hecho') lead.estado = 'presupuesto_enviado';
+      if(elegido){
+        if(elegido.moneda) p.moneda = elegido.moneda;
+        if(['primer_contacto','discovery'].includes(elegido.estado)) elegido.estado = 'presupuesto_enviado';
+      }
       guardar();
       ir('presupuesto/'+p.id);
       toast('Presupuesto creado.');
     }
   });
+}
+
+/* Completa el resto del formulario con los datos del lead elegido. */
+function prellenarDesdeLead(id){
+  const l = id ? buscarLead(id) : null;
+  const dentro = s => document.querySelector('#modal-cuerpo [name='+s+']');
+  if(!l){ return; }
+  const nombre = dentro('clienteNombre'), proyecto = dentro('proyecto'),
+        servicio = dentro('servicioId'), cliente = dentro('clienteId');
+  if(nombre && !nombre.value.trim()) nombre.value = l.empresa || l.nombre;
+  if(proyecto && !proyecto.value.trim()) proyecto.value = [l.servicio, l.categoria].filter(Boolean).join(' · ');
+  const equiv = servicioDeEmbudo(l.servicio, l.categoria);
+  if(servicio && !servicio.value && equiv) servicio.value = equiv;
+  if(cliente && l.clienteId) cliente.value = l.clienteId;
 }
 
 function crearPresupuesto(datos){
@@ -2217,6 +2456,8 @@ function marcarEnviado(id){
       const l = p.leadId ? buscarLead(p.leadId) : null;
       if(l){
         l.estado = 'presupuesto_enviado';
+        l.fechaPresupuesto = p.fechaEnvio;
+        if(!num(l.monto)){ l.monto = totalPresupuesto(p).total; l.moneda = p.moneda; }
         if(d.proximoSeguimiento) l.proximoSeguimiento = d.proximoSeguimiento;
       }
       refrescar();
@@ -2240,7 +2481,7 @@ function registrarSeguimiento(id){
       const l = p.leadId ? buscarLead(p.leadId) : null;
       if(l){
         if(d.proximoSeguimiento) l.proximoSeguimiento = d.proximoSeguimiento;
-        if(l.estado === 'presupuesto_enviado') l.estado = 'negociacion';
+        if(l.estado === 'presupuesto_enviado') l.estado = 'verbal';
       }
       refrescar();
       toast('Seguimiento registrado.');
@@ -2259,7 +2500,7 @@ function rechazarPresupuesto(id){
       p.motivoRechazo = d.motivoRechazo;
       p.fechaDecision = d.fechaDecision || hoy();
       const l = p.leadId ? buscarLead(p.leadId) : null;
-      if(l){ l.estado = 'rechazado'; l.proximoSeguimiento = ''; }
+      if(l){ l.estado = 'perdido'; l.proximoSeguimiento = ''; l.fechaCierre = p.fechaDecision; l.motivo = d.motivoRechazo || l.motivo; }
       refrescar();
       toast('Presupuesto marcado como rechazado.');
     }
@@ -2375,7 +2616,8 @@ function aceptarPresupuesto(id){
     p.fechaDecision = d.fechaDecision || hoy();
     p.clienteId = cliente.id;
     p.proyectoId = proy.id;
-    if(lead){ lead.estado = 'aceptado'; lead.proximoSeguimiento = ''; lead.clienteId = cliente.id; }
+    if(lead){ lead.estado = 'ganado'; lead.probabilidad = ''; lead.proximoSeguimiento = '';
+      lead.fechaCierre = p.fechaDecision; lead.clienteId = cliente.id; }
 
     guardar();
     ir('proyecto/'+proy.id);
@@ -3372,6 +3614,7 @@ function vistaDatos(){
       <p class="sub">Todo se guarda en este navegador · ${kb} KB ocupados</p>
     </div>
     <div class="acciones">
+      <button class="btn" onclick="abrirImportador()">Importar embudo (CSV)</button>
       <button class="btn pri" onclick="exportarDatos()">Descargar respaldo</button>
     </div>
   </div>
@@ -3398,12 +3641,20 @@ function vistaDatos(){
           <div class="campo"><label>Teléfono</label><input type="text" value="${esc(c.telefono)}" onchange="setConfig('telefono',this.value)"/></div>
           <div class="campo"><label>Web</label><input type="text" value="${esc(c.web)}" onchange="setConfig('web',this.value)"/></div>
         </div>
-        <div class="fila c2">
+        <div class="fila c3">
           <div class="campo"><label>Tarifa por hora</label>
             <input type="number" step="any" value="${num(c.tarifaHora)}" onchange="setConfig('tarifaHora',this.value,true)"/>
-            <div class="ayuda">Se usa en los presupuestos cotizados por horas.</div></div>
-          <div class="campo"><label>Validez de las propuestas (días)</label>
+            <div class="ayuda">Se usa en los presupuestos por horas.</div></div>
+          <div class="campo"><label>Validez de propuestas (días)</label>
             <input type="number" value="${num(c.validezDias)}" onchange="setConfig('validezDias',this.value,true)"/></div>
+          <div class="campo"><label>Cotización del dólar</label>
+            <input type="number" step="any" value="${num(c.cotizacionUSD)}" onchange="setConfig('cotizacionUSD',this.value,true)"/>
+            <div class="ayuda">Para el ponderado del embudo.</div></div>
+        </div>
+        <div class="campo">
+          <label>Fuentes de leads <span class="op">(una por línea)</span></label>
+          <textarea rows="5" onchange="setFuentes(this.value)">${esc((c.fuentes||[]).join('\n'))}</textarea>
+          <div class="ayuda">Son las opciones del desplegable "De dónde viene" al cargar un lead.</div>
         </div>
       </div>
     </div>
@@ -3420,6 +3671,7 @@ function vistaDatos(){
         <div class="dato"><span class="k">Servicios del catálogo</span><span class="v">${DB.catalogo.length}</span></div>
         <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem">
           <button class="btn pri" onclick="exportarDatos()">Descargar respaldo (.json)</button>
+          <button class="btn" onclick="abrirImportador()">Importar embudo (.csv)</button>
           <button class="btn" onclick="document.getElementById('archivo-import').click()">Restaurar desde archivo</button>
           <input type="file" id="archivo-import" accept="application/json,.json" style="display:none" onchange="importarDatos(this)"/>
         </div>
@@ -3448,6 +3700,11 @@ function setConfig(campo, valor, numerico){
   DB.config[campo] = numerico ? num(valor) : valor;
   guardar();
   toast('Guardado.');
+}
+function setFuentes(valor){
+  DB.config.fuentes = lineas(valor);
+  guardar();
+  toast('Fuentes actualizadas.');
 }
 
 function exportarDatos(){
@@ -3496,6 +3753,289 @@ function borrarTodo(){
       toast('Datos borrados.');
     }, 'Sí, borrar todo');
   }, 'Continuar');
+}
+
+/* ===============  13 bis. IMPORTADOR DEL EMBUDO (CSV)  ===================
+   Lee la planilla de seguimiento tal como se exporta, sin tocar sus columnas. */
+
+/* Un CSV con comillas y comas dentro de los campos (los motivos de rechazo las tienen). */
+function parsearCSV(texto){
+  const filas = [];
+  let fila = [], campo = '', enComillas = false;
+  texto = texto.replace(/^﻿/, '').replace(/\r\n?/g, '\n');
+  for(let i = 0; i < texto.length; i++){
+    const c = texto[i];
+    if(enComillas){
+      if(c === '"'){
+        if(texto[i+1] === '"'){ campo += '"'; i++; }
+        else enComillas = false;
+      } else campo += c;
+    }else if(c === '"') enComillas = true;
+    else if(c === ','){ fila.push(campo); campo = ''; }
+    else if(c === '\n'){ fila.push(campo); filas.push(fila); fila = []; campo = ''; }
+    else campo += c;
+  }
+  if(campo !== '' || fila.length){ fila.push(campo); filas.push(fila); }
+  if(!filas.length) return [];
+  const encabezados = filas[0].map(h => h.trim());
+  return filas.slice(1)
+    .filter(f => f.some(v => (v||'').trim()))
+    .map(f => { const o = {}; encabezados.forEach((h,i) => o[h] = (f[i]||'').trim()); return o; });
+}
+
+/* "1/01/2026" → "2026-01-01" */
+function fechaDeCSV(v){
+  const m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec((v||'').trim());
+  if(!m) return '';
+  return m[3] + '-' + m[2].padStart(2,'0') + '-' + m[1].padStart(2,'0');
+}
+/* "$1.050.000" → 1050000 · "$285,71" → 285.71 · "#N/A" → null */
+function montoDeCSV(v){
+  let s = (v||'').replace(/\$|\s|"/g, '').trim();
+  if(!s || s === '#N/A' || s === '-') return null;
+  const negativo = s.startsWith('-');
+  s = s.replace('-','');
+  s = /,\d{1,2}$/.test(s) ? s.replace(/\./g,'').replace(',','.') : s.replace(/[.,]/g,'');
+  const n = Number(s);
+  return isNaN(n) ? null : (negativo ? -n : n);
+}
+function porcentajeDeCSV(v){
+  const s = (v||'').replace('%','').trim();
+  if(!s) return '';
+  const n = Number(s.replace(',','.'));
+  return isNaN(n) ? '' : (n <= 1 && s.indexOf('.') >= 0 ? n*100 : n);
+}
+
+/* "9- Perdido" → clave interna. Acepta el número, el texto o ambos. */
+function estadoDeCSV(v){
+  const s = (v||'').trim().toLowerCase();
+  if(!s) return 'primer_contacto';
+  const numero = (s.match(/^(\d)/) || [])[1];
+  const porNumero = {'0':'primer_contacto','1':'discovery','2':'no_califica','3':'alianza',
+                     '4':'presupuesto_enviado','5':'verbal','6':'verbal','7':'ganado',
+                     '8':'no_contesto','9':'perdido'};
+  if(numero && porNumero[numero]) return porNumero[numero];
+  if(s.includes('gana') || s.includes('aprob')) return 'ganado';
+  if(s.includes('perd')) return 'perdido';
+  if(s.includes('no contesta') || s.includes('no contesto')) return 'no_contesto';
+  if(s.includes('califica')) return 'no_califica';
+  if(s.includes('alianza')) return 'alianza';
+  if(s.includes('verbal')) return 'verbal';
+  if(s.includes('presupuesto')) return 'presupuesto_enviado';
+  if(s.includes('discovery')) return 'discovery';
+  return 'primer_contacto';
+}
+
+/* Unifica las variantes de fuente sin perder el texto original. */
+function fuenteDeCSV(v){
+  const bruto = (v||'').trim();
+  if(!bruto) return {fuente:'', detalle:''};
+  const s = bruto.toLowerCase();
+  const detalle = bruto;
+  if(s.startsWith('referido')) return {fuente:'Referido', detalle};
+  if(s.includes('referido'))   return {fuente:'Referido', detalle};
+  if(s === 'web')              return {fuente:'Web', detalle:''};
+  if(s === 'linkedin')         return {fuente:'LinkedIn', detalle:''};
+  if(s === 'whatsapp')         return {fuente:'WhatsApp', detalle:''};
+  if(s === 'instagram')        return {fuente:'Instagram', detalle:''};
+  if(s === 'cliente')          return {fuente:'Cliente actual', detalle:''};
+  if(s === 'contacto')         return {fuente:'Contacto', detalle:''};
+  if(s === 'cas')              return {fuente:'CAS', detalle:''};
+  if(s === 'networking')       return {fuente:'Networking', detalle:''};
+  if(s === 'ditella')          return {fuente:'Ditella', detalle:''};
+  if(s.startsWith('contacto')) return {fuente:'Contacto', detalle};
+  return {fuente:'Otra', detalle};
+}
+
+/* Clave anti-duplicados. Incluye servicio y categoría porque en la planilla hay
+   filas del mismo cliente en la misma fecha por dos servicios distintos. */
+const claveLead = l => [(l.nombre||'').trim().toLowerCase(), l.fechaContacto||'',
+  (l.servicio||'').trim().toLowerCase(), (l.categoria||'').trim().toLowerCase()].join('|');
+
+/* Convierte las filas del CSV en leads, sin tocar la base todavía. */
+function leerEmbudoCSV(texto){
+  const filas = parsearCSV(texto);
+  const col = (f, ...nombres) => {
+    for(const n of nombres) if(f[n] !== undefined && f[n] !== '') return f[n];
+    return '';
+  };
+  const leidos = [], problemas = [];
+  filas.forEach((f, i) => {
+    const nombre = col(f,'Cliente','cliente','Nombre').trim();
+    const fechaContacto = fechaDeCSV(col(f,'Fecha Contacto','Fecha contacto','Fecha'));
+    if(!nombre){ problemas.push({fila:i+2, motivo:'sin nombre de cliente'}); return; }
+    if(!fechaContacto){ problemas.push({fila:i+2, motivo:'fecha de contacto ilegible', nombre}); return; }
+    const fu = fuenteDeCSV(col(f,'Fuente','Origen'));
+    const monto = montoDeCSV(col(f,'Monto'));
+    leidos.push({
+      id:uid(), notas:[],
+      nombre, empresa:'',
+      fuente:fu.fuente, fuenteDetalle:fu.detalle,
+      servicio:col(f,'Servicio'), categoria:col(f,'Categoria','Categoría'),
+      estado:estadoDeCSV(col(f,'Estado')),
+      moneda:(col(f,'Moneda') || 'ARS').toUpperCase(),
+      monto: monto === null ? 0 : monto,
+      cotizacionUSD: montoDeCSV(col(f,'Cotización USD','Cotizacion USD')) || DB.config.cotizacionUSD,
+      probabilidad: porcentajeDeCSV(col(f,'% probabilidad','Probabilidad')),
+      fechaContacto,
+      fechaPresupuesto: fechaDeCSV(col(f,'Fecha de Presupuesto')),
+      proximoSeguimiento: fechaDeCSV(col(f,'Fecha Proximo Contacto','Fecha Próximo Contacto')),
+      fechaCierre: fechaDeCSV(col(f,'Fecha de Cierre')),
+      fechaEstimadaInicio: col(f,'Fecha estimada inicio'),
+      motivo: col(f,'Motivo de Rechazo','Motivo'),
+      horasEstimadas: col(f,'Horas estimadas')
+    });
+  });
+  return {leidos, problemas};
+}
+
+let importePendiente = null;
+
+function abrirImportador(){
+  abrirModal('Importar el embudo desde la planilla', `
+    <p style="font-size:.88rem;margin-bottom:.9rem">
+      Exportá la hoja como <b>CSV</b> y elegí el archivo. Se leen las columnas tal como están
+      en tu planilla (Fecha Contacto, Cliente, Fuente, Servicio, Categoria, Moneda, Monto,
+      Estado, fechas, % probabilidad, Motivo de Rechazo y Cotización USD).</p>
+    <div class="campo">
+      <label>Archivo CSV</label>
+      <input type="file" accept=".csv,text/csv" onchange="previsualizarImporte(this)"/>
+    </div>
+    <div class="campo">
+      <label>…o pegá el contenido acá</label>
+      <textarea name="pegado" rows="4" placeholder="Fecha Contacto,Cliente,Fuente,…"></textarea>
+    </div>
+    <div id="previa"></div>
+  `, {ancho:true, botones:[
+    {et:'Cancelar', accion:'cerrarModal()'},
+    {et:'Analizar lo pegado', accion:'previsualizarPegado()'}
+  ]});
+}
+
+function previsualizarImporte(input){
+  const archivo = input.files && input.files[0];
+  if(!archivo) return;
+  const lector = new FileReader();
+  lector.onload = e => mostrarPrevia(e.target.result);
+  lector.readAsText(archivo, 'utf-8');
+}
+function previsualizarPegado(){
+  const t = document.querySelector('#modal-cuerpo [name=pegado]');
+  if(!t || !t.value.trim()){ toast('Pegá el contenido del CSV o elegí un archivo.'); return; }
+  mostrarPrevia(t.value);
+}
+
+function mostrarPrevia(texto){
+  const {leidos, problemas} = leerEmbudoCSV(texto);
+  if(!leidos.length){
+    document.getElementById('previa').innerHTML =
+      `<div class="aviso err">No se pudo leer ninguna fila. Revisá que el archivo sea el CSV de la planilla.</div>`;
+    return;
+  }
+  const existentes = new Set(DB.leads.map(claveLead));
+  const nuevos = leidos.filter(l => !existentes.has(claveLead(l)));
+  const repetidos = leidos.length - nuevos.length;
+  const ganados = nuevos.filter(l => l.estado === 'ganado');
+  const porEstado = {};
+  nuevos.forEach(l => porEstado[l.estado] = (porEstado[l.estado]||0) + 1);
+  importePendiente = leidos;
+
+  document.getElementById('previa').innerHTML = `
+    <div class="seccion-form">
+      <h3>Vista previa</h3>
+      <div class="aviso ${nuevos.length?'ok':'info'}">
+        <b>${leidos.length}</b> filas leídas · <b>${nuevos.length}</b> nuevas ·
+        <b>${repetidos}</b> ya cargadas${problemas.length?` · <b>${problemas.length}</b> con problemas`:''}.
+      </div>
+      ${nuevos.length ? `<div style="margin:.7rem 0">
+        ${ORDEN_LEAD.filter(k => porEstado[k]).map(k =>
+          `<span class="chip ${ESTADOS_LEAD[k].color}" style="margin:.15rem">${esc(ESTADOS_LEAD[k].et)}: ${porEstado[k]}</span>`).join('')}
+      </div>` : ''}
+      ${problemas.length ? `<div class="aviso warn" style="margin-bottom:.7rem">
+        Filas que se van a saltear: ${problemas.slice(0,5).map(p => `fila ${p.fila} (${esc(p.motivo)})`).join(', ')}${problemas.length>5?` y ${problemas.length-5} más`:''}.
+      </div>` : ''}
+      ${repetidos ? `<label style="font-size:.85rem;display:flex;gap:.45rem;align-items:center;margin-bottom:.5rem">
+        <input type="checkbox" id="imp-actualizar"/> Actualizar las ${repetidos} que ya estaban (por defecto se dejan como están)</label>` : ''}
+      ${ganados.length ? `<label style="font-size:.85rem;display:flex;gap:.45rem;align-items:center">
+        <input type="checkbox" id="imp-ganados" checked/> Dar de alta los ${ganados.length} ganados: cliente, proyecto y factura por el total</label>` : ''}
+    </div>`;
+
+  document.getElementById('modal-pie').innerHTML = `
+    <button class="btn" onclick="cerrarModal()">Cancelar</button>
+    <button class="btn pri" onclick="confirmarImporte()" ${nuevos.length||repetidos?'':'disabled'}>Importar</button>`;
+}
+
+function confirmarImporte(){
+  if(!importePendiente) return;
+  const actualizar = !!(document.getElementById('imp-actualizar') || {}).checked;
+  const altaGanados = !!(document.getElementById('imp-ganados') || {}).checked;
+  // El mapa se arma una sola vez, con lo que ya había: dos filas iguales dentro
+  // del mismo archivo son dos oportunidades distintas y entran las dos.
+  const porClave = new Map(DB.leads.map(l => [claveLead(l), l]));
+  let nuevos = 0, actualizados = 0, altas = 0;
+
+  importePendiente.forEach(l => {
+    const existente = porClave.get(claveLead(l));
+    let lead;
+    if(existente){
+      if(!actualizar) return;
+      const {id, notas, clienteId} = existente;
+      Object.assign(existente, l, {id, notas, clienteId});
+      lead = existente;
+      actualizados++;
+    }else{
+      DB.leads.push(l);
+      lead = l;
+      nuevos++;
+    }
+    if(altaGanados && lead.estado === 'ganado' && !lead.clienteId){
+      if(altaDesdeLead(lead)) altas++;
+    }
+  });
+
+  guardar();
+  importePendiente = null;
+  cerrarModal();
+  ir('leads');
+  toast(`Importados ${nuevos} leads${actualizados?', '+actualizados+' actualizados':''}${altas?', '+altas+' clientes dados de alta':''}.`);
+}
+
+/* Crea cliente + proyecto + factura a partir de un lead ganado. */
+function altaDesdeLead(lead){
+  if(!num(lead.monto)) return false;
+  const cliente = {
+    id:uid(), razonSocial:lead.nombre, nombreFantasia:lead.empresa || lead.nombre,
+    cuit:'', contacto:'', telefono:lead.telefono||'', email:lead.email||'',
+    rne:'', domicilio:'', rubro:lead.rubro||'',
+    fechaAlta:lead.fechaCierre || lead.fechaContacto || hoy(), leadId:lead.id, notas:[]
+  };
+  DB.clientes.push(cliente);
+
+  const mensual = esMensual(lead);
+  const inicio = lead.fechaCierre || lead.fechaContacto || hoy();
+  const proyecto = {
+    id:uid(), clienteId:cliente.id, presupuestoId:null,
+    nombre:[lead.servicio, lead.categoria].filter(Boolean).join(' · ') || 'Proyecto',
+    servicioId:servicioDeEmbudo(lead.servicio, lead.categoria),
+    estado:'activo', fechaInicio:inicio, moneda:lead.moneda || 'ARS',
+    montoTotal:num(lead.monto), recurrente:mensual,
+    honorarioMensual: mensual ? num(lead.monto) : 0,
+    diaFacturacion: mensual ? 1 : 0,
+    proximoAjuste: mensual ? sumarMeses(mesDe(inicio), 3) + '-01' : '',
+    ultimoMesGenerado:''
+  };
+  DB.proyectos.push(proyecto);
+
+  DB.facturas.push({
+    id:uid(), clienteId:cliente.id, proyectoId:proyecto.id,
+    concepto: mensual ? 'Abono ' + etiquetaMes(mesDe(inicio)) : 'Total del servicio',
+    mesServicio: mensual ? mesDe(inicio) : undefined,
+    moneda:lead.moneda || 'ARS', monto:num(lead.monto), pct:100,
+    estado:'por_emitir', numero:'', fechaEmision:'', vencimiento:'', fechaCobro:''
+  });
+
+  lead.clienteId = cliente.id;
+  return true;
 }
 
 /* =======================  14. DOCUMENTO IMPRIMIBLE  ====================== */
