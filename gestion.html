@@ -235,6 +235,18 @@ fieldset{border:none}
 .filtros input:focus,.filtros select:focus{outline:none;border-color:var(--g)}
 .filtros .esp{margin-left:auto}
 
+/* selector de servicios del catálogo */
+.selector-serv{border:1px solid var(--bd);border-radius:8px;max-height:330px;overflow-y:auto;background:#fbfdfc}
+.grupo-serv h4{
+  font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--gris2);
+  padding:.5rem .8rem .3rem;position:sticky;top:0;background:#f2f7f5;border-bottom:1px solid var(--bd);
+}
+.serv-item{display:flex;gap:.55rem;align-items:flex-start;padding:.45rem .8rem;cursor:pointer;font-size:.85rem;border-bottom:1px solid #f0f4f2}
+.serv-item:last-child{border-bottom:none}
+.serv-item:hover{background:var(--gll)}
+.serv-item input{margin-top:.18rem;width:15px;height:15px;accent-color:var(--g);flex:0 0 auto}
+.serv-item .sec{color:var(--gris2)}
+
 /* embudo de leads */
 .embudo{display:flex;gap:.45rem;flex-wrap:wrap;margin-bottom:1rem}
 .embudo button{
@@ -1326,8 +1338,20 @@ function totalPresupuesto(p){
     const v = pl ? num(pl.precio) : 0;
     return {min:v, max:v, total:v, rango:false};
   }
-  const t = (p.items||[]).reduce((a,i)=> a + num(i.cantidad||1)*num(i.precioUnit), 0);
-  return {min:t, max:t, total:t, rango:false};
+  // Los ítems marcados como mensuales no entran en el total del proyecto:
+  // son un abono aparte (Dirección Técnica, auditorías, gestión de calidad).
+  let unico = 0, mensual = 0;
+  (p.items||[]).forEach(i => {
+    const sub = num(i.cantidad||1) * num(i.precioUnit);
+    if(i.mensual) mensual += sub; else unico += sub;
+  });
+  return {min:unico, max:unico, total:unico, mensual, rango:false};
+}
+/* Base sobre la que se calculan los hitos: el trabajo único, o el abono si el
+   presupuesto es puramente mensual. */
+function baseHitos(p){
+  const t = totalPresupuesto(p);
+  return t.total > 0 ? t.total : num(t.mensual);
 }
 function totalAranceles(p){
   return (p.aranceles||[]).reduce((a,x)=> a + num(x.monto), 0);
@@ -1339,9 +1363,12 @@ function horasPresupuesto(p){
 }
 function textoTotal(p){
   const t = totalPresupuesto(p);
-  return t.rango && t.min !== t.max
+  const unico = t.rango && t.min !== t.max
     ? fmt(t.min, p.moneda)+' – '+fmt(t.max, p.moneda)
     : fmt(t.total, p.moneda);
+  const abono = num(t.mensual) ? fmt(t.mensual, p.moneda)+'/mes' : '';
+  if(abono && !num(t.total)) return abono;
+  return abono ? unico + ' + ' + abono : unico;
 }
 function sumaHitos(p){ return (p.hitos||[]).reduce((a,h)=> a + num(h.pct), 0); }
 
@@ -1469,10 +1496,39 @@ function guardarModal(){
 function leerFormulario(){
   const datos = {};
   document.querySelectorAll('#modal-cuerpo [name]').forEach(el => {
-    if(el.type === 'checkbox') datos[el.name] = el.checked;
+    if(el.type === 'checkbox'){
+      // Varias casillas con el mismo nombre y un valor propio = grupo de opciones.
+      if(el.value && el.value !== 'on'){
+        if(!Array.isArray(datos[el.name])) datos[el.name] = [];
+        if(el.checked) datos[el.name].push(el.value);
+      }else{
+        datos[el.name] = el.checked;
+      }
+    }
     else datos[el.name] = el.value.trim();
   });
   return datos;
+}
+
+/* Lista de servicios del catálogo con casillas, agrupada por categoría. */
+function selectorServicios(nombre, marcados){
+  marcados = marcados || [];
+  const porCategoria = {};
+  DB.catalogo.forEach(s => (porCategoria[s.categoria] = porCategoria[s.categoria] || []).push(s));
+  return `<div class="selector-serv">
+    ${Object.keys(porCategoria).map(cat => `
+      <div class="grupo-serv">
+        <h4>${esc(cat)}</h4>
+        ${porCategoria[cat].map(s => `
+          <label class="serv-item">
+            <input type="checkbox" name="${nombre}" value="${esc(s.id)}" ${marcados.includes(s.id)?'checked':''}/>
+            <span>
+              <b>${esc(s.nombre)}</b>${s.recurrente?' <span class="chip verde">mensual</span>':''}
+              ${s.precioRef ? `<span class="sec"> · ${fmt(s.precioRef, s.moneda)}${s.refNota?' — '+esc(s.refNota):''}</span>` : ''}
+            </span>
+          </label>`).join('')}
+      </div>`).join('')}
+  </div>`;
 }
 function confirmar(titulo, mensaje, alConfirmar, etiqueta){
   abrirModal(titulo, `<p style="font-size:.92rem;line-height:1.55">${mensaje}</p>`, {
@@ -2050,14 +2106,14 @@ function vistaPresupuestos(){
       ${lista.map(p => {
         const dias = p.fechaEnvio ? diasEntre(p.fechaEnvio, hoy()) : null;
         const abierto = p.estado==='enviado' || p.estado==='seguimiento';
-        const serv = buscarServicio(p.servicioId);
+        const servs = serviciosDe(p);
         return `<tr>
           <td class="sec mono">${esc(p.numero||'')}<div class="sec">${esc(p.version||'')}</div></td>
           <td onclick="ir('presupuesto/${p.id}')" style="cursor:pointer">
             <div class="prin">${esc(p.clienteNombre||'Sin cliente')}</div>
             <div class="sec">${esc(p.proyecto)}</div>
           </td>
-          <td class="sec">${esc(serv ? serv.nombre : '—')}</td>
+          <td class="sec">${servs.length ? esc(servs[0].nombre) : '—'}${servs.length>1?`<div class="sec">+ ${servs.length-1} servicio${servs.length>2?'s':''} más</div>`:''}</td>
           <td>${fmtFecha(p.fecha)}</td>
           <td class="num">${textoTotal(p)}</td>
           <td>${chip(ESTADOS_PRESU, p.estado)}</td>
@@ -2096,8 +2152,11 @@ function nuevoPresupuesto(leadId){
       </select>
       <div class="ayuda">Al elegirlo se completan cliente, servicio y moneda, y el presupuesto queda vinculado a su seguimiento.</div>
     </div>
-    ${campo('servicioId','Plantilla del catálogo', lead ? (servicioDeEmbudo(lead.servicio, lead.categoria)||'') : '', {tipo:'select', opciones:opcionesServicio,
-      ayuda:'Carga alcance, entregables, fases, plazos, hitos y precio de referencia. Después ajustás todo.'})}
+    <div class="campo">
+      <label>Servicios del catálogo <span class="op">(podés elegir varios)</span></label>
+      ${selectorServicios('servicios', lead && servicioDeEmbudo(lead.servicio, lead.categoria) ? [servicioDeEmbudo(lead.servicio, lead.categoria)] : [])}
+      <div class="ayuda">Cada uno suma su alcance, entregables, fases, ítems y condiciones. Después ajustás todo.</div>
+    </div>
     ${campo('clienteId','Cliente existente', lead && lead.clienteId ? lead.clienteId : '', {tipo:'select', opciones:opcionesCliente, opcional:true})}
     ${campo('clienteNombre','Nombre del cliente', lead ? (lead.empresa || lead.nombre) : '', {ayuda:'Si elegiste un cliente existente, este campo se ignora.'})}
     ${campo('proyecto','Nombre del proyecto', lead ? [lead.servicio, lead.categoria].filter(Boolean).join(' · ') : '', {ph:'Inscripción RNPA línea de snacks'})}
@@ -2106,7 +2165,7 @@ function nuevoPresupuesto(leadId){
       if(!d.clienteId && !d.clienteNombre){ toast('Indicá el cliente.'); return false; }
       const elegido = d.leadId ? buscarLead(d.leadId) : null;
       const p = crearPresupuesto({
-        servicioId:d.servicioId, clienteId:d.clienteId,
+        servicioIds:d.servicios || [], clienteId:d.clienteId,
         clienteNombre:d.clienteId ? nombreCliente(d.clienteId) : d.clienteNombre,
         proyecto:d.proyecto, leadId:d.leadId || null
       });
@@ -2126,17 +2185,24 @@ function prellenarDesdeLead(id){
   const l = id ? buscarLead(id) : null;
   const dentro = s => document.querySelector('#modal-cuerpo [name='+s+']');
   if(!l){ return; }
-  const nombre = dentro('clienteNombre'), proyecto = dentro('proyecto'),
-        servicio = dentro('servicioId'), cliente = dentro('clienteId');
+  const nombre = dentro('clienteNombre'), proyecto = dentro('proyecto'), cliente = dentro('clienteId');
   if(nombre && !nombre.value.trim()) nombre.value = l.empresa || l.nombre;
   if(proyecto && !proyecto.value.trim()) proyecto.value = [l.servicio, l.categoria].filter(Boolean).join(' · ');
   const equiv = servicioDeEmbudo(l.servicio, l.categoria);
-  if(servicio && !servicio.value && equiv) servicio.value = equiv;
+  if(equiv){
+    const casilla = document.querySelector('#modal-cuerpo [name=servicios][value="'+equiv+'"]');
+    const algunaMarcada = document.querySelector('#modal-cuerpo [name=servicios]:checked');
+    if(casilla && !algunaMarcada) casilla.checked = true;
+  }
   if(cliente && l.clienteId) cliente.value = l.clienteId;
 }
 
 function crearPresupuesto(datos){
-  const s = datos.servicioId ? buscarServicio(datos.servicioId) : null;
+  // El primero define la base (modo, moneda, hitos); el resto se fusiona encima.
+  const ids = (datos.servicioIds && datos.servicioIds.length)
+    ? datos.servicioIds.slice()
+    : (datos.servicioId ? [datos.servicioId] : []);
+  const s = ids.length ? buscarServicio(ids[0]) : null;
   DB.contadorPresupuesto = (DB.contadorPresupuesto||0) + 1;
   const p = {
     id: uid(),
@@ -2146,7 +2212,8 @@ function crearPresupuesto(datos){
     clienteId: datos.clienteId || null,
     clienteNombre: datos.clienteNombre || '',
     proyecto: datos.proyecto || (s ? s.nombre : 'Nuevo proyecto'),
-    servicioId: datos.servicioId || null,
+    servicioId: s ? s.id : null,
+    serviciosIds: s ? [s.id] : [],
     descripcion: s ? s.descripcion : '',
     fecha: hoy(),
     validezDias: DB.config.validezDias || 30,
@@ -2156,7 +2223,7 @@ function crearPresupuesto(datos){
     alcance: s ? s.alcance : '',
     entregables: s ? JSON.parse(JSON.stringify(s.entregables||[])) : [],
     fases: s ? JSON.parse(JSON.stringify(s.fases||[])) : [],
-    items: s ? JSON.parse(JSON.stringify(s.items||[])) : [],
+    items: s ? JSON.parse(JSON.stringify(s.items||[])).map(i => Object.assign(i, {mensual: !!s.recurrente})) : [],
     planes: s && s.planes ? JSON.parse(JSON.stringify(s.planes)) : [],
     planElegido: s ? (s.planElegido||'') : '',
     aranceles: s ? JSON.parse(JSON.stringify(s.aranceles||[])) : [],
@@ -2171,9 +2238,65 @@ function crearPresupuesto(datos){
     seguimientos: [],
     proyectoId: null
   };
+  ids.slice(1).forEach(id => fusionarServicio(p, buscarServicio(id)));
   DB.presupuestos.push(p);
   guardar();
   return p;
+}
+
+/* Suma un servicio del catálogo a un presupuesto ya armado: encadena alcance,
+   entregables, fases, ítems, aranceles, requisitos, exclusiones y condiciones. */
+function fusionarServicio(p, s){
+  if(!s) return;
+  p.serviciosIds = p.serviciosIds || (p.servicioId ? [p.servicioId] : []);
+  if(!p.serviciosIds.includes(s.id)) p.serviciosIds.push(s.id);
+  const copia = x => JSON.parse(JSON.stringify(x));
+
+  const encabezado = '— ' + s.nombre + ' —';
+  if(s.alcance && !(p.alcance || '').includes(encabezado))
+    p.alcance = [(p.alcance || '').trim(), encabezado, s.alcance].filter(Boolean).join('\n');
+
+  (s.entregables || []).forEach(e => p.entregables.push(copia(e)));
+  (s.fases || []).forEach(f => p.fases.push(copia(f)));
+  (s.aranceles || []).forEach(a => p.aranceles.push(copia(a)));
+
+  if((s.items || []).length){
+    s.items.forEach(i => p.items.push(Object.assign(copia(i), {mensual: !!s.recurrente})));
+  }else if(num(s.precioRef)){
+    p.items.push({concepto:s.nombre, detalle:s.refNota || '', cantidad:1,
+                  precioUnit:num(s.precioRef), mensual: !!s.recurrente});
+  }
+
+  (s.requisitos || []).forEach(r => { if(!p.requisitos.includes(r)) p.requisitos.push(r); });
+  (s.exclusiones || []).forEach(r => { if(!p.exclusiones.includes(r)) p.exclusiones.push(r); });
+  ['plazos','condicionesPago','notas'].forEach(k => {
+    if(s[k] && !(p[k] || '').includes(s[k]))
+      p[k] = [(p[k] || '').trim(), s[k]].filter(Boolean).join('\n');
+  });
+}
+
+/* Servicios que combina un presupuesto. */
+function serviciosDe(p){
+  const ids = p.serviciosIds && p.serviciosIds.length ? p.serviciosIds : (p.servicioId ? [p.servicioId] : []);
+  return ids.map(buscarServicio).filter(Boolean);
+}
+
+function agregarServicios(pid){
+  const p = buscarPresu(pid);
+  abrirModal('Agregar servicios del catálogo', `
+    <p style="font-size:.87rem;margin-bottom:.8rem">
+      Lo que elijas se suma a este presupuesto: sus ítems, entregables, fases, requisitos,
+      exclusiones y condiciones se encadenan a lo que ya está.</p>
+    ${selectorServicios('nuevos', (p.serviciosIds || []))}
+  `, {ancho:true, alGuardar(d){
+    const yaEstaban = p.serviciosIds && p.serviciosIds.length ? p.serviciosIds.slice() : (p.servicioId ? [p.servicioId] : []);
+    const elegidos = (d.nuevos || []).filter(id => !yaEstaban.includes(id));
+    if(!elegidos.length){ toast('No elegiste ningún servicio nuevo.'); return false; }
+    elegidos.forEach(id => fusionarServicio(p, buscarServicio(id)));
+    guardar();
+    router();
+    toast(`Se agregaron ${elegidos.length} servicio(s) al presupuesto.`);
+  }});
 }
 
 /* ---- edición en vivo ---- */
@@ -2233,6 +2356,10 @@ function listaDinamica(pid, col, campos, etiqueta, cols){
         <div class="lin" style="grid-template-columns:${cols}">
           ${campos.map(c => c.tipo === 'textarea'
             ? `<textarea rows="2" placeholder="${esc(c.ph)}" onchange="setItem('${pid}','${col}',${i},'${c.k}',this.value)">${esc(it[c.k]||'')}</textarea>`
+            : c.tipo === 'check'
+            ? `<label style="display:flex;gap:.35rem;align-items:center;font-size:.78rem;color:var(--gris2);white-space:nowrap">
+                 <input type="checkbox" style="width:14px;height:14px;accent-color:var(--g)" ${it[c.k]?'checked':''}
+                   onchange="setItem('${pid}','${col}',${i},'${c.k}',this.checked)"/> ${esc(c.ph)}</label>`
             : `<input type="${c.tipo||'text'}" ${c.tipo==='number'?'step="any"':''} placeholder="${esc(c.ph)}"
                  value="${esc(it[c.k]===0?'0':(it[c.k]||''))}"
                  onchange="setItem('${pid}','${col}',${i},'${c.k}',this.value,${c.tipo==='number'})"/>`).join('')}
@@ -2251,12 +2378,14 @@ function bloqueTotales(p){
   return `
     ${p.modo === 'horas' ? `<div class="tot-linea"><span>Horas estimadas</span><span class="v">${hs.min} – ${hs.max} h</span></div>
       <div class="tot-linea"><span>Tarifa por hora</span><span class="v">${fmt(p.tarifaHora, p.moneda)}</span></div>` : ''}
-    <div class="tot-linea"><span>Honorarios</span><span class="v">${t.rango && t.min!==t.max ? fmt(t.min,p.moneda)+' – '+fmt(t.max,p.moneda) : fmt(t.total,p.moneda)}</span></div>
+    <div class="tot-linea"><span>Honorarios${num(t.mensual)?' de trabajo único':''}</span><span class="v">${t.rango && t.min!==t.max ? fmt(t.min,p.moneda)+' – '+fmt(t.max,p.moneda) : fmt(t.total,p.moneda)}</span></div>
+    ${num(t.mensual) ? `<div class="tot-linea"><span>Abono mensual <span class="sec">(se factura todos los meses)</span></span><span class="v">${fmt(t.mensual,p.moneda)}</span></div>` : ''}
     ${ar ? `<div class="tot-linea"><span>Aranceles oficiales <span class="sec">(no incluidos en los honorarios)</span></span><span class="v">${fmt(ar,p.moneda)}</span></div>` : ''}
     <div class="tot-linea grande"><span>Total del presupuesto</span><span class="v">${textoTotal(p)}</span></div>
     <div style="margin-top:.8rem">
+      ${num(t.mensual) && num(t.total) ? `<p class="sec" style="font-size:.78rem;color:var(--gris2);margin-bottom:.4rem">Los hitos se calculan sobre el trabajo único; el abono se factura aparte cada mes.</p>` : ''}
       ${(p.hitos||[]).map(h => `<div class="tot-linea"><span>${esc(h.nombre)} <span class="sec">${esc(h.condicion)}</span></span>
-        <span class="v">${num(h.pct)}% · ${fmt(t.total*num(h.pct)/100, p.moneda)}</span></div>`).join('')}
+        <span class="v">${num(h.pct)}% · ${fmt(baseHitos(p)*num(h.pct)/100, p.moneda)}</span></div>`).join('')}
       ${suma !== 100 ? `<div class="aviso warn" style="margin-top:.5rem">Los hitos suman <b>${suma}%</b>. Ajustalos para que sumen 100%.</div>` : ''}
     </div>`;
 }
@@ -2264,7 +2393,7 @@ function bloqueTotales(p){
 function vistaPresupuesto(id){
   const p = buscarPresu(id);
   if(!p) return `<div class="aviso err">No se encontró el presupuesto.</div>`;
-  const serv = buscarServicio(p.servicioId);
+  const servs = serviciosDe(p);
   const bloqueado = p.estado === 'aceptado';
 
   return `
@@ -2318,12 +2447,16 @@ function vistaPresupuesto(id){
               <option value="USD" ${p.moneda==='USD'?'selected':''}>Dólares (USD)</option>
             </select></div>
         </div>
-        ${serv ? `<p class="sec" style="font-size:.8rem;color:var(--gris2)">Basado en la plantilla <b>${esc(serv.nombre)}</b>${serv.refNota?' · referencia: '+esc(serv.refNota):''}</p>` : ''}
+        ${servs.length ? `<p class="sec" style="font-size:.8rem;color:var(--gris2)">
+          ${servs.length===1 ? `Basado en la plantilla <b>${esc(servs[0].nombre)}</b>${servs[0].refNota?' · referencia: '+esc(servs[0].refNota):''}`
+                             : `Combina ${servs.length} servicios del catálogo: ${servs.map(x=>esc(x.nombre)).join(' · ')}`}</p>` : ''}
       </div>
     </div>
 
     <div class="tarjeta">
-      <h2>Inversión</h2>
+      <h2>Inversión
+        <span class="der"><button class="btn mini" onclick="agregarServicios('${p.id}')">+ Agregar servicio del catálogo</button></span>
+      </h2>
       <div class="cuerpo">
         <div class="fila ${p.modo==='horas'?'c2':''}">
           <div class="campo"><label>Modo de cotización</label>
@@ -2340,8 +2473,9 @@ function vistaPresupuesto(id){
           <h3 style="font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--g);margin:.7rem 0 .5rem">Ítems</h3>
           ${listaDinamica(p.id,'items',[
             {k:'concepto',ph:'Concepto'},{k:'detalle',ph:'Detalle'},
-            {k:'cantidad',ph:'Cant.',tipo:'number'},{k:'precioUnit',ph:'Precio unitario',tipo:'number'}
-          ],'Agregar ítem','1.4fr 1.4fr .5fr .9fr')}` : ''}
+            {k:'cantidad',ph:'Cant.',tipo:'number'},{k:'precioUnit',ph:'Precio unitario',tipo:'number'},
+            {k:'mensual',ph:'mensual',tipo:'check'}
+          ],'Agregar ítem','1.3fr 1.3fr .45fr .8fr auto')}` : ''}
 
         ${p.modo==='horas' ? `<p style="font-size:.83rem;color:var(--gris2);margin:.5rem 0">
           Las horas se cargan en cada fase del plan de trabajo. El total se calcula como horas × tarifa.</p>` : ''}
@@ -2568,8 +2702,10 @@ function eliminarPresupuesto(id){
 function aceptarPresupuesto(id){
   const p = buscarPresu(id);
   const lead = p.leadId ? buscarLead(p.leadId) : null;
-  const serv = buscarServicio(p.servicioId);
-  const recurrente = !!(serv && serv.recurrente);
+  const tot = totalPresupuesto(p);
+  // Recurrente si el presupuesto incluye algún ítem mensual (abono de DT, auditorías, SGC).
+  const abonoMensual = num(tot.mensual) || (serviciosDe(p).some(s => s.recurrente) ? tot.total : 0);
+  const recurrente = abonoMensual > 0;
   const opcionesCliente = [{v:'', et:'— Crear cliente nuevo —'}].concat(
     DB.clientes.map(c => ({v:c.id, et:c.nombreFantasia || c.razonSocial})));
 
@@ -2598,7 +2734,7 @@ function aceptarPresupuesto(id){
         ${campo('fechaDecision','Fecha de aceptación', hoy(), {tipo:'date'})}
       </div>
       ${recurrente ? `
-        <div class="aviso info">Servicio recurrente: se va a registrar como abono mensual de <b>${fmt(totalPresupuesto(p).total, p.moneda)}</b>, con ajuste trimestral y checklist que se regenera cada mes.</div>
+        <div class="aviso info">Incluye un abono mensual de <b>${fmt(abonoMensual, p.moneda)}</b>, con ajuste trimestral y checklist que se regenera cada mes.${num(tot.total) ? ` El trabajo único de <b>${fmt(tot.total, p.moneda)}</b> se factura aparte, según los hitos.` : ''}</div>
         <div class="fila c2">
           ${campo('diaFacturacion','Día de facturación', '1', {tipo:'number', ayuda:'Día del mes en que emitís la factura.'})}
           ${campo('proximoAjuste','Próximo ajuste de honorarios', sumarMeses(mesHoy(),3)+'-01', {tipo:'date'})}
@@ -2620,12 +2756,12 @@ function aceptarPresupuesto(id){
       };
       DB.clientes.push(cliente);
     }
-    const total = totalPresupuesto(p).total;
+    const total = tot.total;
     const proy = {
       id:uid(), clienteId:cliente.id, presupuestoId:p.id, nombre:p.proyecto,
       servicioId:p.servicioId, estado:'activo', fechaInicio:d.fechaInicio || hoy(),
       moneda:p.moneda, montoTotal:total, recurrente:recurrente,
-      honorarioMensual: recurrente ? total : 0,
+      honorarioMensual: abonoMensual,
       diaFacturacion: recurrente ? num(d.diaFacturacion)||1 : 0,
       proximoAjuste: recurrente ? d.proximoAjuste : '',
       ultimoMesGenerado: ''
@@ -2684,19 +2820,21 @@ function generarTareasDelMes(proy, mes){
 }
 
 function generarFacturasIniciales(proy, p){
-  const total = totalPresupuesto(p).total;
-  if(proy.recurrente){
-    crearFacturaMensual(proy, mesDe(proy.fechaInicio));
-    return;
-  }
-  (p.hitos||[]).forEach(h => {
-    DB.facturas.push({
-      id:uid(), clienteId:proy.clienteId, proyectoId:proy.id,
-      concepto:(h.nombre||'Hito') + (h.condicion ? ' — '+h.condicion : ''),
-      moneda:p.moneda, monto: total * num(h.pct) / 100, pct:num(h.pct),
-      estado:'por_emitir', numero:'', fechaEmision:'', vencimiento:'', fechaCobro:''
+  // El trabajo único se reparte en los hitos; el abono va como factura del mes.
+  const unico = totalPresupuesto(p).total;
+  if(unico > 0){
+    (p.hitos||[]).forEach(h => {
+      DB.facturas.push({
+        id:uid(), clienteId:proy.clienteId, proyectoId:proy.id,
+        concepto:(h.nombre||'Hito') + (h.condicion ? ' — '+h.condicion : ''),
+        moneda:p.moneda, monto: unico * num(h.pct) / 100, pct:num(h.pct),
+        estado:'por_emitir', numero:'', fechaEmision:'', vencimiento:'', fechaCobro:''
+      });
     });
-  });
+  }
+  if(proy.recurrente && num(proy.honorarioMensual)){
+    crearFacturaMensual(proy, mesDe(proy.fechaInicio));
+  }
 }
 
 function crearFacturaMensual(proy, mes){
@@ -4274,11 +4412,13 @@ function vistaImprimir(id){
         <thead><tr><th>Concepto</th><th>Detalle</th><th class="num">Cant.</th><th class="num">Precio</th><th class="num">Subtotal</th></tr></thead>
         <tbody>
           ${(p.items||[]).map(i => `<tr>
-            <td><b>${esc(i.concepto)}</b></td><td>${esc(i.detalle||'')}</td>
+            <td><b>${esc(i.concepto)}</b>${i.mensual?' <span style="font-size:.75rem;color:#666">(mensual)</span>':''}</td>
+            <td>${esc(i.detalle||'')}</td>
             <td class="num">${num(i.cantidad||1)}</td><td class="num">${fmt(i.precioUnit, p.moneda)}</td>
-            <td class="num">${fmt(num(i.cantidad||1)*num(i.precioUnit), p.moneda)}</td>
+            <td class="num">${fmt(num(i.cantidad||1)*num(i.precioUnit), p.moneda)}${i.mensual?' / mes':''}</td>
           </tr>`).join('')}
-          <tr class="total"><td colspan="4">Total de honorarios</td><td class="num">${fmt(t.total, p.moneda)}</td></tr>
+          ${num(t.total) ? `<tr class="total"><td colspan="4">Total de honorarios${num(t.mensual)?' — trabajo único':''}</td><td class="num">${fmt(t.total, p.moneda)}</td></tr>` : ''}
+          ${num(t.mensual) ? `<tr class="total"><td colspan="4">Abono mensual</td><td class="num">${fmt(t.mensual, p.moneda)} / mes</td></tr>` : ''}
         </tbody>
       </table>
     `}
@@ -4296,9 +4436,10 @@ function vistaImprimir(id){
         <thead><tr><th style="width:22%">Hito</th><th>Cuándo se factura</th><th class="num" style="width:10%">%</th><th class="num" style="width:22%">Importe</th></tr></thead>
         <tbody>${p.hitos.map(h => `<tr>
           <td><b>${esc(h.nombre)}</b></td><td>${esc(h.condicion||'')}</td>
-          <td class="num">${num(h.pct)}%</td><td class="num">${fmt(t.total*num(h.pct)/100, p.moneda)}</td>
+          <td class="num">${num(h.pct)}%</td><td class="num">${fmt(baseHitos(p)*num(h.pct)/100, p.moneda)}</td>
         </tr>`).join('')}</tbody>
-      </table>` : ''}
+      </table>
+      ${num(t.mensual) && num(t.total) ? `<p style="font-size:.85rem">El abono mensual de <b>${fmt(t.mensual, p.moneda)}</b> se factura por mes adelantado, independientemente de los hitos.</p>` : ''}` : ''}
     ${p.condicionesPago ? lineas(p.condicionesPago).map(l => `<p>${esc(l)}</p>`).join('') : ''}
 
     ${(p.exclusiones||[]).length || (p.requisitos||[]).length ? `<h2>Alcance detallado</h2>
