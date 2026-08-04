@@ -1322,6 +1322,19 @@ function dbVacia(){
       profesionales:[
         {id:'lo', nombre:'Lucía Osinalde', titulo:'Ingeniera en Alimentos', matricula:'MN 00237 * 46 * 44'},
         {id:'lv', nombre:'Lucas Venturi', titulo:'Lic. en Química', matricula:'MP 10890'}
+      ],
+      // Textos que se reutilizan al armar cada módulo del presupuesto.
+      alcances:[
+        {nombre:'Gestión de trámite ante la autoridad', texto:'Se solicitarán y/o confeccionarán, según lo que envíe el cliente, los documentos para la presentación ante la autoridad sanitaria, con el seguimiento del expediente hasta su resolución.'},
+        {nombre:'Elaboración de documentación técnica', texto:'Se confecciona la documentación técnica requerida, adaptada al establecimiento y a sus procesos, lista para la presentación ante el organismo.'},
+        {nombre:'Dirección Técnica mensual', texto:'Revisión y firma de conformidad de documentos, una visita mensual al establecimiento, participación en inspecciones y asistencia técnica permanente.'}
+      ],
+      condiciones:[
+        {nombre:'50 / 50 contra entrega', texto:'50% de anticipo.\n50% contra entrega de la documentación.'},
+        {nombre:'50 / 50 al obtener el número', texto:'50% de anticipo.\n50% al momento de la obtención del número de legajo o expediente.'},
+        {nombre:'75 / 25 informe', texto:'75% del valor total al inicio del servicio, junto con la entrega de la documentación.\n25% restante contra entrega del informe final.'},
+        {nombre:'Abono mensual a mes cerrado', texto:'Se abona a mes cerrado.\nAjuste trimestral según IPC.'},
+        {nombre:'Tres cuotas iguales', texto:'El monto se abona en 3 cuotas iguales y consecutivas, según los hitos acordados.'}
       ]
     },
     leads:[], clientes:[], presupuestos:[], proyectos:[], tareas:[], facturas:[],
@@ -2447,12 +2460,16 @@ function fusionarServicio(p, s){
 }
 
 /* Quién firma la propuesta. Si no se eligió a nadie, los datos de configuración. */
-function firmanteDe(p){
+function firmantesDe(p){
   const lista = DB.config.profesionales || [];
-  const f = lista.find(x => x.id === (p && p.firmanteId));
-  if(f) return f;
-  return {nombre:DB.config.profesional, titulo:DB.config.titulo, matricula:DB.config.matricula};
+  const ids = (p && p.firmantesIds && p.firmantesIds.length)
+    ? p.firmantesIds
+    : (p && p.firmanteId ? [p.firmanteId] : []);
+  const elegidos = ids.map(id => lista.find(x => x.id === id)).filter(Boolean);
+  if(elegidos.length) return elegidos;
+  return [{nombre:DB.config.profesional, titulo:DB.config.titulo, matricula:DB.config.matricula}];
 }
+function firmanteDe(p){ return firmantesDe(p)[0]; }
 
 /* Un módulo es cada sección numerada de la propuesta (1.1, 1.2, …), con su
    propio alcance, documentación, cotización y condición de pago. */
@@ -2572,6 +2589,57 @@ function listaDinamica(pid, col, campos, etiqueta, cols){
   </div>`;
 }
 
+function alternarFirmante(pid, fid, marcado){
+  const p = buscarPresu(pid);
+  let ids = (p.firmantesIds && p.firmantesIds.length) ? p.firmantesIds.slice()
+           : (p.firmanteId ? [p.firmanteId] : []);
+  if(marcado){ if(!ids.includes(fid)) ids.push(fid); }
+  else ids = ids.filter(x => x !== fid);
+  // Se respeta el orden en que están cargados los profesionales.
+  const orden = (DB.config.profesionales||[]).map(f => f.id);
+  ids.sort((a,b) => orden.indexOf(a) - orden.indexOf(b));
+  p.firmantesIds = ids;
+  p.firmanteId = ids[0] || '';
+  guardar();
+}
+
+/* ---- biblioteca de textos (se administra en Datos) ---- */
+function selectorTexto(coleccion, alElegir, alGuardar){
+  const lista = DB.config[coleccion] || [];
+  return `<div style="display:flex;gap:.4rem;align-items:center;margin-top:.3rem">
+    <select style="flex:1;border:1px solid var(--bd2);border-radius:6px;padding:.28rem .45rem;font-size:.8rem"
+      onchange="${alElegir}">
+      <option value="">— Usar un texto guardado —</option>
+      ${lista.map((t,j) => `<option value="${j}">${esc(t.nombre)}</option>`).join('')}
+    </select>
+    <button class="btn-txt" title="Guardar este texto para reutilizarlo" onclick="${alGuardar}">Guardar texto</button>
+  </div>`;
+}
+/* Vuelca el texto elegido en el campo y lo guarda en el presupuesto. */
+function usarTexto(idCampo, pid, i, campo, indice){
+  if(indice === '') return;
+  const coleccion = campo === 'alcance' ? 'alcances' : 'condiciones';
+  const t = (DB.config[coleccion] || [])[Number(indice)];
+  if(!t) return;
+  const el = document.getElementById(idCampo);
+  if(el) el.value = t.texto;
+  setModulo(pid, i, campo, t.texto);
+  toast('Texto aplicado.');
+}
+/* Suma el contenido actual del campo a la biblioteca. */
+function guardarTexto(coleccion, idCampo){
+  const el = document.getElementById(idCampo);
+  const texto = el ? el.value.trim() : '';
+  if(!texto){ toast('El campo está vacío.'); return; }
+  const nombre = prompt('¿Con qué nombre lo guardo?', texto.slice(0, 40));
+  if(!nombre || !nombre.trim()) return;
+  DB.config[coleccion] = DB.config[coleccion] || [];
+  DB.config[coleccion].push({nombre:nombre.trim(), texto});
+  guardar();
+  router();
+  toast('Texto guardado en Datos.');
+}
+
 /* ---- módulos de la propuesta ---- */
 function setModulo(pid, i, campo, valor, numerico){
   const p = buscarPresu(pid);
@@ -2620,8 +2688,12 @@ function bloqueModulos(p){
           <button class="quitar" title="Quitar" onclick="quitarModulo('${p.id}',${i})">&times;</button>
         </div>
         <div class="modulo-cuerpo">
-          <div class="campo"><label>Alcance</label>
-            <textarea rows="3" onchange="setModulo('${p.id}',${i},'alcance',this.value)">${esc(m.alcance)}</textarea></div>
+          <div class="campo">
+            <label>Alcance</label>
+            <textarea id="alc-${p.id}-${i}" rows="3" onchange="setModulo('${p.id}',${i},'alcance',this.value)">${esc(m.alcance)}</textarea>
+            ${selectorTexto('alcances', `usarTexto('alc-${p.id}-${i}','${p.id}',${i},'alcance',this.value)`,
+                            `guardarTexto('alcances','alc-${p.id}-${i}')`)}
+          </div>
           <div class="campo"><label>Documentación a presentar <span class="op">(una por línea)</span></label>
             <textarea rows="4" onchange="setModuloLineas('${p.id}',${i},'documentacion',this.value)">${esc((m.documentacion||[]).join('\n'))}</textarea></div>
           <div class="fila c3">
@@ -2636,8 +2708,12 @@ function bloqueModulos(p){
                   onchange="setModulo('${p.id}',${i},'mensual',this.checked)"/> Es mensual</label></div>
           </div>
           <div class="fila c2">
-            <div class="campo"><label>Condiciones de pago de este módulo</label>
-              <textarea rows="2" onchange="setModulo('${p.id}',${i},'condicionesPago',this.value)">${esc(m.condicionesPago||'')}</textarea></div>
+            <div class="campo">
+              <label>Condiciones de pago de este módulo</label>
+              <textarea id="cond-${p.id}-${i}" rows="2" onchange="setModulo('${p.id}',${i},'condicionesPago',this.value)">${esc(m.condicionesPago||'')}</textarea>
+              ${selectorTexto('condiciones', `usarTexto('cond-${p.id}-${i}','${p.id}',${i},'condicionesPago',this.value)`,
+                              `guardarTexto('condiciones','cond-${p.id}-${i}')`)}
+            </div>
             <div class="campo"><label>Nota</label>
               <textarea rows="2" onchange="setModulo('${p.id}',${i},'nota',this.value)">${esc(m.nota||'')}</textarea></div>
           </div>
@@ -2730,12 +2806,17 @@ function vistaPresupuesto(id){
               <option value="clasico" ${!esModular(p)?'selected':''}>Clásico — entregables, plan de trabajo e inversión</option>
               <option value="modulos" ${esModular(p)?'selected':''}>Por módulos — una sección numerada por servicio</option>
             </select></div>
-          <div class="campo"><label>Firma la propuesta</label>
-            <select onchange="setCampo('${p.id}','firmanteId',this.value)">
-              <option value="">${esc(DB.config.profesional)} (por defecto)</option>
-              ${(DB.config.profesionales||[]).map(f =>
-                `<option value="${esc(f.id)}" ${p.firmanteId===f.id?'selected':''}>${esc(f.nombre)}${f.matricula?' — '+esc(f.matricula):''}</option>`).join('')}
-            </select></div>
+          <div class="campo"><label>Firman la propuesta <span class="op">(podés elegir varios)</span></label>
+            <div style="display:flex;flex-wrap:wrap;gap:.5rem 1.1rem;padding:.35rem 0">
+              ${(DB.config.profesionales||[]).map(f => `
+                <label style="display:flex;gap:.4rem;align-items:center;font-size:.85rem">
+                  <input type="checkbox" style="width:15px;height:15px;accent-color:var(--g)"
+                    ${(p.firmantesIds||[]).includes(f.id)||p.firmanteId===f.id?'checked':''}
+                    onchange="alternarFirmante('${p.id}','${f.id}',this.checked)"/>
+                  ${esc(f.nombre)}${f.matricula?` <span class="sec">${esc(f.matricula)}</span>`:''}
+                </label>`).join('')}
+            </div>
+            <div class="ayuda">Si no marcás a nadie firma ${esc(DB.config.profesional)}. Se administran en Datos.</div></div>
         </div>
         <div class="campo"><label>Introducción <span class="op">(encabeza el documento)</span></label>
           <textarea rows="2" placeholder="A quién corresponda: les hago llegar la siguiente propuesta de trabajo para…"
@@ -4178,6 +4259,45 @@ function vistaDatos(){
   </div>
 
   <div class="tarjeta">
+    <h2>Textos reutilizables</h2>
+    <div class="cuerpo">
+      <p style="font-size:.85rem;color:var(--gris2);margin-bottom:1rem">
+        Son los textos que aparecen en el desplegable de cada módulo del presupuesto, para no
+        volver a escribir siempre lo mismo. También podés guardar uno nuevo desde el presupuesto.</p>
+      <div class="seccion-form" style="border-top:none;margin-top:0;padding-top:0">
+        <h3>Alcances</h3>
+        ${listaTextos('alcances')}
+      </div>
+      <div class="seccion-form">
+        <h3>Condiciones de pago</h3>
+        ${listaTextos('condiciones')}
+      </div>
+    </div>
+  </div>
+
+  <div class="tarjeta">
+    <h2>Profesionales que firman</h2>
+    <div class="cuerpo">
+      <p style="font-size:.85rem;color:var(--gris2);margin-bottom:1rem">
+        Quiénes pueden figurar como firmantes de una propuesta. En cada presupuesto elegís
+        cuál o cuáles firman.</p>
+      <div class="lista-din">
+        ${(c.profesionales||[]).map((f,i) => `
+          <div class="item-din" style="grid-template-columns:auto 1fr auto">
+            <span class="n">${i+1}</span>
+            <div class="lin" style="grid-template-columns:1fr 1fr 1fr">
+              <input type="text" placeholder="Nombre" value="${esc(f.nombre)}" onchange="setProfesional(${i},'nombre',this.value)"/>
+              <input type="text" placeholder="Título" value="${esc(f.titulo||'')}" onchange="setProfesional(${i},'titulo',this.value)"/>
+              <input type="text" placeholder="Matrícula" value="${esc(f.matricula||'')}" onchange="setProfesional(${i},'matricula',this.value)"/>
+            </div>
+            <button class="quitar" onclick="quitarProfesional(${i})">&times;</button>
+          </div>`).join('')}
+        <div><button class="btn mini" onclick="agregarProfesional()">+ Agregar profesional</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tarjeta">
     <h2>Cómo funciona el circuito</h2>
     <div class="cuerpo">
       <ul class="lista-simple">
@@ -4189,6 +4309,51 @@ function vistaDatos(){
       </ul>
     </div>
   </div>`;
+}
+
+/* Lista editable de textos reutilizables (alcances / condiciones de pago). */
+function listaTextos(coleccion){
+  const lista = DB.config[coleccion] || [];
+  return `<div class="lista-din">
+    ${lista.map((t,i) => `
+      <div class="item-din" style="grid-template-columns:auto 1fr auto">
+        <span class="n">${i+1}</span>
+        <div class="lin">
+          <input type="text" placeholder="Nombre corto" value="${esc(t.nombre)}"
+            onchange="setTexto('${coleccion}',${i},'nombre',this.value)"/>
+          <textarea rows="2" placeholder="Texto completo"
+            onchange="setTexto('${coleccion}',${i},'texto',this.value)">${esc(t.texto)}</textarea>
+        </div>
+        <button class="quitar" onclick="quitarTexto('${coleccion}',${i})">&times;</button>
+      </div>`).join('')}
+    <div><button class="btn mini" onclick="agregarTexto('${coleccion}')">+ Agregar texto</button></div>
+  </div>`;
+}
+function setTexto(coleccion, i, campo, valor){
+  DB.config[coleccion][i][campo] = valor;
+  guardar();
+}
+function agregarTexto(coleccion){
+  DB.config[coleccion] = DB.config[coleccion] || [];
+  DB.config[coleccion].push({nombre:'', texto:''});
+  refrescar();
+}
+function quitarTexto(coleccion, i){
+  DB.config[coleccion].splice(i,1);
+  refrescar();
+}
+function setProfesional(i, campo, valor){
+  DB.config.profesionales[i][campo] = valor;
+  guardar();
+}
+function agregarProfesional(){
+  DB.config.profesionales = DB.config.profesionales || [];
+  DB.config.profesionales.push({id:'pro-'+Date.now(), nombre:'', titulo:'', matricula:''});
+  refrescar();
+}
+function quitarProfesional(i){
+  DB.config.profesionales.splice(i,1);
+  refrescar();
 }
 
 function setConfig(campo, valor, numerico){
@@ -4693,7 +4858,7 @@ function vistaImprimir(id){
   const ar = totalAranceles(p);
   const vence = p.fechaEnvio ? sumarDias(p.fechaEnvio, num(p.validezDias)) : sumarDias(p.fecha, num(p.validezDias));
   const planElegido = (p.planes||[]).find(x => x.id === p.planElegido);
-  const firma = firmanteDe(p);
+  const firmas = firmantesDe(p);
 
   return `
   <div class="barra-imp">
@@ -4705,8 +4870,7 @@ function vistaImprimir(id){
     <div class="barra-doc">
       <div class="m">B<span>Food</span><small>Consultoría alimentaria</small></div>
       <div class="der">
-        ${esc(firma.nombre)}${firma.titulo?' · '+esc(firma.titulo):''}<br/>
-        ${firma.matricula?esc(firma.matricula)+'<br/>':''}
+        ${firmas.map(f => `${esc(f.nombre)}${f.titulo?' · '+esc(f.titulo):''}${f.matricula?' · '+esc(f.matricula):''}`).join('<br/>')}<br/>
         ${esc(c.email)} · ${esc(c.telefono)}<br/>${esc(c.web)}
       </div>
     </div>
@@ -4830,11 +4994,12 @@ function vistaImprimir(id){
 
     <div class="firma">
       <div>Firma y aclaración — ${esc(p.clienteNombre||'Cliente')}</div>
-      <div>${esc(firma.nombre)}${firma.matricula?' — '+esc(firma.matricula):''}</div>
+      <div>${firmas.map(f => `${esc(f.nombre)}${f.matricula?' — '+esc(f.matricula):''}`).join('<br/>')}</div>
     </div>
 
     <div class="pie-doc">
       BFood Consultoría Alimentaria · ${esc(c.email)} · ${esc(c.telefono)} · ${esc(c.web)}<br/>
+      ${firmas.map(f => `${esc(f.nombre)}${f.matricula?' — '+esc(f.matricula):''}`).join(' · ')}<br/>
       Propuesta ${esc(p.numero)} ${esc(p.version)} — válida por ${num(p.validezDias)} días desde su emisión.
     </div>
   </div>`;
