@@ -235,6 +235,17 @@ fieldset{border:none}
 .filtros input:focus,.filtros select:focus{outline:none;border-color:var(--g)}
 .filtros .esp{margin-left:auto}
 
+/* módulos de la propuesta */
+.modulo{border:1px solid var(--bd);border-radius:9px;background:#fbfdfc;overflow:hidden}
+.modulo-cab{display:flex;gap:.5rem;align-items:center;padding:.5rem .6rem;background:#f2f7f5;border-bottom:1px solid var(--bd)}
+.modulo-cab .n{font-size:.78rem;font-weight:700;color:var(--gdp);background:var(--gl);border-radius:5px;padding:.2rem .45rem;flex:0 0 auto}
+.modulo-cab .titulo{flex:1;border:1px solid var(--bd2);border-radius:6px;padding:.32rem .5rem;font-size:.87rem;font-weight:600;background:#fff}
+.modulo-cab .titulo:focus{outline:none;border-color:var(--g)}
+.modulo-cuerpo{padding:.75rem .7rem .2rem}
+.modulo-cuerpo .campo{margin-bottom:.6rem}
+.solo-interno{border:1px dashed #d8b26a;background:#fffdf6;border-radius:8px;padding:.7rem .85rem}
+.solo-interno .et{font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--ambar);font-weight:700;margin-bottom:.35rem}
+
 /* selector de servicios del catálogo */
 .selector-serv{border:1px solid var(--bd);border-radius:8px;max-height:330px;overflow-y:auto;background:#fbfdfc}
 .grupo-serv h4{
@@ -356,6 +367,16 @@ body.imprimiendo #doc{display:block}
 .hoja .plan .nom{font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;color:var(--g);font-weight:700}
 .hoja .plan .pr{font-size:1.45rem;font-weight:700;color:var(--gdp);margin:.15rem 0 .5rem;font-variant-numeric:tabular-nums}
 .hoja .plan ul{margin-left:1rem;font-size:.81rem}
+.hoja .modulo-doc{margin-bottom:1.5rem;padding-bottom:1.1rem;border-bottom:1px solid #eef3f0}
+.hoja .modulo-doc:last-child{border-bottom:none}
+.hoja .modulo-doc h3{font-size:1rem;color:var(--gdp);margin:0 0 .4rem}
+.hoja .nota-doc{background:#fffdf6;border-left:3px solid #e2c583;padding:.45rem .7rem;font-size:.85rem;border-radius:0 5px 5px 0}
+.hoja .cotiz{
+  display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;
+  background:var(--gl);border-radius:7px;padding:.5rem .85rem;margin:.6rem 0 .4rem;color:var(--gdp);font-size:.9rem;
+}
+.hoja .cotiz b{font-size:1.1rem;font-variant-numeric:tabular-nums}
+.hoja .cond-doc{font-size:.85rem;color:#555}
 .hoja .firma{margin-top:2.6rem;display:grid;grid-template-columns:1fr 1fr;gap:2.5rem}
 .hoja .firma div{border-top:1px solid #bbb;padding-top:.4rem;font-size:.8rem;color:var(--gris2)}
 .hoja .pie-doc{margin-top:2rem;padding-top:.8rem;border-top:1px solid var(--bd);font-size:.75rem;color:#8a8a8a;text-align:center;line-height:1.6}
@@ -377,6 +398,8 @@ body.imprimiendo #doc{display:block}
   .hoja{box-shadow:none;margin:0;padding:0;max-width:none;font-size:10.5pt}
   .hoja h2{break-after:avoid}
   .hoja table,.hoja .caja,.hoja .plan,.hoja .destacado,.hoja .ficha{break-inside:avoid}
+  .hoja .modulo-doc{break-inside:avoid}
+  .hoja .cotiz{background:#d8f3e5!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .hoja tr{break-inside:avoid}
   .hoja .firma{break-inside:avoid}
 }
@@ -1050,6 +1073,131 @@ const CATALOGO = [
   notas:'El layout se entrega en formato digital editable y PDF.'
 },
 {
+  id:'domi-establecimiento', nombre:'Contratación de establecimiento', categoria:'Domisanitarios', modo:'fijo',
+  moneda:'ARS', recurrente:false, precioRef:360000, refNota:'+ viáticos fuera del AMBA',
+  descripcion:'Búsqueda y evaluación del depósito habilitado donde va a operar la empresa.',
+  alcance:'Gestión de proveedor de servicios acorde a las tareas, volumen de ventas y tipo de productos a comercializar por la compañía (regulados por ANMAT). Como Dirección Técnica del proyecto, la elección del depósito es clave para el resto del proyecto.',
+  entregables:[
+    {titulo:'Relevamiento de establecimientos',descripcion:'Evaluación de opciones acordes a las tareas, al volumen de ventas y al tipo de productos a comercializar.'},
+    {titulo:'Selección del depósito',descripcion:'Recomendación técnica del establecimiento, con la mirada de la Dirección Técnica sobre su aptitud para el resto del proyecto.'}
+  ],
+  fases:[{nombre:'Contratación de establecimiento',actividades:'Relevamiento, evaluación y selección del proveedor de servicios de depósito.',duracion:'A convenir',hsMin:0,hsMax:0}],
+  items:[{concepto:'Contratación de establecimiento',detalle:'+ viáticos fuera del AMBA',cantidad:1,precioUnit:360000}],
+  aranceles:[], requisitos:[],
+  exclusiones:['Viáticos en caso de que el establecimiento esté fuera del AMBA.'],
+  hitos:[{nombre:'Anticipo',condicion:'Al aceptar la propuesta',pct:50},{nombre:'Saldo',condicion:'A la selección del establecimiento',pct:50}],
+  plazos:'A convenir con el cliente.',
+  condicionesPago:'',
+  notas:'Los viáticos se cotizan aparte si el establecimiento está fuera del AMBA.'
+},
+{
+  id:'domi-habilitacion', nombre:'Revisión / elaboración de documentos para la habilitación del establecimiento',
+  categoria:'Domisanitarios', modo:'fijo',
+  moneda:'ARS', recurrente:false, precioRef:2250000, refNota:'',
+  descripcion:'Documentación para habilitar el establecimiento ante ANMAT.',
+  alcance:'Se solicitarán y/o confeccionarán, según lo que envíe el cliente, los documentos para la presentación ante ANMAT para habilitar el establecimiento.',
+  entregables:[
+    {titulo:'Legajo de habilitación',descripcion:'Documentación revisada y/o confeccionada para la presentación ante ANMAT.'},
+    {titulo:'Presentación del trámite',descripcion:'Carga del expediente y seguimiento hasta la obtención del número de legajo.'}
+  ],
+  fases:[{nombre:'Habilitación del establecimiento',actividades:'Revisión y confección de la documentación, presentación ante ANMAT y seguimiento hasta el número de legajo.',duracion:'A convenir',hsMin:0,hsMax:0}],
+  items:[{concepto:'Revisión / elaboración de documentos para la habilitación del establecimiento',detalle:'',cantidad:1,precioUnit:2250000}],
+  aranceles:[{concepto:'Volante de pago (VEP) de habilitación del establecimiento',monto:1501800}],
+  requisitos:[
+    'Solicitudes — DDJJ',
+    'Plano del establecimiento',
+    'Habilitación municipal',
+    'Memoria descriptiva',
+    'Contrato de alquiler del establecimiento',
+    'Estatuto de la sociedad',
+    'Inscripción en ARCA para la actividad',
+    'Notas de cumplimiento de Buenas Prácticas',
+    'Nota de cumplimiento y matrícula del Responsable de Seguridad e Higiene',
+    'Matrícula del Director Técnico',
+    'Volante y comprobante de pago (no incluido en esta propuesta)'
+  ],
+  exclusiones:['Volante de pago (VEP) y su comprobante.'],
+  hitos:[{nombre:'Anticipo',condicion:'Al aceptar la propuesta',pct:50},{nombre:'Saldo',condicion:'Al momento de la obtención del número de legajo',pct:50}],
+  plazos:'Sujeto a los tiempos de evaluación de ANMAT.',
+  condicionesPago:'50% de anticipo.\n50% al momento de la obtención del número de legajo.',
+  notas:'Se requiere poder en TAD para los gestores y alta en Interbanking para el pago de los volantes. Valor del VEP al momento de la propuesta: $1.501.800.'
+},
+{
+  id:'domi-sgc', nombre:'Elaboración de Sistema de Gestión de Calidad', categoria:'Domisanitarios', modo:'fijo',
+  moneda:'ARS', recurrente:false, precioRef:800000, refNota:'',
+  descripcion:'Sistema de calidad base con los documentos exigidos al momento de la DDJJ.',
+  alcance:'La empresa deberá contar con un Sistema de Calidad y sus documentos asociados. Esto implica una serie de procedimientos, registros, planes y organigrama que deberán estar listos al momento de la presentación de la DDJJ. Se confecciona un sistema de calidad base para asegurar los requerimientos mínimos operativos (POE y sus registros respectivos, más los demás documentos requeridos).',
+  entregables:[
+    {titulo:'Procedimientos operativos (POE)',descripcion:'Procedimientos base para asegurar los requerimientos mínimos operativos.'},
+    {titulo:'Registros asociados',descripcion:'Planillas y registros que acompañan a cada procedimiento.'},
+    {titulo:'Planes y organigrama',descripcion:'Documentos del sistema exigidos al momento de la presentación de la DDJJ.'}
+  ],
+  fases:[{nombre:'Sistema de Gestión de Calidad',actividades:'Confección de procedimientos, registros, planes y organigrama del sistema base.',duracion:'A convenir',hsMin:0,hsMax:0}],
+  items:[{concepto:'Elaboración de Sistema de Gestión de Calidad',detalle:'',cantidad:1,precioUnit:800000}],
+  aranceles:[], requisitos:[],
+  exclusiones:['Implementación y capacitación del personal en el sistema (se cotizan aparte).'],
+  hitos:[{nombre:'Anticipo',condicion:'Al aceptar la propuesta',pct:50},{nombre:'Saldo',condicion:'Entregados los documentos',pct:50}],
+  plazos:'Los documentos deben estar listos al momento de la presentación de la DDJJ.',
+  condicionesPago:'50% de anticipo.\n50% entregados los documentos.',
+  notas:''
+},
+{
+  id:'domi-dt', nombre:'Servicio de Dirección Técnica — domisanitarios', categoria:'Domisanitarios', modo:'fijo',
+  moneda:'ARS', recurrente:true, precioRef:600000, refNota:'Por mes · ajuste trimestral según IPC',
+  descripcion:'Dirección Técnica mensual del establecimiento de domisanitarios.',
+  alcance:'Revisión y firma de conformidad de documentos para presentaciones ante la autoridad para la solicitud de RNE, sin límite. Una (1) visita a depósito o planta por mes, en caso de ser necesario, no acumulable mes a mes. Participación activa en inspecciones solicitadas por y para la autoridad, según demanda. Reuniones virtuales relacionadas a este alcance, sin restricciones, con la empresa o con el organismo, a modo de asistencia técnica o análisis de documentación, según demanda. Otras responsabilidades legalmente derivadas de la dirección técnica.',
+  entregables:[
+    {titulo:'Firma de documentos',descripcion:'Revisión y firma de conformidad de los documentos para presentaciones ante la autoridad, sin límite.'},
+    {titulo:'Visita mensual',descripcion:'Una visita a depósito o planta por mes, en caso de ser necesario. No acumulable mes a mes.'},
+    {titulo:'Acompañamiento en inspecciones',descripcion:'Participación activa en las inspecciones solicitadas por y para la autoridad.'},
+    {titulo:'Asistencia técnica',descripcion:'Reuniones virtuales sin restricciones con la empresa o con el organismo.'}
+  ],
+  fases:[{nombre:'Dirección Técnica mensual',actividades:'Firma de documentos, visita mensual, inspecciones y asistencia técnica.',duracion:'Mensual',hsMin:0,hsMax:0}],
+  items:[{concepto:'Servicio de Dirección Técnica',detalle:'Por mes',cantidad:1,precioUnit:600000}],
+  aranceles:[], requisitos:[],
+  exclusiones:['Trámites de habilitación e inscripción de productos, que se cotizan por separado.'],
+  hitos:[{nombre:'Abono mensual',condicion:'A mes cerrado',pct:100}],
+  plazos:'Inicio: al mes siguiente desde la obtención del legajo.',
+  condicionesPago:'Se abona a mes cerrado.\nInicio: al mes siguiente desde la obtención del legajo.\nAjuste trimestral según IPC.',
+  notas:'',
+  tareasMensuales:[
+    'Visita a depósito o planta del mes',
+    'Revisión y firma de documentos para presentaciones',
+    'Seguimiento de inspecciones y requerimientos de la autoridad',
+    'Reuniones de asistencia técnica'
+  ]
+},
+{
+  id:'domi-producto', nombre:'Elaboración de documentos y presentación para inscripción de producto',
+  categoria:'Domisanitarios', modo:'fijo',
+  moneda:'ARS', recurrente:false, precioRef:800000, refNota:'Por producto / expediente',
+  descripcion:'Inscripción de cada producto domisanitario a importar, ante ANMAT.',
+  alcance:'Se confeccionarán, según lo que envíe el cliente, los documentos para la presentación ante ANMAT para habilitar cada uno de los productos domisanitarios que la empresa quiera importar.',
+  entregables:[
+    {titulo:'Legajo del producto',descripcion:'Documentación revisada y/o confeccionada para la inscripción del producto.'},
+    {titulo:'Presentación del expediente',descripcion:'Carga del trámite y seguimiento hasta la obtención del número de expediente.'}
+  ],
+  fases:[{nombre:'Inscripción de producto',actividades:'Confección de la documentación, presentación ante ANMAT y seguimiento hasta el número de expediente.',duracion:'A convenir',hsMin:0,hsMax:0}],
+  items:[{concepto:'Elaboración de documentos y presentación para inscripción de producto',detalle:'Por producto / expediente',cantidad:1,precioUnit:800000}],
+  aranceles:[{concepto:'Volante de pago (VEP) de inscripción de producto',monto:471600}],
+  requisitos:[
+    'Formulario de inscripción',
+    'Legajo del establecimiento y matrícula del Director Técnico',
+    'Poder en TAD',
+    'Fórmula y proceso de elaboración',
+    'Certificado de libre venta (CLV) de origen, apostillado',
+    'Especificaciones de producto — certificado de análisis',
+    'Estudios de estabilidad',
+    'Hoja de seguridad',
+    'Volante y comprobante de pago (no incluido en esta propuesta)'
+  ],
+  exclusiones:['Volante de pago (VEP) y su comprobante.'],
+  hitos:[{nombre:'Anticipo',condicion:'Al aceptar la propuesta',pct:50},{nombre:'Saldo',condicion:'Al momento de la obtención del número de expediente',pct:50}],
+  plazos:'Sujeto a los tiempos de evaluación de ANMAT.',
+  condicionesPago:'50% de anticipo.\n50% al momento de la obtención del número de expediente.',
+  notas:'Se evaluará la posibilidad de registrar productos diferentes bajo el mismo expediente, considerando la evaluación técnica de cada caso. Valor del VEP al momento de la propuesta: $471.600.'
+},
+{
   id:'habilitacion-municipal', nombre:'Habilitación municipal y puesta a punto', categoria:'Registros', modo:'fijo',
   moneda:'ARS', recurrente:false, precioRef:950000, refNota:'Local gastronómico · 2026',
   descripcion:'Acompañamiento para la habilitación municipal del local y la puesta a punto higiénico-sanitaria.',
@@ -1170,7 +1318,11 @@ function dbVacia(){
       validezDias:30,
       tipoFactura:'C',
       cotizacionUSD:1500,
-      fuentes: FUENTES_BASE.slice()
+      fuentes: FUENTES_BASE.slice(),
+      profesionales:[
+        {id:'lo', nombre:'Lucía Osinalde', titulo:'Ingeniera en Alimentos', matricula:'MN 00237 * 46 * 44'},
+        {id:'lv', nombre:'Lucas Venturi', titulo:'Lic. en Química', matricula:'MP 10890'}
+      ]
     },
     leads:[], clientes:[], presupuestos:[], proyectos:[], tareas:[], facturas:[],
     catalogo: JSON.parse(JSON.stringify(CATALOGO)),
@@ -1327,6 +1479,10 @@ function fmtUSD(v){
 
 /* ---- cálculo de presupuestos ---- */
 function totalPresupuesto(p){
+  if(esModular(p)){
+    const t = totalModulos(p);
+    return {min:t.unico, max:t.unico, total:t.unico, mensual:t.mensual, rango:false};
+  }
   if(p.modo === 'horas'){
     const t = num(p.tarifaHora);
     let min = 0, max = 0;
@@ -2214,7 +2370,12 @@ function crearPresupuesto(datos){
     proyecto: datos.proyecto || (s ? s.nombre : 'Nuevo proyecto'),
     servicioId: s ? s.id : null,
     serviciosIds: s ? [s.id] : [],
-    descripcion: s ? s.descripcion : '',
+    // Con más de un servicio la propuesta sale por módulos numerados.
+    formato: ids.length > 1 ? 'modulos' : 'clasico',
+    modulos: s ? [moduloDeServicio(s)] : [],
+    intro: '',
+    firmanteId: '',
+    notasInternas: '',
     fecha: hoy(),
     validezDias: DB.config.validezDias || 30,
     moneda: s ? s.moneda : 'ARS',
@@ -2230,9 +2391,11 @@ function crearPresupuesto(datos){
     requisitos: s ? (s.requisitos||[]).slice() : [],
     exclusiones: s ? (s.exclusiones||[]).slice() : [],
     hitos: s ? JSON.parse(JSON.stringify(s.hitos||[])) : [{nombre:'Anticipo',condicion:'Al aceptar la propuesta',pct:50},{nombre:'Saldo',condicion:'A la entrega final',pct:50}],
-    plazos: s ? s.plazos : '',
-    condicionesPago: s ? s.condicionesPago : '',
-    notas: s ? s.notas : '',
+    // Con varios servicios, plazos/condiciones/notas viven en cada módulo.
+    descripcion: ids.length > 1 ? '' : (s ? s.descripcion : ''),
+    plazos: ids.length > 1 ? '' : (s ? s.plazos : ''),
+    condicionesPago: ids.length > 1 ? '' : (s ? s.condicionesPago : ''),
+    notas: ids.length > 1 ? '' : (s ? s.notas : ''),
     estado: 'borrador',
     fechaEnvio: '', fechaDecision: '', motivoRechazo: '',
     seguimientos: [],
@@ -2252,6 +2415,10 @@ function fusionarServicio(p, s){
   if(!p.serviciosIds.includes(s.id)) p.serviciosIds.push(s.id);
   const copia = x => JSON.parse(JSON.stringify(x));
 
+  // En formato modular cada servicio es una sección numerada de la propuesta.
+  p.modulos = p.modulos || [];
+  if(!p.modulos.some(m => m.servicioId === s.id)) p.modulos.push(moduloDeServicio(s));
+
   const encabezado = '— ' + s.nombre + ' —';
   if(s.alcance && !(p.alcance || '').includes(encabezado))
     p.alcance = [(p.alcance || '').trim(), encabezado, s.alcance].filter(Boolean).join('\n');
@@ -2269,11 +2436,46 @@ function fusionarServicio(p, s){
 
   (s.requisitos || []).forEach(r => { if(!p.requisitos.includes(r)) p.requisitos.push(r); });
   (s.exclusiones || []).forEach(r => { if(!p.exclusiones.includes(r)) p.exclusiones.push(r); });
-  ['plazos','condicionesPago','notas'].forEach(k => {
-    if(s[k] && !(p[k] || '').includes(s[k]))
-      p[k] = [(p[k] || '').trim(), s[k]].filter(Boolean).join('\n');
-  });
+  // En formato modular cada módulo lleva su nota y su condición de pago, así que
+  // no se encadenan al texto global: ese queda libre para las condiciones generales.
+  if(!esModular(p)){
+    ['plazos','condicionesPago','notas'].forEach(k => {
+      if(s[k] && !(p[k] || '').includes(s[k]))
+        p[k] = [(p[k] || '').trim(), s[k]].filter(Boolean).join('\n');
+    });
+  }
 }
+
+/* Quién firma la propuesta. Si no se eligió a nadie, los datos de configuración. */
+function firmanteDe(p){
+  const lista = DB.config.profesionales || [];
+  const f = lista.find(x => x.id === (p && p.firmanteId));
+  if(f) return f;
+  return {nombre:DB.config.profesional, titulo:DB.config.titulo, matricula:DB.config.matricula};
+}
+
+/* Un módulo es cada sección numerada de la propuesta (1.1, 1.2, …), con su
+   propio alcance, documentación, cotización y condición de pago. */
+function moduloDeServicio(s){
+  const items = s.items || [];
+  const monto = items.length
+    ? items.reduce((a,i) => a + num(i.cantidad||1)*num(i.precioUnit), 0)
+    : num(s.precioRef);
+  return {
+    id:uid(), servicioId:s.id, titulo:s.nombre,
+    alcance:s.alcance || s.descripcion || '',
+    documentacion:(s.requisitos || []).slice(),
+    nota:s.notas || '',
+    monto, detalleMonto:s.refNota || '', mensual: !!s.recurrente,
+    condicionesPago:s.condicionesPago || ''
+  };
+}
+function totalModulos(p){
+  let unico = 0, mensual = 0;
+  (p.modulos || []).forEach(m => { if(m.mensual) mensual += num(m.monto); else unico += num(m.monto); });
+  return {unico, mensual};
+}
+const esModular = p => p.formato === 'modulos';
 
 /* Servicios que combina un presupuesto. */
 function serviciosDe(p){
@@ -2370,6 +2572,81 @@ function listaDinamica(pid, col, campos, etiqueta, cols){
   </div>`;
 }
 
+/* ---- módulos de la propuesta ---- */
+function setModulo(pid, i, campo, valor, numerico){
+  const p = buscarPresu(pid);
+  if(!p.modulos || !p.modulos[i]) return;
+  p.modulos[i][campo] = numerico ? num(valor) : valor;
+  guardar();
+  actualizarTotales(pid);
+}
+function setModuloLineas(pid, i, campo, valor){
+  const p = buscarPresu(pid);
+  p.modulos[i][campo] = lineas(valor);
+  guardar();
+}
+function agregarModulo(pid){
+  const p = buscarPresu(pid);
+  p.modulos = p.modulos || [];
+  p.modulos.push({id:uid(), servicioId:null, titulo:'', alcance:'', documentacion:[],
+                  nota:'', monto:0, detalleMonto:'', mensual:false, condicionesPago:''});
+  refrescar();
+}
+function quitarModulo(pid, i){
+  const p = buscarPresu(pid);
+  const m = p.modulos[i];
+  p.modulos.splice(i, 1);
+  if(m && m.servicioId) p.serviciosIds = (p.serviciosIds||[]).filter(x => x !== m.servicioId);
+  refrescar();
+}
+function moverModulo(pid, i, dir){
+  const p = buscarPresu(pid);
+  const j = i + dir;
+  if(j < 0 || j >= p.modulos.length) return;
+  const t = p.modulos[i]; p.modulos[i] = p.modulos[j]; p.modulos[j] = t;
+  refrescar();
+}
+
+function bloqueModulos(p){
+  return `<div class="lista-din">
+    ${(p.modulos||[]).map((m,i) => `
+      <div class="modulo">
+        <div class="modulo-cab">
+          <span class="n">1.${i+1}</span>
+          <input type="text" class="titulo" placeholder="Título del módulo" value="${esc(m.titulo)}"
+            onchange="setModulo('${p.id}',${i},'titulo',this.value)"/>
+          <button class="quitar" title="Subir" onclick="moverModulo('${p.id}',${i},-1)">↑</button>
+          <button class="quitar" title="Bajar" onclick="moverModulo('${p.id}',${i},1)">↓</button>
+          <button class="quitar" title="Quitar" onclick="quitarModulo('${p.id}',${i})">&times;</button>
+        </div>
+        <div class="modulo-cuerpo">
+          <div class="campo"><label>Alcance</label>
+            <textarea rows="3" onchange="setModulo('${p.id}',${i},'alcance',this.value)">${esc(m.alcance)}</textarea></div>
+          <div class="campo"><label>Documentación a presentar <span class="op">(una por línea)</span></label>
+            <textarea rows="4" onchange="setModuloLineas('${p.id}',${i},'documentacion',this.value)">${esc((m.documentacion||[]).join('\n'))}</textarea></div>
+          <div class="fila c3">
+            <div class="campo"><label>Cotización</label>
+              <input type="number" step="any" value="${num(m.monto)}" onchange="setModulo('${p.id}',${i},'monto',this.value,true)"/></div>
+            <div class="campo"><label>Aclaración del precio</label>
+              <input type="text" placeholder="por producto, + viáticos…" value="${esc(m.detalleMonto||'')}"
+                onchange="setModulo('${p.id}',${i},'detalleMonto',this.value)"/></div>
+            <div class="campo"><label>&nbsp;</label>
+              <label style="display:flex;gap:.4rem;align-items:center;font-size:.85rem;padding-top:.4rem">
+                <input type="checkbox" style="width:15px;height:15px;accent-color:var(--g)" ${m.mensual?'checked':''}
+                  onchange="setModulo('${p.id}',${i},'mensual',this.checked)"/> Es mensual</label></div>
+          </div>
+          <div class="fila c2">
+            <div class="campo"><label>Condiciones de pago de este módulo</label>
+              <textarea rows="2" onchange="setModulo('${p.id}',${i},'condicionesPago',this.value)">${esc(m.condicionesPago||'')}</textarea></div>
+            <div class="campo"><label>Nota</label>
+              <textarea rows="2" onchange="setModulo('${p.id}',${i},'nota',this.value)">${esc(m.nota||'')}</textarea></div>
+          </div>
+        </div>
+      </div>`).join('')}
+    <div><button class="btn mini" onclick="agregarModulo('${p.id}')">+ Agregar módulo</button></div>
+  </div>`;
+}
+
 function bloqueTotales(p){
   const t = totalPresupuesto(p);
   const ar = totalAranceles(p);
@@ -2447,6 +2724,22 @@ function vistaPresupuesto(id){
               <option value="USD" ${p.moneda==='USD'?'selected':''}>Dólares (USD)</option>
             </select></div>
         </div>
+        <div class="fila c2">
+          <div class="campo"><label>Formato del documento</label>
+            <select onchange="setCampo('${p.id}','formato',this.value);router()">
+              <option value="clasico" ${!esModular(p)?'selected':''}>Clásico — entregables, plan de trabajo e inversión</option>
+              <option value="modulos" ${esModular(p)?'selected':''}>Por módulos — una sección numerada por servicio</option>
+            </select></div>
+          <div class="campo"><label>Firma la propuesta</label>
+            <select onchange="setCampo('${p.id}','firmanteId',this.value)">
+              <option value="">${esc(DB.config.profesional)} (por defecto)</option>
+              ${(DB.config.profesionales||[]).map(f =>
+                `<option value="${esc(f.id)}" ${p.firmanteId===f.id?'selected':''}>${esc(f.nombre)}${f.matricula?' — '+esc(f.matricula):''}</option>`).join('')}
+            </select></div>
+        </div>
+        <div class="campo"><label>Introducción <span class="op">(encabeza el documento)</span></label>
+          <textarea rows="2" placeholder="A quién corresponda: les hago llegar la siguiente propuesta de trabajo para…"
+            onchange="setCampo('${p.id}','intro',this.value)">${esc(p.intro||'')}</textarea></div>
         ${servs.length ? `<p class="sec" style="font-size:.8rem;color:var(--gris2)">
           ${servs.length===1 ? `Basado en la plantilla <b>${esc(servs[0].nombre)}</b>${servs[0].refNota?' · referencia: '+esc(servs[0].refNota):''}`
                              : `Combina ${servs.length} servicios del catálogo: ${servs.map(x=>esc(x.nombre)).join(' · ')}`}</p>` : ''}
@@ -2510,6 +2803,31 @@ function vistaPresupuesto(id){
         ],'Agregar hito','.8fr 2fr .5fr')}
 
         <div class="seccion-form" id="bloque-totales">${bloqueTotales(p)}</div>
+      </div>
+    </div>
+  </div>
+
+  ${esModular(p) ? `
+  <div class="tarjeta">
+    <h2>Módulos de la propuesta
+      <span class="der"><button class="btn mini" onclick="agregarServicios('${p.id}')">+ Agregar servicio del catálogo</button></span>
+    </h2>
+    <div class="cuerpo">
+      <p style="font-size:.83rem;color:var(--gris2);margin-bottom:.8rem">
+        Cada módulo sale en el documento como una sección numerada, con su alcance, su documentación,
+        su cotización y su condición de pago.</p>
+      ${bloqueModulos(p)}
+    </div>
+  </div>` : ''}
+
+  <div class="tarjeta">
+    <h2>Notas internas</h2>
+    <div class="cuerpo">
+      <div class="solo-interno">
+        <div class="et">No se imprime — solo lo ves vos</div>
+        <textarea rows="3" style="width:100%;border:1px solid var(--bd2);border-radius:7px;padding:.44rem .6rem;font-size:.88rem"
+          placeholder="Acuerdo de honorarios, con quién se trabaja, recordatorios…"
+          onchange="setCampo('${p.id}','notasInternas',this.value)">${esc(p.notasInternas||'')}</textarea>
       </div>
     </div>
   </div>
@@ -3510,6 +3828,7 @@ function vistaCatalogo(){
       <p class="sub">${DB.catalogo.length} plantillas · precargan el presupuesto con alcance, entregables, fases, hitos y precio de referencia</p>
     </div>
     <div class="acciones">
+      <button class="btn" onclick="agregarServiciosDeFabrica()">Traer servicios nuevos</button>
       <button class="btn" onclick="restaurarCatalogo()">Restaurar catálogo original</button>
       <button class="btn pri" onclick="nuevoServicio()">+ Servicio</button>
     </div>
@@ -3750,6 +4069,21 @@ function eliminarServicio(id){
     DB.catalogo = DB.catalogo.filter(x => x.id !== id);
     guardar(); ir('catalogo'); toast('Servicio eliminado.');
   }, 'Eliminar');
+}
+
+/* Trae los servicios de fábrica que todavía no estén, sin tocar los existentes. */
+function agregarServiciosDeFabrica(){
+  const faltantes = CATALOGO.filter(o => !DB.catalogo.some(s => s.id === o.id));
+  if(!faltantes.length){ toast('Ya están todos los servicios de fábrica.'); return; }
+  confirmar('Agregar servicios de fábrica',
+    `Se van a agregar <b>${faltantes.length}</b> servicio(s) que no tenés en el catálogo:<br/><br/>
+     ${faltantes.map(s => esc(s.nombre)).join(' · ')}.<br/><br/>
+     Los que ya tenés no se tocan.`,
+    () => {
+      DB.catalogo = DB.catalogo.concat(JSON.parse(JSON.stringify(faltantes)));
+      refrescar();
+      toast(`Agregados ${faltantes.length} servicio(s).`);
+    }, 'Agregar');
 }
 
 function restaurarCatalogo(){
@@ -4330,6 +4664,27 @@ function formAltaDesdeLead(id){
 
 /* =======================  14. DOCUMENTO IMPRIMIBLE  ====================== */
 
+/* Cada módulo, como sección numerada de la propuesta. */
+function bloqueModulosImpresos(p){
+  const mods = p.modulos || [];
+  if(!mods.length) return '';
+  return `<h2>Alcance del servicio</h2>
+    ${mods.map((m,i) => `
+      <div class="modulo-doc">
+        <h3>1.${i+1} · ${esc(m.titulo)}</h3>
+        ${lineas(m.alcance).map(l => `<p>${esc(l)}</p>`).join('')}
+        ${(m.documentacion||[]).length ? `
+          <p style="margin-bottom:.2rem">La documentación a presentar (que será revisada y/o confeccionada) consta de:</p>
+          <ul>${m.documentacion.map(d => `<li>${esc(d)}</li>`).join('')}</ul>` : ''}
+        ${m.nota ? `<p class="nota-doc"><b>Nota:</b> ${esc(m.nota)}</p>` : ''}
+        <div class="cotiz">
+          <span>Cotización${m.detalleMonto ? ' — '+esc(m.detalleMonto) : ''}</span>
+          <b>${fmt(m.monto, p.moneda)}${m.mensual ? ' / mes' : ''}</b>
+        </div>
+        ${m.condicionesPago ? `<p class="cond-doc"><b>Condiciones de pago:</b> ${esc(lineas(m.condicionesPago).join(' '))}</p>` : ''}
+      </div>`).join('')}`;
+}
+
 function vistaImprimir(id){
   const p = buscarPresu(id);
   if(!p) return '<div class="hoja">No se encontró el presupuesto.</div>';
@@ -4338,6 +4693,7 @@ function vistaImprimir(id){
   const ar = totalAranceles(p);
   const vence = p.fechaEnvio ? sumarDias(p.fechaEnvio, num(p.validezDias)) : sumarDias(p.fecha, num(p.validezDias));
   const planElegido = (p.planes||[]).find(x => x.id === p.planElegido);
+  const firma = firmanteDe(p);
 
   return `
   <div class="barra-imp">
@@ -4349,14 +4705,15 @@ function vistaImprimir(id){
     <div class="barra-doc">
       <div class="m">B<span>Food</span><small>Consultoría alimentaria</small></div>
       <div class="der">
-        ${esc(c.profesional)}${c.titulo?' · '+esc(c.titulo):''}<br/>
-        ${c.matricula?esc(c.matricula)+'<br/>':''}
+        ${esc(firma.nombre)}${firma.titulo?' · '+esc(firma.titulo):''}<br/>
+        ${firma.matricula?esc(firma.matricula)+'<br/>':''}
         ${esc(c.email)} · ${esc(c.telefono)}<br/>${esc(c.web)}
       </div>
     </div>
 
     <h1>${esc(p.proyecto)}</h1>
     ${p.descripcion ? `<div class="bajada">${esc(p.descripcion)}</div>` : ''}
+    ${p.intro ? lineas(p.intro).map(l=>`<p>${esc(l)}</p>`).join('') : ''}
 
     <div class="ficha">
       <b>Preparado para</b><span>${esc(p.clienteNombre||'—')}</span>
@@ -4365,15 +4722,17 @@ function vistaImprimir(id){
       <b>Validez</b><span>${num(p.validezDias)} días corridos${vence?' — hasta el '+fmtFecha(vence):''}</span>
     </div>
 
-    ${p.alcance ? `<h2>Alcance del servicio</h2>${lineas(p.alcance).map(l=>`<p>${esc(l)}</p>`).join('')}` : ''}
+    ${esModular(p) ? bloqueModulosImpresos(p) : ''}
 
-    ${(p.entregables||[]).length ? `<h2>Entregables</h2>
+    ${!esModular(p) && p.alcance ? `<h2>Alcance del servicio</h2>${lineas(p.alcance).map(l=>`<p>${esc(l)}</p>`).join('')}` : ''}
+
+    ${!esModular(p) && (p.entregables||[]).length ? `<h2>Entregables</h2>
       <table>
         <thead><tr><th style="width:32%">Entregable</th><th>Descripción</th></tr></thead>
         <tbody>${p.entregables.map(e => `<tr><td><b>${esc(e.titulo)}</b></td><td>${esc(e.descripcion||'')}</td></tr>`).join('')}</tbody>
       </table>` : ''}
 
-    ${(p.fases||[]).length ? `<h2>Plan de trabajo</h2>
+    ${!esModular(p) && (p.fases||[]).length ? `<h2>Plan de trabajo</h2>
       <table>
         <thead><tr><th style="width:4%">#</th><th style="width:26%">Fase</th><th>Actividades principales</th><th style="width:18%">Duración</th></tr></thead>
         <tbody>${p.fases.map((f,i) => `<tr>
@@ -4381,8 +4740,21 @@ function vistaImprimir(id){
         </tr>`).join('')}</tbody>
       </table>` : ''}
 
-    <h2>Inversión</h2>
-    ${p.modo === 'planes' ? `
+    <h2>${esModular(p) ? 'Resumen de la inversión' : 'Inversión'}</h2>
+    ${esModular(p) ? `
+      <table>
+        <thead><tr><th style="width:8%">#</th><th>Concepto</th><th class="num" style="width:26%">Cotización</th></tr></thead>
+        <tbody>
+          ${(p.modulos||[]).map((m,i) => `<tr>
+            <td>1.${i+1}</td>
+            <td><b>${esc(m.titulo)}</b>${m.detalleMonto?` <span style="font-size:.78rem;color:#666">${esc(m.detalleMonto)}</span>`:''}</td>
+            <td class="num">${fmt(m.monto, p.moneda)}${m.mensual?' / mes':''}</td>
+          </tr>`).join('')}
+          ${num(t.total) ? `<tr class="total"><td colspan="2">Total${num(t.mensual)?' de los trabajos únicos':''}</td><td class="num">${fmt(t.total, p.moneda)}</td></tr>` : ''}
+          ${num(t.mensual) ? `<tr class="total"><td colspan="2">Abono mensual</td><td class="num">${fmt(t.mensual, p.moneda)} / mes</td></tr>` : ''}
+        </tbody>
+      </table>
+    ` : p.modo === 'planes' ? `
       <div class="planes">
         ${(p.planes||[]).map(pl => `
           <div class="plan ${pl.id===p.planElegido?'elegido':''}">
@@ -4431,7 +4803,7 @@ function vistaImprimir(id){
       </table>
       <p style="font-size:.82rem;color:#666">Los aranceles corresponden a tasas oficiales, no están incluidos en los honorarios y pueden actualizarse según disposiciones del organismo.</p>` : ''}
 
-    ${(p.hitos||[]).length ? `<h2>Forma de pago</h2>
+    ${!esModular(p) && (p.hitos||[]).length ? `<h2>Forma de pago</h2>
       <table>
         <thead><tr><th style="width:22%">Hito</th><th>Cuándo se factura</th><th class="num" style="width:10%">%</th><th class="num" style="width:22%">Importe</th></tr></thead>
         <tbody>${p.hitos.map(h => `<tr>
@@ -4440,9 +4812,9 @@ function vistaImprimir(id){
         </tr>`).join('')}</tbody>
       </table>
       ${num(t.mensual) && num(t.total) ? `<p style="font-size:.85rem">El abono mensual de <b>${fmt(t.mensual, p.moneda)}</b> se factura por mes adelantado, independientemente de los hitos.</p>` : ''}` : ''}
-    ${p.condicionesPago ? lineas(p.condicionesPago).map(l => `<p>${esc(l)}</p>`).join('') : ''}
+    ${!esModular(p) && p.condicionesPago ? lineas(p.condicionesPago).map(l => `<p>${esc(l)}</p>`).join('') : ''}
 
-    ${(p.exclusiones||[]).length || (p.requisitos||[]).length ? `<h2>Alcance detallado</h2>
+    ${!esModular(p) && ((p.exclusiones||[]).length || (p.requisitos||[]).length) ? `<h2>Alcance detallado</h2>
       <div class="dos-col">
         ${(p.requisitos||[]).length ? `<div class="caja"><h3>Documentación requerida</h3>
           <ul>${p.requisitos.map(r => `<li>${esc(r)}</li>`).join('')}</ul></div>` : ''}
@@ -4450,12 +4822,15 @@ function vistaImprimir(id){
           <ul>${p.exclusiones.map(r => `<li>${esc(r)}</li>`).join('')}</ul></div>` : ''}
       </div>` : ''}
 
-    ${p.plazos ? `<h2>Plazos de ejecución</h2>${lineas(p.plazos).map(l => `<p>${esc(l)}</p>`).join('')}` : ''}
+    ${esModular(p) && p.condicionesPago ? `<h2>Condiciones de la oferta económica</h2>
+      <ul>${lineas(p.condicionesPago).map(l => `<li>${esc(l)}</li>`).join('')}</ul>` : ''}
+
+    ${!esModular(p) && p.plazos ? `<h2>Plazos de ejecución</h2>${lineas(p.plazos).map(l => `<p>${esc(l)}</p>`).join('')}` : ''}
     ${p.notas ? `<h2>Condiciones generales</h2>${lineas(p.notas).map(l => `<p>${esc(l)}</p>`).join('')}` : ''}
 
     <div class="firma">
       <div>Firma y aclaración — ${esc(p.clienteNombre||'Cliente')}</div>
-      <div>${esc(c.profesional)}${c.matricula?' — '+esc(c.matricula):''}</div>
+      <div>${esc(firma.nombre)}${firma.matricula?' — '+esc(firma.matricula):''}</div>
     </div>
 
     <div class="pie-doc">
