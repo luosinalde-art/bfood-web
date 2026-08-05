@@ -350,7 +350,7 @@
   <h2>¿Listo para empezar?<br/>La consulta inicial es gratuita.</h2>
   <p>En 30 minutos analizamos tu situación y te decimos exactamente qué necesita tu empresa. Sin vueltas, sin costos ocultos.</p>
   <div class="cta-actions">
-    <a href="https://wa.me/5491178204883?text=Hola%2C%20quiero%20agendar%20una%20consulta%20gratuita%20Te%20escribo%20desde%20bfood.com.ar." target="_blank" rel="noopener" class="btn btn-white">💬 Agendar consulta gratuita →</a>
+    <a data-consulta href="https://wa.me/5491178204883?text=Hola%2C%20quiero%20agendar%20una%20consulta%20gratuita%20Te%20escribo%20desde%20bfood.com.ar." target="_blank" rel="noopener" class="btn btn-white">💬 Agendar consulta gratuita →</a>
     <a href="/" class="btn btn-outline-white">← Volver al inicio</a>
   </div>
 </section>
@@ -380,3 +380,93 @@
       document.querySelectorAll('.faq-q').forEach(b => {
         b.classList.remove('open');
         b.setAttribute('aria-expanded','false');
+        b.nextElementSibling.classList.remove('open');
+      });
+      if (!isOpen) {
+        btn.classList.add('open');
+        btn.setAttribute('aria-expanded','true');
+        btn.nextElementSibling.classList.add('open');
+      }
+    });
+  });
+</script>
+
+<!-- Mini formulario para los CTA genéricos de WhatsApp -->
+<div id="mc-fondo" role="dialog" aria-modal="true" aria-labelledby="mc-titulo" hidden
+  style="position:fixed;inset:0;background:rgba(10,25,18,.6);z-index:99999;display:none;align-items:center;justify-content:center;padding:1rem;overflow-y:auto">
+  <div style="background:#0d5230;border-radius:6px;max-width:460px;width:100%;padding:2rem 1.8rem;position:relative;margin:auto;box-shadow:0 20px 60px rgba(0,0,0,.4)">
+    <button type="button" id="mc-cerrar" aria-label="Cerrar"
+      style="position:absolute;top:.7rem;right:.9rem;background:none;border:none;color:rgba(255,255,255,.6);font-size:1.6rem;line-height:1;cursor:pointer">&times;</button>
+    <span style="font-size:.66rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#209d5c;display:block;margin-bottom:.6rem">Consulta gratuita</span>
+    <h2 id="mc-titulo" style="font-family:'Cormorant Garamond',serif;font-size:1.55rem;font-weight:700;color:#fff;line-height:1.2;margin:0 0 .6rem">Contanos brevemente qué necesitás</h2>
+    <p style="font-size:.87rem;line-height:1.7;color:rgba(255,255,255,.72);margin:0 0 1.4rem">Con estos datos Lucía te puede responder con algo concreto en vez de arrancar de cero. Se abre WhatsApp con el mensaje ya escrito.</p>
+    <form id="mc-form" style="display:flex;flex-direction:column;gap:.75rem">
+      <input type="text" id="mc-nombre" placeholder="Tu nombre" required style="padding:.8rem 1rem;border:1.5px solid rgba(255,255,255,.2);border-radius:2px;background:rgba(255,255,255,.08);color:#fff;font-family:inherit;font-size:.93rem;outline:none;width:100%"/>
+      <input type="text" id="mc-empresa" placeholder="Empresa o marca (opcional)" style="padding:.8rem 1rem;border:1.5px solid rgba(255,255,255,.2);border-radius:2px;background:rgba(255,255,255,.08);color:#fff;font-family:inherit;font-size:.93rem;outline:none;width:100%"/>
+      <select id="mc-tramite" required style="padding:.8rem 1rem;border:1.5px solid rgba(255,255,255,.2);border-radius:2px;background:rgba(255,255,255,.08);color:#fff;font-family:inherit;font-size:.93rem;outline:none;cursor:pointer;width:100%">
+        <option value="" disabled style="color:#1e1e1e">¿Qué trámite o servicio necesitás?</option>
+        <option value="RNPA" style="color:#1e1e1e">RNPA</option><option value="RNE" style="color:#1e1e1e">RNE</option><option value="RNEE" style="color:#1e1e1e">RNEE</option><option value="RNPE" style="color:#1e1e1e">RNPE</option><option value="Rotulado nutricional" style="color:#1e1e1e">Rotulado nutricional</option><option value="Desarrollo de producto" style="color:#1e1e1e">Desarrollo de producto</option><option value="Dirección Técnica" style="color:#1e1e1e">Dirección Técnica</option><option value="Carnet de manipulación" style="color:#1e1e1e">Carnet de manipulación</option><option value="BPM" style="color:#1e1e1e">BPM</option><option value="HACCP" style="color:#1e1e1e" selected>HACCP</option><option value="Exportación / FDA" style="color:#1e1e1e">Exportación / FDA</option><option value="Importación" style="color:#1e1e1e">Importación</option><option value="Domisanitarios" style="color:#1e1e1e">Domisanitarios</option><option value="Auditorías" style="color:#1e1e1e">Auditorías</option><option value="Todavía no sé" style="color:#1e1e1e">Todavía no sé</option>
+      </select>
+      <select id="mc-estado" required style="padding:.8rem 1rem;border:1.5px solid rgba(255,255,255,.2);border-radius:2px;background:rgba(255,255,255,.08);color:#fff;font-family:inherit;font-size:.93rem;outline:none;cursor:pointer;width:100%">
+        <option value="" disabled selected style="color:#1e1e1e">¿En qué estado estás?</option>
+        <option value="Estoy empezando de cero" style="color:#1e1e1e">Estoy empezando de cero</option><option value="Tengo el local o la planta, sin habilitar" style="color:#1e1e1e">Tengo el local o la planta, sin habilitar</option><option value="Ya opero y necesito regularizar" style="color:#1e1e1e">Ya opero y necesito regularizar</option><option value="Ya está todo en regla y quiero ampliar" style="color:#1e1e1e">Ya está todo en regla y quiero ampliar</option><option value="Solo quiero asesorarme" style="color:#1e1e1e">Solo quiero asesorarme</option>
+      </select>
+      <select id="mc-cantidad" required style="padding:.8rem 1rem;border:1.5px solid rgba(255,255,255,.2);border-radius:2px;background:rgba(255,255,255,.08);color:#fff;font-family:inherit;font-size:.93rem;outline:none;cursor:pointer;width:100%">
+        <option value="" disabled selected style="color:#1e1e1e">¿Cuántos productos involucra?</option>
+        <option value="No aplica" style="color:#1e1e1e">No aplica</option><option value="1" style="color:#1e1e1e">1</option><option value="2 a 5" style="color:#1e1e1e">2 a 5</option><option value="Más de 5" style="color:#1e1e1e">Más de 5</option>
+      </select>
+      <button type="submit" style="display:inline-flex;align-items:center;justify-content:center;gap:.55rem;background:#25d366;color:#fff;font-family:inherit;font-weight:700;font-size:.93rem;border:none;cursor:pointer;padding:.95rem 1.6rem;border-radius:2px;margin-top:.3rem">
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="white" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Enviar por WhatsApp
+      </button>
+      <button type="button" id="mc-saltar" style="background:none;border:none;color:rgba(255,255,255,.5);font-family:inherit;font-size:.8rem;cursor:pointer;text-decoration:underline;padding:.2rem">Prefiero escribir directo</button>
+    </form>
+  </div>
+</div>
+<script>
+(function(){
+  var fondo = document.getElementById('mc-fondo');
+  if(!fondo) return;
+  var form = document.getElementById('mc-form'), destino = '', ultimo = null;
+
+  function abrir(href, disparador){
+    destino = href; ultimo = disparador;
+    fondo.hidden = false;
+    fondo.style.display = 'flex';   // el atributo hidden no gana contra el estilo en línea
+    document.body.style.overflow = 'hidden';
+    var n = document.getElementById('mc-nombre');
+    if(n) setTimeout(function(){ n.focus(); }, 50);
+  }
+  function cerrar(){
+    fondo.hidden = true;
+    fondo.style.display = 'none';
+    document.body.style.overflow = '';
+    if(ultimo && ultimo.focus) ultimo.focus();
+  }
+  document.getElementById('mc-cerrar').addEventListener('click', cerrar);
+  fondo.addEventListener('click', function(e){ if(e.target === fondo) cerrar(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && !fondo.hidden) cerrar(); });
+  document.getElementById('mc-saltar').addEventListener('click', function(){
+    window.open(destino, '_blank', 'noopener'); cerrar();
+  });
+
+  document.querySelectorAll('a[data-consulta]').forEach(function(a){
+    a.addEventListener('click', function(e){ e.preventDefault(); abrir(a.href, a); });
+  });
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var v = function(id){ var el = document.getElementById(id); return el ? el.value.trim() : ''; };
+    var lineas = ['Hola! Te escribo desde bfood.com.ar. Quiero hacer una consulta.'];
+    if(v('mc-nombre'))   lineas.push('Nombre: ' + v('mc-nombre'));
+    if(v('mc-empresa'))  lineas.push('Empresa: ' + v('mc-empresa'));
+    if(v('mc-tramite'))  lineas.push('Trámite: ' + v('mc-tramite'));
+    if(v('mc-estado'))   lineas.push('Estado: ' + v('mc-estado'));
+    if(v('mc-cantidad')) lineas.push('Cantidad de productos: ' + v('mc-cantidad'));
+    window.open('https://wa.me/5491178204883?text=' + encodeURIComponent(lineas.join('\n')), '_blank', 'noopener');
+    cerrar();
+  });
+})();
+</script>
+</body>
+</html>
