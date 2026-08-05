@@ -1958,6 +1958,7 @@ function vistaLeads(){
     </div>
     <div class="acciones">
       <button class="btn" onclick="ir('datos')">Importar planilla</button>
+      <button class="btn" onclick="formLeadWhatsApp()">Desde WhatsApp</button>
       <button class="btn pri" onclick="formLead()">+ Nuevo lead</button>
     </div>
   </div>
@@ -2055,6 +2056,137 @@ function vistaLeads(){
         </tbody>
       </table>` : vacio('No hay leads con estos filtros.','<button class="btn pri" onclick="formLead()">+ Nuevo lead</button>')}
     </div>
+  </div>`;
+}
+
+/* =========  ALTA DESDE UN MENSAJE DE WHATSAPP  =========================
+   Los formularios del sitio arman el mensaje con líneas "Campo: valor" y una
+   primera línea que dice de qué página viene. Con eso alcanza para completar
+   el lead sin tipear nada.                                                  */
+
+const SERVICIOS_WEB = [
+  {re:/rnpa/i,                                    servicio:'RNPA'},
+  {re:/rnee/i,                                    servicio:'RNEE'},
+  {re:/rnpe/i,                                    servicio:'RNPE'},
+  {re:/\brne\b/i,                                 servicio:'RNE'},
+  {re:/habilitaci[oó]n/i,                         servicio:'RNE'},
+  {re:/haccp/i,                                   servicio:'HACCP'},
+  {re:/\bbpm\b|buenas pr[aá]cticas/i,             servicio:'BPM'},
+  {re:/rotulado|tabla nutricional/i,              servicio:'Rotulado'},
+  {re:/desarrollo|formulaci[oó]n/i,               servicio:'Desarrollo'},
+  {re:/direcci[oó]n t[eé]cnica|\bdt\b/i,          servicio:'Dirección técnica'},
+  {re:/carnet|manipulaci[oó]n/i,                  servicio:'Capacitación'},
+  {re:/fda|exportar|exportaci[oó]n/i,             servicio:'FDA'},
+  {re:/importaci[oó]n|importar/i,                 servicio:'Importados'},
+  {re:/domisanitario/i,                           servicio:'Domisanitarios'},
+  {re:/auditor[ií]a/i,                            servicio:'Auditorias'}
+];
+
+function leerMensajeWhatsApp(texto){
+  const crudo = String(texto || '').trim();
+  const filas = crudo.split('\n').map(l => l.trim()).filter(Boolean);
+  const campos = {};
+  filas.forEach(l => {
+    const m = /^([A-Za-zÁÉÍÓÚÑáéíóúñ° ./]{2,32})\s*:\s*(.+)$/.exec(l);
+    if(m) campos[m[1].trim().toLowerCase()] = m[2].trim();
+  });
+
+  const dato = (...claves) => {
+    for(const k of claves) if(campos[k]) return campos[k];
+    return '';
+  };
+  // El servicio sale de la primera línea (la que dice de dónde viene).
+  const origen = filas[0] || '';
+  const hallado = SERVICIOS_WEB.find(s => s.re.test(origen)) || SERVICIOS_WEB.find(s => s.re.test(crudo));
+  const ubicacion = dato('ubicación','ubicacion','jurisdicción','jurisdiccion');
+  let categoria = '';
+  if(/caba|ciudad/i.test(ubicacion)) categoria = 'AGC';
+  else if(/provincia de buenos aires|pba/i.test(ubicacion)) categoria = 'DIPA';
+  else if(/otra provincia/i.test(ubicacion)) categoria = 'SiFega';
+
+  // Las respuestas que no son nombre ni empresa describen el interés.
+  const omitir = ['nombre','empresa','teléfono','telefono','email','mail'];
+  const detalles = Object.keys(campos).filter(k => !omitir.includes(k))
+    .map(k => k.charAt(0).toUpperCase()+k.slice(1)+': '+campos[k]);
+
+  const tel = (crudo.match(/(?:\+?54\s?9?[\s-]?)?(?:11|\d{2,4})[\s-]?\d{3,4}[\s-]?\d{4}/) || [''])[0];
+
+  return {
+    nombre: dato('nombre'),
+    empresa: dato('empresa'),
+    email: dato('email','mail','correo'),
+    telefono: dato('teléfono','telefono','whatsapp','celular') || tel,
+    servicio: hallado ? hallado.servicio : '',
+    categoria,
+    interes: detalles.join(' · '),
+    esDelSitio: /bfood\.com\.ar/i.test(crudo),
+    campos, crudo
+  };
+}
+
+function formLeadWhatsApp(){
+  abrirModal('Nuevo lead desde WhatsApp', `
+    <p style="font-size:.87rem;margin-bottom:.8rem">
+      Copiá el mensaje que te llegó y pegalo acá. Si vino de un formulario del sitio,
+      se completan solos el nombre, la empresa, el servicio y la jurisdicción.</p>
+    <div class="campo">
+      <label>Mensaje recibido</label>
+      <textarea name="mensaje" rows="8" oninput="previsualizarWhatsApp(this.value)"
+        placeholder="Hola! Vengo desde la guía de RNPA de bfood.com.ar…&#10;Nombre: …&#10;Empresa: …"></textarea>
+    </div>
+    <div class="campo">
+      <label>Teléfono <span class="op">(si no viene en el mensaje)</span></label>
+      <input type="text" name="telefonoManual" placeholder="11 6789-0123"/>
+    </div>
+    <div id="previa-wa"></div>
+  `, {ancho:true, botones:[
+    {et:'Cancelar', accion:'cerrarModal()'},
+    {et:'Crear lead', accion:'guardarModal()', pri:true}
+  ], alGuardar(d){
+    if(!d.mensaje){ toast('Pegá el mensaje.'); return false; }
+    const r = leerMensajeWhatsApp(d.mensaje);
+    if(!r.nombre && !d.telefonoManual && !r.telefono){
+      toast('No encontré el nombre. Escribilo en el mensaje como "Nombre: …" o cargá el teléfono.');
+      return false;
+    }
+    const lead = {
+      id:uid(), notas:[{fecha:hoy(), texto:r.crudo}],
+      nombre: r.nombre || ('Contacto ' + (d.telefonoManual || r.telefono)),
+      empresa: r.empresa, email: r.email,
+      telefono: d.telefonoManual || r.telefono,
+      fuente: r.esDelSitio ? 'Web' : 'WhatsApp', fuenteDetalle:'',
+      estado:'primer_contacto', servicio:r.servicio, categoria:r.categoria,
+      interes:r.interes, monto:0, moneda:'ARS',
+      cotizacionUSD:num(DB.config.cotizacionUSD), probabilidad:'',
+      fechaContacto:hoy(), fechaPresupuesto:'', proximoSeguimiento:sumarDias(hoy(),2),
+      fechaCierre:'', motivo:''
+    };
+    DB.leads.push(lead);
+    refrescar();
+    toast('Lead creado desde el mensaje.');
+    setTimeout(() => verLead(lead.id), 0);
+  }});
+}
+
+function previsualizarWhatsApp(texto){
+  const cont = document.getElementById('previa-wa');
+  if(!cont) return;
+  if(!texto.trim()){ cont.innerHTML = ''; return; }
+  const r = leerMensajeWhatsApp(texto);
+  const fila = (k,v) => v ? `<div class="dato"><span class="k">${esc(k)}</span><span class="v">${esc(v)}</span></div>` : '';
+  const algo = r.nombre || r.empresa || r.servicio || r.interes;
+  cont.innerHTML = `<div class="seccion-form"><h3>Lo que entendí</h3>
+    ${algo ? `
+      ${fila('Nombre', r.nombre)}
+      ${fila('Empresa', r.empresa)}
+      ${fila('Teléfono', r.telefono)}
+      ${fila('Email', r.email)}
+      ${fila('Fuente', r.esDelSitio ? 'Web' : 'WhatsApp')}
+      ${fila('Servicio', r.servicio)}
+      ${fila('Categoría', r.categoria)}
+      ${fila('Interés', r.interes)}`
+    : `<div class="aviso info">No reconocí campos con formato <b>Campo: valor</b>.
+        Se va a guardar el mensaje completo como nota y el resto lo completás a mano.</div>`}
   </div>`;
 }
 
