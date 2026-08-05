@@ -302,12 +302,12 @@
     <form id="form-dt" style="display:flex;flex-direction:column;gap:.9rem">
         <input type="text" id="q-dt-nombre" placeholder="Tu nombre" required style="padding:.85rem 1.1rem;border:1.5px solid rgba(255,255,255,.2);border-radius:2px;background:rgba(255,255,255,.08);color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;outline:none;width:100%"/>
         <input type="text" id="q-dt-empresa" placeholder="Empresa"  style="padding:.85rem 1.1rem;border:1.5px solid rgba(255,255,255,.2);border-radius:2px;background:rgba(255,255,255,.08);color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;outline:none;width:100%"/>
-        <select id="q-dt-rne" required style="padding:.85rem 1.1rem;border:1.5px solid rgba(255,255,255,.2);border-radius:2px;background:rgba(255,255,255,.08);color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;outline:none;width:100%;cursor:pointer">
-          <option value="" disabled selected style="color:#1e1e1e">¿Tenés RNE vigente?</option>
-          <option value="Sí, vigente" style="color:#1e1e1e">Sí, vigente</option>
-          <option value="En trámite" style="color:#1e1e1e">En trámite</option>
-          <option value="Todavía no" style="color:#1e1e1e">Todavía no</option>
-          <option value="No estoy seguro/a" style="color:#1e1e1e">No estoy seguro/a</option>
+        <select id="q-dt-situacin" required style="padding:.85rem 1.1rem;border:1.5px solid rgba(255,255,255,.2);border-radius:2px;background:rgba(255,255,255,.08);color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;outline:none;width:100%;cursor:pointer">
+          <option value="" disabled selected style="color:#1e1e1e">¿Cómo estás hoy con la Dirección Técnica?</option>
+          <option value="Es la primera vez que necesito DT" style="color:#1e1e1e">Es la primera vez que necesito DT</option>
+          <option value="Tengo DT y quiero cambiar" style="color:#1e1e1e">Tengo DT y quiero cambiar</option>
+          <option value="Se dio de baja y necesito reemplazo" style="color:#1e1e1e">Se dio de baja y necesito reemplazo</option>
+          <option value="Me lo pidió la autoridad" style="color:#1e1e1e">Me lo pidió la autoridad</option>
         </select>
         <select id="q-dt-cantidaddeproductos" required style="padding:.85rem 1.1rem;border:1.5px solid rgba(255,255,255,.2);border-radius:2px;background:rgba(255,255,255,.08);color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;outline:none;width:100%;cursor:pointer">
           <option value="" disabled selected style="color:#1e1e1e">¿Cuántos productos tenés en el catálogo?</option>
@@ -333,7 +333,7 @@
         var lineas = ['Hola! Vengo de la página de Dirección Técnica de bfood.com.ar. Quiero presupuestar el servicio.'];
         var v = document.getElementById('q-dt-nombre').value.trim(); if (v) lineas.push('Nombre: ' + v);
         var v = document.getElementById('q-dt-empresa').value.trim(); if (v) lineas.push('Empresa: ' + v);
-        var v = document.getElementById('q-dt-rne').value.trim(); if (v) lineas.push('RNE: ' + v);
+        var v = document.getElementById('q-dt-situacin').value.trim(); if (v) lineas.push('Situación: ' + v);
         var v = document.getElementById('q-dt-cantidaddeproductos').value.trim(); if (v) lineas.push('Cantidad de productos: ' + v);
         var v = document.getElementById('q-dt-ubicacin').value.trim(); if (v) lineas.push('Ubicación: ' + v);
         var v = document.getElementById('q-dt-rubro').value.trim(); if (v) lineas.push('Rubro: ' + v);

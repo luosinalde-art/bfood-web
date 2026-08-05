@@ -47,7 +47,7 @@
         "name": "¿Cuánto dura el Carnet de Manipulación de Alimentos?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "El Carnet de Manipulación de Alimentos tiene una validez de 3 años desde su emisión. Al vencimiento, el operario debe renovarlo realizando una nueva capacitación."
+          "text": "El Carnet de Manipulación de Alimentos tiene una validez de 3 años desde su emisión. Vencido ese plazo no hay un trámite de renovación: el manipulador debe volver a realizar el curso completo y rendir el examen para obtener un carnet nuevo."
         }
       },
       {
@@ -294,7 +294,7 @@
         <div class="service-step">
           <div class="step-num">04</div>
           <h3>Gestión del vencimiento</h3>
-          <p>Llevamos el registro del vencimiento de cada carnet de tu personal. Antes del vencimiento te avisamos para renovar y evitar que tu empresa quede expuesta ante una inspección.</p>
+          <p>Llevamos el registro del vencimiento de cada carnet de tu personal. Antes de que venza te avisamos para coordinar el nuevo curso y evitar que tu empresa quede expuesta ante una inspección.</p>
         </div>
       </div>
       <h2>¿Por qué elegir BFood?</h2>
@@ -317,7 +317,7 @@
         </div>
         <div class="faq-item">
           <button class="faq-q" aria-expanded="false">¿Cuánto dura el carnet?<span class="faq-arrow">▼</span></button>
-          <div class="faq-a">El Carnet de Manipulación de Alimentos tiene una validez de 3 años desde su emisión, en todo el territorio nacional. Al vencerse, el operario debe renovarlo realizando una nueva capacitación.</div>
+          <div class="faq-a">El Carnet de Manipulación de Alimentos tiene una validez de 3 años desde su emisión, en todo el territorio nacional. Vencido ese plazo no hay un trámite de renovación: el manipulador debe volver a realizar el curso completo y rendir el examen para obtener un carnet nuevo.</div>
         </div>
         <div class="faq-item">
           <button class="faq-q" aria-expanded="false">¿Qué diferencia hay con el curso público gratuito?<span class="faq-arrow">▼</span></button>
@@ -347,7 +347,7 @@
       <div class="sidebar-card">
         <h3>¿Tiene carnets por vencer?</h3>
         <p>El carnet dura 3 años. Muchas empresas descubren que están vencidos cuando llega la inspección. Mejor anticiparse.</p>
-        <a href="https://wa.me/5491178204883?text=Hola%2C%20quiero%20consultar%20sobre%20renovaci%C3%B3n%20de%20carnets%20de%20manipulaci%C3%B3n%20de%20alimentos.%20Te%20escribo%20desde%20bfood.com.ar." target="_blank" rel="noopener" class="btn btn-outline" style="width:100%;justify-content:center;margin-top:.4rem">Consultar renovación</a>
+        <a href="https://wa.me/5491178204883?text=Hola%2C%20quiero%20consultar%20sobre%20carnets%20de%20manipulaci%C3%B3n%20de%20alimentos%20que%20est%C3%A1n%20por%20vencer.%20Te%20escribo%20desde%20bfood.com.ar." target="_blank" rel="noopener" class="btn btn-outline" style="width:100%;justify-content:center;margin-top:.4rem">Consultar renovación</a>
       </div>
       <div class="sidebar-card sidebar-services">
         <h3>Todos los servicios</h3>
@@ -381,11 +381,12 @@
           <option value="21 a 50" style="color:#1e1e1e">21 a 50</option>
           <option value="Más de 50" style="color:#1e1e1e">Más de 50</option>
         </select>
-        <select id="q-cma-instancia" required style="padding:.85rem 1.1rem;border:1.5px solid rgba(255,255,255,.2);border-radius:2px;background:rgba(255,255,255,.08);color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;outline:none;width:100%;cursor:pointer">
-          <option value="" disabled selected style="color:#1e1e1e">¿Primera vez o renovación?</option>
-          <option value="Primera vez" style="color:#1e1e1e">Primera vez</option>
-          <option value="Renovación" style="color:#1e1e1e">Renovación</option>
-          <option value="Mixto" style="color:#1e1e1e">Mixto</option>
+        <select id="q-cma-plazo" required style="padding:.85rem 1.1rem;border:1.5px solid rgba(255,255,255,.2);border-radius:2px;background:rgba(255,255,255,.08);color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;outline:none;width:100%;cursor:pointer">
+          <option value="" disabled selected style="color:#1e1e1e">¿Para cuándo lo necesitás?</option>
+          <option value="Lo antes posible" style="color:#1e1e1e">Lo antes posible</option>
+          <option value="En el próximo mes" style="color:#1e1e1e">En el próximo mes</option>
+          <option value="En 2 o 3 meses" style="color:#1e1e1e">En 2 o 3 meses</option>
+          <option value="Estoy averiguando" style="color:#1e1e1e">Estoy averiguando</option>
         </select>
         <select id="q-cma-ubicacin" required style="padding:.85rem 1.1rem;border:1.5px solid rgba(255,255,255,.2);border-radius:2px;background:rgba(255,255,255,.08);color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;outline:none;width:100%;cursor:pointer">
           <option value="" disabled selected style="color:#1e1e1e">¿En qué jurisdicción?</option>
@@ -406,7 +407,7 @@
         var v = document.getElementById('q-cma-nombre').value.trim(); if (v) lineas.push('Nombre: ' + v);
         var v = document.getElementById('q-cma-empresa').value.trim(); if (v) lineas.push('Empresa: ' + v);
         var v = document.getElementById('q-cma-cantidaddepersonas').value.trim(); if (v) lineas.push('Cantidad de personas: ' + v);
-        var v = document.getElementById('q-cma-instancia').value.trim(); if (v) lineas.push('Instancia: ' + v);
+        var v = document.getElementById('q-cma-plazo').value.trim(); if (v) lineas.push('Plazo: ' + v);
         var v = document.getElementById('q-cma-ubicacin').value.trim(); if (v) lineas.push('Ubicación: ' + v);
         var v = document.getElementById('q-cma-rubro').value.trim(); if (v) lineas.push('Rubro: ' + v);
         window.open('https://wa.me/5491178204883?text=' + encodeURIComponent(lineas.join('\n')), '_blank');
