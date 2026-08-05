@@ -4,6 +4,28 @@ Sitio web de BFood Consultoría Alimentaria — https://www.bfood.com.ar
 
 Sitio estático (HTML) desplegado en Vercel.
 
+## Plataforma de gestión (`gestion.html`)
+
+Herramienta interna para el circuito comercial: **lead → discovery → presupuesto → seguimiento
+→ alta de cliente → tareas del mes → facturación**.
+
+Es un único archivo HTML autocontenido: se abre con doble clic (no necesita servidor, internet
+ni instalación) y guarda todo en el `localStorage` del navegador. No se publica en el sitio —
+está excluido del deploy (`.vercelignore`) y de la auditoría de SEO.
+
+Qué incluye:
+
+- **Panel** con lo que requiere atención: presupuestos sin respuesta, seguimientos pautados, facturas vencidas y ajustes de honorarios pendientes.
+- **Embudo** con los estados reales de la planilla de seguimiento (primer contacto → discovery → presupuesto enviado → verbal → ganado, más no califica, alianza, no contesta y perdido), cada uno con su probabilidad de cierre. Calcula el **ticket anual en dólares** (×12 para los servicios mensuales) y el **ponderado** con las mismas fórmulas de la planilla, y filtra por fuente, servicio y texto.
+- **Importación del embudo**: *Datos → Importar embudo (CSV)* lee la planilla exportada tal como está. Muestra una vista previa, no duplica lo ya cargado (clave: cliente + fecha + servicio) y opcionalmente da de alta cliente, proyecto y factura por cada lead ganado.
+- **Presupuestos** armados desde un catálogo de 16 servicios, con alcance, entregables, plan de trabajo, hitos de pago y vista imprimible que se exporta a PDF con `Ctrl+P`. Cotiza por monto fijo, por horas o por planes, en pesos o dólares. Un presupuesto puede **combinar varios servicios** del catálogo —se eligen con casillas al crearlo, o se suman después—, y los ítems marcados como **mensuales** se separan del total: los hitos se calculan sobre el trabajo único y el abono se factura aparte cada mes.
+- **Alta de cliente**: al aceptar un presupuesto se crean el cliente, el proyecto, las tareas de cada fase y el plan de facturación de cada hito. Marcar un lead como *Ganado* ofrece el mismo alta sin pasar por un presupuesto, y el embudo avisa si quedó algún ganado sin cliente activo.
+- **Mi mes**: checklist mensual por cliente. Los servicios recurrentes (Dirección Técnica, auditorías, SGC) regeneran sus tareas y su abono cada mes.
+- **Facturación**: se registra el comprobante emitido en ARCA y después el cobro; controla vencimientos y totales por moneda.
+
+> **Respaldo:** los datos viven solo en ese navegador. Desde *Datos → Descargar respaldo* se
+> baja un `.json` que después se restaura desde la misma pantalla. Conviene hacerlo seguido.
+
 ## Auditoría automática de SEO/GEO
 
 El repositorio incluye un auditor de SEO y GEO (optimización para motores de IA) que revisa todas las páginas:
