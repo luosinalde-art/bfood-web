@@ -26,6 +26,10 @@ Qué incluye:
 > **Respaldo:** los datos viven solo en ese navegador. Desde *Datos → Descargar respaldo* se
 > baja un `.json` que después se restaura desde la misma pantalla. Conviene hacerlo seguido.
 
+> **Importar presupuestos (suma):** *Datos → Importar presupuestos* agrega los registros de un
+> `.json` sin pisar nada de lo ya cargado —a diferencia de *Restaurar*, que reemplaza todo—.
+> Los ítems sin precio cargado se imprimen como *A definir* en lugar de `$ 0`.
+
 ## Auditoría automática de SEO/GEO
 
 El repositorio incluye un auditor de SEO y GEO (optimización para motores de IA) que revisa todas las páginas:

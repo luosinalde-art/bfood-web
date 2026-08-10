@@ -1444,6 +1444,9 @@ function fmt(n, moneda){
   }
 }
 function num(v){ const n = Number(v); return isNaN(n) ? 0 : n; }
+// Precio que todavía no se cargó: en la propuesta no conviene mostrar "$ 0".
+function sinCargar(v){ return v === null || v === undefined || v === ''; }
+function fmtOpc(n, moneda){ return sinCargar(n) ? 'A definir' : fmt(n, moneda); }
 
 function toast(msg){
   const t = document.getElementById('toast');
@@ -4380,6 +4383,8 @@ function vistaDatos(){
         <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem">
           <button class="btn pri" onclick="exportarDatos()">Descargar respaldo (.json)</button>
           <button class="btn" onclick="abrirImportador()">Importar embudo (.csv)</button>
+          <button class="btn" onclick="document.getElementById('archivo-lote').click()">Importar presupuestos (suma)</button>
+          <input type="file" id="archivo-lote" accept="application/json,.json" style="display:none" onchange="importarLote(this)"/>
           <button class="btn" onclick="document.getElementById('archivo-import').click()">Restaurar desde archivo</button>
           <input type="file" id="archivo-import" accept="application/json,.json" style="display:none" onchange="importarDatos(this)"/>
         </div>
@@ -4530,6 +4535,40 @@ function importarDatos(input){
       refrescar();
       toast('Respaldo restaurado.');
     }, 'Restaurar');
+    input.value = '';
+  };
+  lector.readAsText(archivo);
+}
+
+/* Importación que SUMA, a diferencia de "Restaurar respaldo" que reemplaza todo.
+   Sirve para incorporar presupuestos armados aparte sin perder lo que ya hay. */
+function importarLote(input){
+  const archivo = input.files && input.files[0];
+  if(!archivo) return;
+  const lector = new FileReader();
+  lector.onload = e => {
+    let datos;
+    try{ datos = JSON.parse(e.target.result); }
+    catch(err){ toast('El archivo no es un JSON válido.'); input.value=''; return; }
+    const colecciones = ['leads','clientes','presupuestos','proyectos','tareas','facturas'];
+    const nuevos = {}, repetidos = {};
+    colecciones.forEach(c => {
+      const entrantes = Array.isArray(datos[c]) ? datos[c] : [];
+      const existentes = new Set((DB[c] || []).map(x => x.id));
+      nuevos[c] = entrantes.filter(x => x && x.id && !existentes.has(x.id));
+      repetidos[c] = entrantes.length - nuevos[c].length;
+    });
+    const total = colecciones.reduce((a,c) => a + nuevos[c].length, 0);
+    if(!total){ toast('No hay nada nuevo para importar.'); input.value=''; return; }
+    const detalle = colecciones.filter(c => nuevos[c].length)
+      .map(c => `<b>${nuevos[c].length}</b> ${c}`).join(' · ');
+    const yaEstaban = colecciones.reduce((a,c) => a + repetidos[c], 0);
+    confirmar('Importar', `Se van a agregar ${detalle}.${yaEstaban ? `<br/><br/>Hay ${yaEstaban} registro(s) que ya tenías: esos se omiten.` : ''}<br/><br/>No se borra ni se pisa nada de lo que ya está cargado.`, () => {
+      colecciones.forEach(c => { DB[c] = (DB[c] || []).concat(nuevos[c]); });
+      refrescar();
+      ir('presupuestos');
+      toast(`Importados ${total} registro(s).`);
+    }, 'Importar');
     input.value = '';
   };
   lector.readAsText(archivo);
@@ -5082,8 +5121,8 @@ function vistaImprimir(id){
           ${(p.items||[]).map(i => `<tr>
             <td><b>${esc(i.concepto)}</b>${i.mensual?' <span style="font-size:.75rem;color:#666">(mensual)</span>':''}</td>
             <td>${esc(i.detalle||'')}</td>
-            <td class="num">${num(i.cantidad||1)}</td><td class="num">${fmt(i.precioUnit, p.moneda)}</td>
-            <td class="num">${fmt(num(i.cantidad||1)*num(i.precioUnit), p.moneda)}${i.mensual?' / mes':''}</td>
+            <td class="num">${num(i.cantidad||1)}</td><td class="num">${fmtOpc(i.precioUnit, p.moneda)}</td>
+            <td class="num">${sinCargar(i.precioUnit) ? 'A definir' : fmt(num(i.cantidad||1)*num(i.precioUnit), p.moneda)+(i.mensual?' / mes':'')}</td>
           </tr>`).join('')}
           ${num(t.total) ? `<tr class="total"><td colspan="4">Total de honorarios${num(t.mensual)?' — trabajo único':''}</td><td class="num">${fmt(t.total, p.moneda)}</td></tr>` : ''}
           ${num(t.mensual) ? `<tr class="total"><td colspan="4">Abono mensual</td><td class="num">${fmt(t.mensual, p.moneda)} / mes</td></tr>` : ''}
@@ -5104,7 +5143,7 @@ function vistaImprimir(id){
         <thead><tr><th style="width:22%">Hito</th><th>Cuándo se factura</th><th class="num" style="width:10%">%</th><th class="num" style="width:22%">Importe</th></tr></thead>
         <tbody>${p.hitos.map(h => `<tr>
           <td><b>${esc(h.nombre)}</b></td><td>${esc(h.condicion||'')}</td>
-          <td class="num">${num(h.pct)}%</td><td class="num">${fmt(baseHitos(p)*num(h.pct)/100, p.moneda)}</td>
+          <td class="num">${num(h.pct)}%</td><td class="num">${num(baseHitos(p)) ? fmt(baseHitos(p)*num(h.pct)/100, p.moneda) : 'A definir'}</td>
         </tr>`).join('')}</tbody>
       </table>
       ${num(t.mensual) && num(t.total) ? `<p style="font-size:.85rem">El abono mensual de <b>${fmt(t.mensual, p.moneda)}</b> se factura por mes adelantado, independientemente de los hitos.</p>` : ''}` : ''}
