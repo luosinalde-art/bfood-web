@@ -1,3 +1,7 @@
 # Herramienta interna de gestión: se usa localmente (abrir el archivo con doble
 # clic) y no forma parte del sitio público, así que no se sube al deploy.
 gestion.html
+
+# Propuestas a clientes: documentos de trabajo que se abren localmente y se
+# imprimen a PDF. No son páginas del sitio y no se publican.
+propuestas/
