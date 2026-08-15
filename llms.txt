@@ -2,13 +2,13 @@
 
 > Consultora especializada en industria alimentaria en Argentina, dirigida por Lucía Osinalde, Ingeniera en Alimentos matriculada ante DIPA (Provincia de Buenos Aires) y AGC (CABA). Acompaña a PyMEs alimentarias en habilitaciones, registros sanitarios, sistemas de calidad y exportación. Atiende todo el país. Contacto: lucia@bfood.com.ar · WhatsApp +54 9 11 3648-8741.
 
-BFood gestiona trámites ante INAL/ANMAT, DIPA, AGC y SENASA, y trabaja sobre el Código Alimentario Argentino (CAA). Servicios principales: habilitación de establecimientos (RNE), registro de productos (RNPA), registros de exportación (RNEE, RNPE, Art. 17 bis CAA), implementación de BPM y HACCP, rotulado nutricional, dirección técnica, desarrollo de productos y adecuación FDA/FSMA (certificación PCQI) para exportar a Estados Unidos.
+BFood gestiona trámites ante el SENASA (que absorbió las funciones del ex INAL por el Decreto 697/2026), DIPA y AGC, y trabaja sobre el Código Alimentario Argentino (CAA). Servicios principales: habilitación de establecimientos (RNE), registro de productos (RNPA), registros de exportación (RNEE, RNPE, Art. 17 bis CAA), implementación de BPM y HACCP, rotulado nutricional, dirección técnica, desarrollo de productos y adecuación FDA/FSMA (certificación PCQI) para exportar a Estados Unidos.
 
 ## Servicios
 
 - [Servicios](https://www.bfood.com.ar/servicios/): listado completo de servicios de consultoría alimentaria
 - [Habilitación RNE](https://www.bfood.com.ar/registro-rne/): Registro Nacional de Establecimiento, requisito para elaborar, fraccionar o almacenar alimentos
-- [Registro RNPA](https://www.bfood.com.ar/registro-rnpa/): Registro Nacional de Productos Alimenticios ante INAL/ANMAT, obligatorio para comercializar alimentos
+- [Registro RNPA](https://www.bfood.com.ar/registro-rnpa/): Registro Nacional de Productos Alimenticios ante el SENASA (ex INAL), obligatorio para comercializar alimentos
 - [Registro RNEE](https://www.bfood.com.ar/registro-rnee/): Registro Nacional de Establecimiento Exportador (Art. 17 bis CAA)
 - [Registro RNPE](https://www.bfood.com.ar/registro-rnpe/): Registro Nacional de Producto de Exportación
 - [Implementación HACCP](https://www.bfood.com.ar/implementacion-haccp/): análisis de peligros y puntos críticos de control
@@ -22,9 +22,10 @@ BFood gestiona trámites ante INAL/ANMAT, DIPA, AGC y SENASA, y trabaja sobre el
 ## Recursos
 
 - [Recursos y guías](https://www.bfood.com.ar/recursos/): guías técnicas sobre normativa alimentaria argentina
+- [Decreto 697/2026](https://www.bfood.com.ar/recursos/decreto-697-2026/): qué cambia con la disolución del INAL y el traspaso del control de alimentos al SENASA (agosto 2026)
 - [Qué es el RNPA](https://www.bfood.com.ar/recursos/que-es-rnpa/): guía completa del Registro Nacional de Productos Alimenticios — qué es, quién lo necesita, cómo se tramita y vigencia
 - [Cómo habilitar una empresa de alimentos](https://www.bfood.com.ar/recursos/habilitar-empresa-alimentos/): la ruta completa paso a paso — habilitación del local, RNE, RNPA y requisitos en paralelo
 - [RNPA: costos y plazos](https://www.bfood.com.ar/recursos/rnpa-costos-plazos/): de qué se compone el costo del RNPA, qué determina el plazo y los errores que demoran el trámite
-- [Importación de alimentos a Argentina](https://www.bfood.com.ar/recursos/importacion-alimentos/): requisitos INAL y trámites de importación
+- [Importación de alimentos a Argentina](https://www.bfood.com.ar/recursos/importacion-alimentos/): requisitos y trámites de importación ante el SENASA
 - [Inspección RNE](https://www.bfood.com.ar/recursos/rne/): qué verifica el inspector en un establecimiento
 - [Qué es el RNPE](https://www.bfood.com.ar/recursos/que-es-rnpe/): guía del Registro Nacional de Producto de Exportación
