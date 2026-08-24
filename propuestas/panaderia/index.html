@@ -175,6 +175,9 @@ th{
 td{padding:.75rem .9rem .75rem 0;border-bottom:1px solid var(--rule-soft);vertical-align:top;color:var(--ink-2)}
 td:first-child{color:var(--ink);font-weight:400}
 tbody tr:last-child td{border-bottom:0}
+td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink)}
+th.num{text-align:right}
+tr.total td{background:var(--green-pale);color:var(--ink);font-weight:500;border-bottom:0}
 
 /* ---------- criterios de corte ---------- */
 .triple{display:grid;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));gap:1.5rem;margin-top:1rem}
@@ -254,7 +257,7 @@ tbody tr:last-child td{border-bottom:0}
     <div><dt>Con la coordinación de</dt><dd>Diego, consultor de la empresa</dd></div>
     <div><dt>Por</dt><dd>Lucía Osinalde · BFood</dd></div>
     <div><dt>Fecha</dt><dd>Agosto de 2026</dd></div>
-    <div><dt>Horizonte</dt><dd>12 meses de proyecto + Dirección Técnica continua</dd></div>
+    <div><dt>Horizonte</dt><dd>8 meses hasta la habilitación + Dirección Técnica continua</dd></div>
   </dl>
 </header>
 
@@ -298,16 +301,17 @@ tbody tr:last-child td{border-bottom:0}
 <section class="wrap">
   <div class="section-head">
     <span class="eyebrow">El recorrido</span>
-    <h2>Seis etapas, en este orden</h2>
+    <h2>Siete etapas, en este orden</h2>
   </div>
-  <p>El orden no es arbitrario: cada etapa produce la información que necesita la siguiente. Las etapas 3 y 5 corren en paralelo, porque los ensayos de vida útil llevan meses de reloj y no tiene sentido frenar el diseño de la planta esperándolos.</p>
+  <p>El orden no es arbitrario: cada etapa produce la información que necesita la siguiente. Varias corren en paralelo: los ensayos de vida útil llevan meses de reloj y no tiene sentido frenar el diseño de la planta esperándolos.</p>
   <div class="map">
-    <div class="map-row"><span class="n">1</span><span class="t">Relevamiento de la cartera</span><span class="d">Qué se produce, cómo, para qué canal y con qué riesgo asociado</span><span class="w">3 a 4 semanas</span></div>
-    <div class="map-row"><span class="n">2</span><span class="t">Plan de vida útil</span><span class="d">El protocolo: qué se ensaya, cuándo se muestrea y con qué criterio se corta</span><span class="w">2 a 3 semanas</span></div>
-    <div class="map-row"><span class="n">3</span><span class="t">Ensayos con laboratorio externo</span><span class="d">Ejecución, seguimiento e interpretación de los resultados</span><span class="w">3 a 6 meses</span></div>
-    <div class="map-row"><span class="n">4</span><span class="t">Extensión de la vida útil</span><span class="d">Proceso, barreras y aditivos donde haga falta, con revalidación</span><span class="w">2 a 3 meses</span></div>
-    <div class="map-row"><span class="n">5</span><span class="t">Layout de la planta nueva</span><span class="d">Sectores, circuitos y requisitos sanitarios, antes de la obra</span><span class="w">6 a 8 semanas</span></div>
-    <div class="map-row"><span class="n">6</span><span class="t">Dirección Técnica</span><span class="d">Habilitación de la planta y conducción técnica permanente</span><span class="w">Continuo</span></div>
+    <div class="map-row"><span class="n">1</span><span class="t">Relevamiento de la cartera</span><span class="d">Qué se produce, cómo, para qué canal y con qué riesgo asociado</span><span class="w">Mes 1</span></div>
+    <div class="map-row"><span class="n">2</span><span class="t">Plan de vida útil</span><span class="d">El protocolo: qué se ensaya, cuándo se muestrea y con qué criterio se corta</span><span class="w">Mes 2</span></div>
+    <div class="map-row"><span class="n">3</span><span class="t">Ensayos con laboratorio externo</span><span class="d">Ejecución, seguimiento e interpretación de los resultados</span><span class="w">Meses 2 a 6</span></div>
+    <div class="map-row"><span class="n">4</span><span class="t">Extensión de la vida útil</span><span class="d">Proceso, barreras y aditivos donde haga falta, con revalidación</span><span class="w">Meses 4 a 6</span></div>
+    <div class="map-row"><span class="n">5</span><span class="t">Layout de la planta nueva</span><span class="d">Sectores, circuitos y requisitos sanitarios, antes de la obra</span><span class="w">Meses 3 a 5</span></div>
+    <div class="map-row"><span class="n">6</span><span class="t">Habilitación de la planta</span><span class="d">RNE, sistema documental y puesta en marcha con el personal</span><span class="w">Meses 7 y 8</span></div>
+    <div class="map-row"><span class="n">7</span><span class="t">Dirección Técnica</span><span class="d">Conducción técnica permanente del establecimiento</span><span class="w">Desde el mes 9</span></div>
   </div>
 </section>
 
@@ -536,19 +540,40 @@ tbody tr:last-child td{border-bottom:0}
   <div class="etapa">
     <div class="rail"><span class="num">6</span><span class="spine"></span></div>
     <div>
+      <h3>Habilitación de la planta nueva</h3>
+      <span class="plazo">Meses 7 y 8 · sobre el cierre de la obra</span>
+      <p class="obj">Objetivo: que la planta abra habilitada y con el sistema de calidad funcionando desde el primer día de producción.</p>
+
+      <p>Es la etapa más intensa del proyecto y la más acotada en el tiempo: concentra el trámite de habilitación, la construcción de todo el sistema documental y la capacitación del personal, y tiene que estar cerrada antes de que la planta empiece a producir. Una planta que arranca sin habilitación o sin registros no puede facturar lo que produce.</p>
+
+      <h4>Qué se hace en estos dos meses</h4>
+      <ul>
+        <li><strong>Habilitación del establecimiento.</strong> Gestión del RNE de la planta nueva ante la autoridad sanitaria competente, y traslado o alta de los RNPA de los productos al nuevo establecimiento.</li>
+        <li><strong>Sistema documental completo.</strong> BPM, POES, trazabilidad, control de proveedores, control de agua, manejo de plagas, calibración de instrumentos y procedimiento de retiro de producto del mercado.</li>
+        <li><strong>Plan HACCP.</strong> Construido sobre el análisis de peligros que salió de la etapa 1 y sobre el layout de la etapa 5, no sobre un modelo genérico descargado.</li>
+        <li><strong>Capacitación del personal.</strong> En el arranque, que es cuando se fijan las prácticas que después duran años. Incluye la formación de quienes van a tomar las muestras y llevar los registros.</li>
+        <li><strong>Verificación previa a la inspección.</strong> Recorrido de la planta terminada contra la lista de lo que va a mirar el inspector, con tiempo para corregir.</li>
+      </ul>
+
+      <h4>Entregables</h4>
+      <div class="deliv">
+        <div><h5>RNE de la planta nueva</h5><p>Trámite presentado y seguido hasta la obtención del certificado.</p></div>
+        <div><h5>Manuales y registros</h5><p>BPM, POES, HACCP y planillas de registro, en formato editable y listos para usar.</p></div>
+        <div><h5>Constancias de capacitación</h5><p>Del personal formado durante la puesta en marcha.</p></div>
+        <div><h5>Informe de verificación previa</h5><p>Estado de la planta frente a los requisitos de habilitación, con los puntos a corregir antes de la inspección.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ETAPA 7 -->
+  <div class="etapa">
+    <div class="rail"><span class="num">7</span><span class="spine"></span></div>
+    <div>
       <h3>Dirección Técnica de la planta</h3>
-      <span class="plazo">Desde la habilitación, con continuidad mensual</span>
-      <p class="obj">Objetivo: que la planta arranque habilitada y que lo construido en las etapas anteriores se sostenga en el tiempo.</p>
+      <span class="plazo">Desde el mes 9, con continuidad mensual</span>
+      <p class="obj">Objetivo: sostener en el tiempo todo lo construido en las etapas anteriores.</p>
 
       <p>La Dirección Técnica es una función personal y matriculada, ejercida en los términos del artículo 17 de la Resolución Conjunta SGS y SAGyP N.º 6/2025. La asumiría Lucía Osinalde, Ingeniera en Alimentos matriculada, como profesional responsable ante la autoridad sanitaria.</p>
-
-      <h4>Puesta en marcha</h4>
-      <ul>
-        <li>Habilitación de la planta nueva: RNE del establecimiento y traslado o alta de los RNPA de los productos.</li>
-        <li>Sistema documental completo: BPM, POES, trazabilidad, control de proveedores, agua, plagas, calibración y retiro de producto del mercado.</li>
-        <li>Plan HACCP construido sobre el análisis de peligros que sale de la etapa 1, no sobre un modelo genérico.</li>
-        <li>Capacitación del personal en el arranque, que es cuando se fijan las prácticas que después duran años.</li>
-      </ul>
 
       <h4>Régimen permanente</h4>
       <ul>
@@ -612,7 +637,49 @@ tbody tr:last-child td{border-bottom:0}
       </ul>
     </div>
   </div>
-  <div class="rule-note" style="margin-top:1.6rem">Los honorarios profesionales se presentan por separado, en una propuesta económica que acompaña a este documento y se acuerda junto con Diego. El proyecto puede tomarse completo o por etapas: cada una cierra con entregables propios y tiene valor por sí misma.</div>
+</section>
+
+<section class="wrap">
+  <div class="section-head">
+    <span class="eyebrow">Inversión</span>
+    <h2>Honorarios</h2>
+  </div>
+  <p>Los honorarios se facturan como un abono mensual, que acompaña la intensidad de trabajo de cada tramo del proyecto. No hay anticipo ni pago inicial: se factura mes a mes, contra el trabajo del período.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Tramo</th><th>Qué comprende</th><th class="num">Por mes</th><th class="num">Subtotal</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Meses 1 a 6</td>
+          <td>Etapas 1 a 5: relevamiento de la cartera, plan y ensayos de vida útil, extensión y layout de la planta nueva</td>
+          <td class="num">$&nbsp;700.000</td><td class="num">$&nbsp;4.200.000</td>
+        </tr>
+        <tr>
+          <td>Meses 7 y 8</td>
+          <td>Etapa 6: habilitación de la planta, sistema documental y puesta en marcha con el personal</td>
+          <td class="num">$&nbsp;1.300.000</td><td class="num">$&nbsp;2.600.000</td>
+        </tr>
+        <tr>
+          <td>Desde el mes 9</td>
+          <td>Etapa 7: Dirección Técnica del establecimiento, con continuidad mensual</td>
+          <td class="num">A convenir</td><td class="num">—</td>
+        </tr>
+        <tr class="total">
+          <td colspan="3">Total del proyecto, hasta dejar la planta habilitada</td>
+          <td class="num">$&nbsp;6.800.000</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Condiciones</h4>
+  <ul>
+    <li><strong>Facturación mensual, por mes adelantado,</strong> dentro de los primeros cinco días de cada mes. Transferencia bancaria a cinco días de presentada la factura. Factura C.</li>
+    <li><strong>Ajuste trimestral</strong> de los honorarios, tomando el mayor valor entre la variación del IPC Nivel General del INDEC del trimestre anterior y la tabla de honorarios mínimos sugeridos del CPIA vigente.</li>
+    <li><strong>La Dirección Técnica se acuerda antes de asumirla,</strong> según el alcance final de la planta, la cantidad de productos y la dedicación mensual que requiera. Se contrata por un mínimo de doce meses, renovable.</li>
+    <li><strong>Los valores no incluyen los costos de terceros</strong> detallados más arriba: laboratorio, aranceles oficiales, honorarios del proyectista y obra.</li>
+    <li><strong>El proyecto puede tomarse completo o por tramos.</strong> Cada etapa cierra con entregables propios y tiene valor por sí misma, aunque el resultado de las siguientes depende de las anteriores.</li>
+  </ul>
 </section>
 
 </main>
