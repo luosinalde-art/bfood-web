@@ -1,3 +1,6 @@
 # Herramienta interna de gestión: se usa localmente (abrir el archivo con doble
 # clic) y no forma parte del sitio público, así que no se sube al deploy.
 gestion.html
+
+# Documentación interna: no forma parte del sitio público.
+docs
