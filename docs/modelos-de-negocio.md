@@ -223,6 +223,65 @@ Un solo servicio de punta a punta, no siete a medias.
   resuelve con producto, no con reuniones: alcance cerrado y seña por adelantado filtran
   mejor que cualquier discovery.
 
+## 8. Qué se puede copiar y qué no
+
+El miedo a que los colegas copien el formato mezcla dos riesgos distintos, y se arreglan
+al revés uno del otro: **que salga algo flojo y dañe la reputación con clientes** (real, se
+resuelve con alcance chico y pilotos) y **que copien el modelo** (menos peligroso de lo que
+parece, y el secreto no es la defensa).
+
+### Ranking de copiabilidad
+
+| Qué | Copiable en | Por qué |
+|---|---|---|
+| Precio y página de venta | días | Está a la vista; siempre lo estuvo |
+| Kits documentales | inmediato | Un PDF se reenvía. Hay que asumirlo |
+| Curso online | meses | El contenido sí; el alta del curso ante el organismo, no |
+| Software de rótulo | meses, y ahí empieza el problema | Copiar el cálculo es fácil; mantenerlo actualizado por años es un costo fijo que el copiador no presupuestó |
+| Suscripción de cumplimiento | casi nunca | Hay que desplazar a la DT designada ante la autoridad y hacerse cargo de un legajo ajeno |
+| El corpus de casos | nunca | Cuántas veces observaron un expediente y por qué no está escrito en ningún lado |
+
+Lo copiable es lo barato del negocio; lo caro es lo que no se copia. Quien copia la página
+de rotulado copió el folleto, no el negocio.
+
+### El precio público es riesgoso para quien copia
+
+El precio fijo se publica *después* de medir las horas reales en diez entregas. Quien copia
+el número no midió nada: si le lleva 20 horas lo que acá lleva 6, firmó precio fijo y plazo
+garantizado sobre una estructura de costos que desconoce. Un precio publicado es una
+apuesta sobre la propia eficiencia.
+
+### Qué proteger, y cómo
+
+- **La marca.** El único activo realmente defendible y el más barato: registrar BFood en
+  INPI (servicios profesionales y capacitación), con un agente de la propiedad industrial.
+  El método se copia; el nombre no debería.
+- **La maquinaria, no la promesa.** Publicar resultado, alcance, plazo y precio; mantener
+  internos los checklists, plantillas, criterios de decisión y, sobre todo, las horas y
+  costos reales. Hoy eso ya está bien resuelto: el catálogo con precios vive en
+  `gestion.html`, fuera del deploy.
+- **Los materiales, versionados.** El derecho de autor protege la redacción concreta, no el
+  procedimiento: no impide que otro escriba su propio manual de BPM, sí que reparta el
+  nuestro. Fechar y versionar todo, y vender actualización en lugar de archivo — un kit del
+  Decreto 697/2026 sin mantenimiento es basura en un año. (A confirmar con abogado.)
+- **Contratos, al llegar a la red.** NDA y no competencia con los licenciados.
+
+### Cómo tener una v1 robusta sin exponerla
+
+No hace falta publicar para probar; lo que hace robusto a un producto no son más meses de
+preparación sino diez entregas reales. Piloto privado de 60-90 días: cinco clientes
+actuales o tibios, rotulado con alcance cerrado, precio fijo y plazo garantizado, sin
+página ni anuncio. Medir horas reales, reclamos y pedidos fuera de alcance; ajustar precio
+y exclusiones con datos; publicar después. La v1 pública va a ser, en los hechos, la v3.
+
+### La amenaza es el canal
+
+Los colegas que preocupan son el insumo del modelo 3.6. Un matriculado en otra provincia
+que hoy copiaría el formato preferiría usar la marca, las plantillas y los leads a cambio
+de un porcentaje, porque le sale más barato que construirlo. La pregunta no es cómo evitar
+que copien, sino a quién le conviene más copiar que asociarse — y cómo hacer que asociarse
+sea la opción obvia.
+
 ---
 
 Los precios citados salen del catálogo de la plataforma de gestión (referencias 2026) y
