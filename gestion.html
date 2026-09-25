@@ -5160,6 +5160,10 @@ function vistaImprimir(id){
     ${esModular(p) && p.condicionesPago ? `<h2>Condiciones de la oferta económica</h2>
       <ul>${lineas(p.condicionesPago).map(l => `<li>${esc(l)}</li>`).join('')}</ul>` : ''}
 
+    ${esModular(p) && (p.exclusiones||[]).length ? `<h2>No incluye</h2>
+      <div class="caja no"><ul>${p.exclusiones.map(r => `<li>${esc(r)}</li>`).join('')}</ul></div>` : ''}
+
+    ${esModular(p) && p.plazos ? `<h2>Plazos de ejecución</h2>${lineas(p.plazos).map(l => `<p>${esc(l)}</p>`).join('')}` : ''}
     ${!esModular(p) && p.plazos ? `<h2>Plazos de ejecución</h2>${lineas(p.plazos).map(l => `<p>${esc(l)}</p>`).join('')}` : ''}
     ${p.notas ? `<h2>Condiciones generales</h2>${lineas(p.notas).map(l => `<p>${esc(l)}</p>`).join('')}` : ''}
 
