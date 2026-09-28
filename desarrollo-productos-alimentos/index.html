@@ -142,7 +142,7 @@
     <a href="/#servicios" class="lnk">Servicios</a>
     <a href="/#proceso" class="lnk">Proceso</a>
     <a href="/#faq" class="lnk">Preguntas frecuentes</a>
-    <a href="https://wa.me/5491178204883?text=Hola!%20Vengo%20de%20la%20p%C3%A1gina%20de%20desarrollo%20de%20productos%20de%20bfood.com.ar.%20Quiero%20consultar%20por%20mi%20proyecto." target="_blank" rel="noopener" class="cta-btn">Agendar consulta gratuita</a>
+    <a href="https://wa.me/5491178204883?text=Hola!%20Vengo%20de%20la%20p%C3%A1gina%20de%20desarrollo%20de%20productos%20de%20bfood.com.ar.%20Quiero%20consultar%20por%20mi%20proyecto." target="_blank" rel="noopener" class="cta-btn">Agendá tu consulta técnica</a>
   </div>
 </nav>
 
@@ -250,7 +250,7 @@
     <div class="sidebar">
       <div class="sidebar-card">
         <h3>¿Necesitás ayuda?</h3>
-        <p>Consulta inicial gratuita y sin compromiso. En 30 minutos te decimos exactamente qué necesita tu empresa.</p>
+        <p>Contanos qué necesitás y te enviamos un presupuesto sin cargo, con alcance, plazos y costos. Las consultas técnicas puntuales son aranceladas.</p>
         <a href="https://wa.me/5491178204883?text=Hola!%20Vengo%20de%20la%20p%C3%A1gina%20de%20desarrollo%20de%20productos%20de%20bfood.com.ar.%20Quiero%20consultar%20por%20mi%20proyecto." target="_blank" rel="noopener" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:.4rem">💬 WhatsApp ahora</a>
       </div>
       <div class="sidebar-card sidebar-services">
@@ -339,10 +339,10 @@
 </section>
 
 <section class="cta-section">
-  <h2>¿Listo para empezar?<br/>La consulta inicial es gratuita.</h2>
-  <p>En 30 minutos analizamos tu situación y te decimos exactamente qué necesita tu empresa. Sin vueltas, sin costos ocultos.</p>
+  <h2>¿Listo para empezar?<br/>Pedí tu presupuesto sin cargo.</h2>
+  <p>Contanos qué necesitás y te enviamos una propuesta con alcance, plazos y costos definidos. Sin vueltas, sin costos ocultos.</p>
   <div class="cta-actions">
-    <a data-consulta href="https://wa.me/5491178204883?text=Hola%2C%20quiero%20agendar%20una%20consulta%20gratuita%20Te%20escribo%20desde%20bfood.com.ar." target="_blank" rel="noopener" class="btn btn-white">💬 Agendar consulta gratuita →</a>
+    <a data-consulta href="https://wa.me/5491178204883?text=Hola%2C%20quiero%20agendar%20una%20consulta%20t%C3%A9cnica%20Te%20escribo%20desde%20bfood.com.ar." target="_blank" rel="noopener" class="btn btn-white">💬 Agendá tu consulta técnica →</a>
     <a href="/" class="btn btn-outline-white">← Volver al inicio</a>
   </div>
 </section>
@@ -389,13 +389,18 @@
   <div style="background:#0d5230;border-radius:6px;max-width:460px;width:100%;padding:2rem 1.8rem;position:relative;margin:auto;box-shadow:0 20px 60px rgba(0,0,0,.4)">
     <button type="button" id="mc-cerrar" aria-label="Cerrar"
       style="position:absolute;top:.7rem;right:.9rem;background:none;border:none;color:rgba(255,255,255,.6);font-size:1.6rem;line-height:1;cursor:pointer">&times;</button>
-    <span style="font-size:.66rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#209d5c;display:block;margin-bottom:.6rem">Consulta gratuita</span>
+    <span style="font-size:.66rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#209d5c;display:block;margin-bottom:.6rem">Presupuesto o consulta técnica</span>
     <h2 id="mc-titulo" style="font-family:'Cormorant Garamond',serif;font-size:1.55rem;font-weight:700;color:#fff;line-height:1.2;margin:0 0 .6rem">Contanos brevemente qué necesitás</h2>
     <p style="font-size:.87rem;line-height:1.7;color:rgba(255,255,255,.72);margin:0 0 1.4rem">Con estos datos Lucía te puede responder con algo concreto en vez de arrancar de cero. Se abre WhatsApp con el mensaje ya escrito.</p>
     <form id="mc-form" style="display:flex;flex-direction:column;gap:.75rem">
       <input type="text" id="mc-nombre" placeholder="Tu nombre" required style="padding:.8rem 1rem;border:1.5px solid rgba(255,255,255,.2);border-radius:2px;background:rgba(255,255,255,.08);color:#fff;font-family:inherit;font-size:.93rem;outline:none;width:100%"/>
       <input type="text" id="mc-empresa" placeholder="Empresa o marca (opcional)" style="padding:.8rem 1rem;border:1.5px solid rgba(255,255,255,.2);border-radius:2px;background:rgba(255,255,255,.08);color:#fff;font-family:inherit;font-size:.93rem;outline:none;width:100%"/>
-      <select id="mc-tramite" required style="padding:.8rem 1rem;border:1.5px solid rgba(255,255,255,.2);border-radius:2px;background:rgba(255,255,255,.08);color:#fff;font-family:inherit;font-size:.93rem;outline:none;cursor:pointer;width:100%">
+      <select id="mc-tipo" required style="padding:.8rem 1rem;border:1.5px solid rgba(255,255,255,.2);border-radius:2px;background:rgba(255,255,255,.08);color:#fff;font-family:inherit;font-size:.93rem;outline:none;cursor:pointer;width:100%">
+          <option value="" disabled selected style="color:#1e1e1e">¿Qué necesitás?</option>
+          <option value="Un presupuesto para un servicio (sin cargo)" style="color:#1e1e1e">Un presupuesto para un servicio (sin cargo)</option>
+          <option value="Una consulta técnica puntual (arancelada)" style="color:#1e1e1e">Una consulta técnica puntual (arancelada)</option>
+        </select>
+        <select id="mc-tramite" required style="padding:.8rem 1rem;border:1.5px solid rgba(255,255,255,.2);border-radius:2px;background:rgba(255,255,255,.08);color:#fff;font-family:inherit;font-size:.93rem;outline:none;cursor:pointer;width:100%">
         <option value="" disabled style="color:#1e1e1e">¿Qué trámite o servicio necesitás?</option>
         <option value="RNPA" style="color:#1e1e1e">RNPA</option><option value="RNE" style="color:#1e1e1e">RNE</option><option value="RNEE" style="color:#1e1e1e">RNEE</option><option value="RNPE" style="color:#1e1e1e">RNPE</option><option value="Rotulado nutricional" style="color:#1e1e1e">Rotulado nutricional</option><option value="Desarrollo de producto" style="color:#1e1e1e" selected>Desarrollo de producto</option><option value="Dirección Técnica" style="color:#1e1e1e">Dirección Técnica</option><option value="Carnet de manipulación" style="color:#1e1e1e">Carnet de manipulación</option><option value="BPM" style="color:#1e1e1e">BPM</option><option value="HACCP" style="color:#1e1e1e">HACCP</option><option value="Exportación / FDA" style="color:#1e1e1e">Exportación / FDA</option><option value="Importación" style="color:#1e1e1e">Importación</option><option value="Domisanitarios" style="color:#1e1e1e">Domisanitarios</option><option value="Auditorías" style="color:#1e1e1e">Auditorías</option><option value="Todavía no sé" style="color:#1e1e1e">Todavía no sé</option>
       </select>
@@ -450,6 +455,7 @@
     e.preventDefault();
     var v = function(id){ var el = document.getElementById(id); return el ? el.value.trim() : ''; };
     var lineas = ['Hola! Te escribo desde bfood.com.ar. Quiero hacer una consulta.'];
+    if(v('mc-tipo'))     lineas.push('Necesito: ' + v('mc-tipo'));
     if(v('mc-nombre'))   lineas.push('Nombre: ' + v('mc-nombre'));
     if(v('mc-empresa'))  lineas.push('Empresa: ' + v('mc-empresa'));
     if(v('mc-tramite'))  lineas.push('Trámite: ' + v('mc-tramite'));
