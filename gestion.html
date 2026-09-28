@@ -4383,8 +4383,7 @@ function vistaDatos(){
         <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem">
           <button class="btn pri" onclick="exportarDatos()">Descargar respaldo (.json)</button>
           <button class="btn" onclick="abrirImportador()">Importar embudo (.csv)</button>
-          <button class="btn" onclick="document.getElementById('archivo-lote').click()">Importar presupuestos (suma)</button>
-          <input type="file" id="archivo-lote" accept="application/json,.json" style="display:none" onchange="importarLote(this)"/>
+          <button class="btn" onclick="abrirImportadorLote()">Importar presupuestos (suma)</button>
           <button class="btn" onclick="document.getElementById('archivo-import').click()">Restaurar desde archivo</button>
           <input type="file" id="archivo-import" accept="application/json,.json" style="display:none" onchange="importarDatos(this)"/>
         </div>
@@ -4542,36 +4541,71 @@ function importarDatos(input){
 
 /* Importación que SUMA, a diferencia de "Restaurar respaldo" que reemplaza todo.
    Sirve para incorporar presupuestos armados aparte sin perder lo que ya hay. */
-function importarLote(input){
+function abrirImportadorLote(){
+  abrirModal('Importar presupuestos', `
+    <p style="font-size:.88rem;margin-bottom:.9rem">
+      Agrega los registros del archivo <b>sin pisar nada</b> de lo que ya tenés cargado.
+      Si el explorador no te deja elegir el archivo —pasa seguido en el celular, porque lo
+      guarda como .txt— abrilo, copiá todo el texto y pegalo abajo.</p>
+    <div class="campo">
+      <label>Archivo .json</label>
+      <input type="file" accept=".json,.txt,application/json,text/plain" onchange="leerArchivoLote(this)"/>
+    </div>
+    <div class="campo">
+      <label>…o pegá el contenido acá</label>
+      <textarea id="lote-pegado" rows="5" placeholder='{"presupuestos": [ … ]}'></textarea>
+    </div>
+  `, {ancho:true, botones:[
+    {et:'Cancelar', accion:'cerrarModal()'},
+    {et:'Importar lo pegado', accion:'importarLotePegado()'}
+  ]});
+}
+
+function leerArchivoLote(input){
   const archivo = input.files && input.files[0];
   if(!archivo) return;
   const lector = new FileReader();
-  lector.onload = e => {
-    let datos;
-    try{ datos = JSON.parse(e.target.result); }
-    catch(err){ toast('El archivo no es un JSON válido.'); input.value=''; return; }
-    const colecciones = ['leads','clientes','presupuestos','proyectos','tareas','facturas'];
-    const nuevos = {}, repetidos = {};
-    colecciones.forEach(c => {
-      const entrantes = Array.isArray(datos[c]) ? datos[c] : [];
-      const existentes = new Set((DB[c] || []).map(x => x.id));
-      nuevos[c] = entrantes.filter(x => x && x.id && !existentes.has(x.id));
-      repetidos[c] = entrantes.length - nuevos[c].length;
-    });
-    const total = colecciones.reduce((a,c) => a + nuevos[c].length, 0);
-    if(!total){ toast('No hay nada nuevo para importar.'); input.value=''; return; }
-    const detalle = colecciones.filter(c => nuevos[c].length)
-      .map(c => `<b>${nuevos[c].length}</b> ${c}`).join(' · ');
-    const yaEstaban = colecciones.reduce((a,c) => a + repetidos[c], 0);
-    confirmar('Importar', `Se van a agregar ${detalle}.${yaEstaban ? `<br/><br/>Hay ${yaEstaban} registro(s) que ya tenías: esos se omiten.` : ''}<br/><br/>No se borra ni se pisa nada de lo que ya está cargado.`, () => {
-      colecciones.forEach(c => { DB[c] = (DB[c] || []).concat(nuevos[c]); });
-      refrescar();
-      ir('presupuestos');
-      toast(`Importados ${total} registro(s).`);
-    }, 'Importar');
-    input.value = '';
-  };
+  lector.onload = e => { input.value=''; fusionarLote(e.target.result); };
   lector.readAsText(archivo);
+}
+
+function importarLotePegado(){
+  const ta = document.getElementById('lote-pegado');
+  const txt = ta ? ta.value.trim() : '';
+  if(!txt){ toast('Pegá el contenido del archivo primero.'); return; }
+  fusionarLote(txt);
+}
+
+/* Importación que SUMA, a diferencia de "Restaurar respaldo" que reemplaza todo.
+   Sirve para incorporar presupuestos armados aparte sin perder lo que ya hay. */
+function fusionarLote(texto){
+  let datos;
+  try{ datos = JSON.parse(texto); }
+  catch(err){ toast('El contenido no es un JSON válido.'); return; }
+  const colecciones = ['leads','clientes','presupuestos','proyectos','tareas','facturas'];
+  const nuevos = {}, repetidos = {};
+  colecciones.forEach(c => {
+    const entrantes = Array.isArray(datos[c]) ? datos[c] : [];
+    const existentes = new Set((DB[c] || []).map(x => x.id));
+    nuevos[c] = entrantes.filter(x => x && x.id && !existentes.has(x.id));
+    repetidos[c] = entrantes.length - nuevos[c].length;
+  });
+  const total = colecciones.reduce((a,c) => a + nuevos[c].length, 0);
+  const yaEstaban = colecciones.reduce((a,c) => a + repetidos[c], 0);
+  if(!total){
+    toast(yaEstaban ? 'Eso ya lo tenías cargado: no hay nada nuevo.'
+                    : 'El archivo no trae presupuestos ni leads para importar.');
+    return;
+  }
+  const detalle = colecciones.filter(c => nuevos[c].length)
+    .map(c => `<b>${nuevos[c].length}</b> ${c}`).join(' · ');
+  cerrarModal();
+  confirmar('Importar', `Se van a agregar ${detalle}.${yaEstaban ? `<br/><br/>Hay ${yaEstaban} registro(s) que ya tenías: esos se omiten.` : ''}<br/><br/>No se borra ni se pisa nada de lo que ya está cargado.`, () => {
+    colecciones.forEach(c => { DB[c] = (DB[c] || []).concat(nuevos[c]); });
+    refrescar();
+    ir('presupuestos');
+    toast(`Importados ${total} registro(s).`);
+  }, 'Importar');
 }
 
 function borrarTodo(){
