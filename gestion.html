@@ -1525,6 +1525,12 @@ function baseHitos(p){
   const t = totalPresupuesto(p);
   return t.total > 0 ? t.total : num(t.mensual);
 }
+/* La lista de aranceles sirve para tasas oficiales y también para adicionales
+   fuera de alcance. El título decide cómo se imprime y si se totaliza. */
+const TIT_ARANCELES = 'Aranceles oficiales';
+const tituloAranceles = p => (p && p.arancelesTitulo) || TIT_ARANCELES;
+const arancelesOficiales = p => tituloAranceles(p) === TIT_ARANCELES;
+
 function totalAranceles(p){
   return (p.aranceles||[]).reduce((a,x)=> a + num(x.monto), 0);
 }
@@ -2536,6 +2542,7 @@ function crearPresupuesto(datos){
     planes: s && s.planes ? JSON.parse(JSON.stringify(s.planes)) : [],
     planElegido: s ? (s.planElegido||'') : '',
     aranceles: s ? JSON.parse(JSON.stringify(s.aranceles||[])) : [],
+    arancelesTitulo: s ? (s.arancelesTitulo||'') : '',
     requisitos: s ? (s.requisitos||[]).slice() : [],
     exclusiones: s ? (s.exclusiones||[]).slice() : [],
     hitos: s ? JSON.parse(JSON.stringify(s.hitos||[])) : [{nombre:'Anticipo',condicion:'Al aceptar la propuesta',pct:50},{nombre:'Saldo',condicion:'A la entrega final',pct:50}],
@@ -2574,6 +2581,7 @@ function fusionarServicio(p, s){
   (s.entregables || []).forEach(e => p.entregables.push(copia(e)));
   (s.fases || []).forEach(f => p.fases.push(copia(f)));
   (s.aranceles || []).forEach(a => p.aranceles.push(copia(a)));
+  if(s.arancelesTitulo && !p.arancelesTitulo) p.arancelesTitulo = s.arancelesTitulo;
 
   if((s.items || []).length){
     s.items.forEach(i => p.items.push(Object.assign(copia(i), {mensual: !!s.recurrente})));
@@ -2868,7 +2876,7 @@ function bloqueTotales(p){
       <div class="tot-linea"><span>Tarifa por hora</span><span class="v">${fmt(p.tarifaHora, p.moneda)}</span></div>` : ''}
     <div class="tot-linea"><span>Honorarios${num(t.mensual)?' de trabajo único':''}</span><span class="v">${t.rango && t.min!==t.max ? fmt(t.min,p.moneda)+' – '+fmt(t.max,p.moneda) : fmt(t.total,p.moneda)}</span></div>
     ${num(t.mensual) ? `<div class="tot-linea"><span>Abono mensual <span class="sec">(se factura todos los meses)</span></span><span class="v">${fmt(t.mensual,p.moneda)}</span></div>` : ''}
-    ${ar ? `<div class="tot-linea"><span>Aranceles oficiales <span class="sec">(no incluidos en los honorarios)</span></span><span class="v">${fmt(ar,p.moneda)}</span></div>` : ''}
+    ${ar && arancelesOficiales(p) ? `<div class="tot-linea"><span>${esc(tituloAranceles(p))} <span class="sec">(no incluidos en los honorarios)</span></span><span class="v">${fmt(ar,p.moneda)}</span></div>` : ''}
     <div class="tot-linea grande"><span>Total del presupuesto</span><span class="v">${textoTotal(p)}</span></div>
     <div style="margin-top:.8rem">
       ${num(t.mensual) && num(t.total) ? `<p class="sec" style="font-size:.78rem;color:var(--gris2);margin-bottom:.4rem">Los hitos se calculan sobre el trabajo único; el abono se factura aparte cada mes.</p>` : ''}
@@ -3011,6 +3019,9 @@ function vistaPresupuesto(id){
           <button class="btn mini" onclick="agregarItem('${p.id}','planes')">+ Agregar plan</button>` : ''}
 
         <h3 style="font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--g);margin:1rem 0 .5rem">Aranceles oficiales</h3>
+        <div class="campo"><label>Cómo se titula esta lista en el documento</label>
+          <input type="text" placeholder="Aranceles oficiales" value="${esc(p.arancelesTitulo||'')}" onchange="setCampo('${p.id}','arancelesTitulo',this.value)"/>
+          <div class="ayuda">Dejalo vacío para tasas oficiales. Cambialo —por ejemplo a <i>Adicionales fuera de alcance</i>— si son opcionales: entonces no se totalizan y los que no tienen monto salen como "A cotizar".</div></div>
         ${listaDinamica(p.id,'aranceles',[{k:'concepto',ph:'Concepto'},{k:'monto',ph:'Monto',tipo:'number'}],'Agregar arancel','1fr .8fr')}
 
         <h3 style="font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--g);margin:1rem 0 .5rem">Hitos de pago</h3>
@@ -4238,6 +4249,9 @@ function vistaServicio(id){
         ${s.modo==='fijo' ? `<h3 style="font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--g);margin-bottom:.5rem">Ítems</h3>
         ${listaDinServ(s.id,'items',[{k:'concepto',ph:'Concepto'},{k:'detalle',ph:'Detalle'},{k:'cantidad',ph:'Cant.',tipo:'number'},{k:'precioUnit',ph:'Precio',tipo:'number'}],'Agregar ítem','1.4fr 1.4fr .5fr .9fr')}` : ''}
         <h3 style="font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--g);margin:1rem 0 .5rem">Aranceles</h3>
+        <div class="campo"><label>Cómo se titula esta lista en el documento</label>
+          <input type="text" placeholder="Aranceles oficiales" value="${esc(s.arancelesTitulo||'')}" onchange="setServ('${s.id}','arancelesTitulo',this.value)"/>
+          <div class="ayuda">Vacío = tasas oficiales. Cambialo si son adicionales opcionales fuera de alcance.</div></div>
         ${listaDinServ(s.id,'aranceles',[{k:'concepto',ph:'Concepto'},{k:'monto',ph:'Monto',tipo:'number'}],'Agregar arancel','1fr .8fr')}
         <h3 style="font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--g);margin:1rem 0 .5rem">Hitos de pago</h3>
         ${listaDinServ(s.id,'hitos',[{k:'nombre',ph:'Hito'},{k:'condicion',ph:'Cuándo'},{k:'pct',ph:'%',tipo:'number'}],'Agregar hito','.8fr 2fr .5fr')}
@@ -4582,7 +4596,7 @@ function fusionarLote(texto){
   let datos;
   try{ datos = JSON.parse(texto); }
   catch(err){ toast('El contenido no es un JSON válido.'); return; }
-  const colecciones = ['leads','clientes','presupuestos','proyectos','tareas','facturas'];
+  const colecciones = ['catalogo','leads','clientes','presupuestos','proyectos','tareas','facturas'];
   const nuevos = {}, repetidos = {};
   colecciones.forEach(c => {
     const entrantes = Array.isArray(datos[c]) ? datos[c] : [];
@@ -5164,13 +5178,15 @@ function vistaImprimir(id){
       </table>
     `}
 
-    ${(p.aranceles||[]).length ? `<h3>Aranceles oficiales</h3>
+    ${(p.aranceles||[]).length ? `<h3>${esc(tituloAranceles(p))}</h3>
       <table>
         <thead><tr><th>Concepto</th><th class="num">Monto</th></tr></thead>
-        <tbody>${p.aranceles.map(a => `<tr><td>${esc(a.concepto)}</td><td class="num">${a.monto?fmt(a.monto,p.moneda):'Según organismo'}</td></tr>`).join('')}
-        ${ar ? `<tr class="total"><td>Total de aranceles</td><td class="num">${fmt(ar, p.moneda)}</td></tr>` : ''}</tbody>
+        <tbody>${p.aranceles.map(a => `<tr><td>${esc(a.concepto)}</td><td class="num">${a.monto?fmt(a.monto,p.moneda):(arancelesOficiales(p)?'Según organismo':'A cotizar')}</td></tr>`).join('')}
+        ${arancelesOficiales(p) && ar ? `<tr class="total"><td>Total de aranceles</td><td class="num">${fmt(ar, p.moneda)}</td></tr>` : ''}</tbody>
       </table>
-      <p style="font-size:.82rem;color:#666">Los aranceles corresponden a tasas oficiales, no están incluidos en los honorarios y pueden actualizarse según disposiciones del organismo.</p>` : ''}
+      <p style="font-size:.82rem;color:#666">${arancelesOficiales(p)
+        ? 'Los aranceles corresponden a tasas oficiales, no están incluidos en los honorarios y pueden actualizarse según disposiciones del organismo.'
+        : 'Estos conceptos no están incluidos en los honorarios. Se cotizan y se facturan solo si el cliente los solicita.'}</p>` : ''}
 
     ${!esModular(p) && (p.hitos||[]).length ? `<h2>Forma de pago</h2>
       <table>
