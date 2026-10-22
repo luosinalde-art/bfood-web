@@ -1278,6 +1278,7 @@ function formFormula(){
     <div class="mini-et">Fórmula (cantidades en g por batch o por unidad)</div>
     <table class="tab receta"><thead><tr><th>Materia prima</th><th class="g">Cantidad (g)</th><th class="num pc">%</th><th class="x"></th></tr></thead><tbody>${filas}</tbody></table>
     <div style="margin:.6rem 0 1rem;display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn mini" onclick="PROD.receta.push({ingId:'',g:''});refrescar(true)">+ Agregar materia prima</button>
+      <button class="btn mini" onclick="pegarReceta()">Pegar receta desde Excel</button>
       <button class="btn mini" onclick="nuevoIngDesdeProducto()">+ Nueva materia prima en la base</button></div>
     <div class="fila c2">${campo('Rendimiento del proceso (%)','rendimiento',{ayuda:'Peso del producto terminado ÷ peso de la masa × 100. Ej.: un horneado que pierde 12 % de agua → 88. Sin pérdidas → 100.'})}<div></div></div>
     <div class="seccion-form"><h3>Ley 27.642: ¿lleva azúcares, grasas o sodio añadidos?</h3>
@@ -1403,6 +1404,49 @@ document.addEventListener('change', ev => {
     else pintarResultados();
   }
 });
+
+/* Receta copiada de la hoja 2-Receta (o de cualquier tabla con nombre y gramos). */
+function leerReceta(texto){
+  const filas = parsearCSV(texto);
+  let iNom = 0, iCant = 1, desde = 0;
+  const iCab = filas.findIndex(f => f.some(c => /^(ingrediente|materia prima)/.test(normalizar(c))));
+  if(iCab >= 0){
+    const cab = filas[iCab].map(normalizar);
+    iNom = cab.findIndex(h => /^(ingrediente|materia prima)/.test(h));
+    const c = cab.findIndex(h => /^cantidad|^gramos|^\(?g\)?$/.test(h));
+    iCant = c >= 0 ? c : iNom + 1;
+    desde = iCab + 1;
+  }
+  return filas.slice(desde).map(f => ({nombre:(f[iNom]||'').trim(), g:parseNum(f[iCant])}))
+    .filter(x => x.nombre && x.g !== null && x.g > 0)
+    .map(x => ({...x, ing:ingPorNombre(x.nombre)}));
+}
+function pegarReceta(){
+  abrirModal('Pegar receta desde Excel', `
+    <div class="campo"><label>Copiá desde la hoja 2-Receta las filas con el ingrediente y la cantidad (con o sin encabezados) y pegalas acá</label>
+      <textarea id="receta-pegada" rows="7" placeholder="Ingrediente	Cantidad (g)\nFACHITAS MEDIANAS CITRICAS 61MM	20\nDulce de leche Vacalin	12" oninput="previsualizarReceta()"></textarea>
+      <div class="ayuda">Sirve también una tabla de dos columnas: nombre y gramos. Los nombres tienen que coincidir con los de la base de materias primas.</div></div>
+    <label class="chk"><input type="checkbox" id="receta-reemplazar" ${PROD.receta.some(f=>f.ingId) ? '' : 'checked'}/> Reemplazar la fórmula actual (si no, se agrega al final)</label>
+    <div id="receta-prev"></div>`,
+    {botones:[{et:'Cancelar', accion:'cerrarModal()'}, {et:'Cargar fórmula', accion:'guardarModal()', pri:true}],
+     alGuardar: () => {
+      const items = leerReceta(valor('receta-pegada'));
+      if(!items.length){ toast('No encontré filas con ingrediente y cantidad.'); return false; }
+      const nuevas = items.map(x => ({ingId: x.ing ? x.ing.id : '', g: fmtLibre(x.g), txt: x.ing ? '' : x.nombre}));
+      if(valor('receta-reemplazar')) PROD.receta = nuevas;
+      else PROD.receta = PROD.receta.filter(f => f.ingId || f.txt || num(f.g)).concat(nuevas);
+      const faltan = items.filter(x=>!x.ing).length;
+      refrescar(true);
+      toast(items.length + ' filas cargadas' + (faltan ? ` · ${faltan} sin coincidencia en la base (en rojo)` : '') + '.');
+    }});
+}
+function previsualizarReceta(){
+  const items = leerReceta(valor('receta-pegada'));
+  const faltan = items.filter(x=>!x.ing);
+  document.getElementById('receta-prev').innerHTML = !items.length ? '' : `
+    <div class="aviso ${faltan.length ? 'warn' : 'ok'}" style="margin-top:.6rem">${items.length} filas, ${fmtLibre(items.reduce((a,x)=>a+x.g,0))} g en total.
+      ${faltan.length ? `<br/>No están en la base: <b>${esc(faltan.map(x=>x.nombre).join(', '))}</b>. Se cargan en rojo para que elijas la materia prima correcta, o dalas de alta en la base.` : ' Todas coinciden con la base.'}</div>`;
+}
 
 function nuevoIngDesdeProducto(){
   editarIng('', () => { refrescar(true); });

@@ -39,7 +39,8 @@ y está excluido del deploy y de la auditoría de SEO.
   público de Google Sheets. Cada materia prima se controla: energía que no cierra con los
   macronutrientes, azúcares mayores que los carbohidratos, carbohidratos que incluyen la fibra,
   ácidos grasos mayores que las grasas totales, alérgenos que faltan según el nombre, duplicados.
-- **Productos**: fórmula en gramos y rendimiento del proceso → tabla nutricional por porción con %VD,
+- **Productos**: fórmula en gramos (se carga fila por fila o pegando la hoja *2-Receta* del Excel)
+  y rendimiento del proceso → tabla nutricional por porción con %VD,
   redondeo y valores no significativos; sellos de advertencia y leyendas de edulcorantes y cafeína;
   lista de ingredientes en orden decreciente (compuestos entre paréntesis, aditivos por función);
   "CONTIENE…" / "PUEDE CONTENER…"; controles de datos obligatorios, Sin TACC y restricciones de
