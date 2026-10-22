@@ -786,9 +786,12 @@ function revisarIng(ing){
     const faltan = ['kcal','carb','prot','gt','gs','gtrans','fibra','sodio'].filter(k => n(k) === null || n(k) === '');
     if(faltan.length && declaraAlgo) r.push({nivel:'warn', txt:'Datos vacíos (se toman como 0): '+faltan.map(k=>NUT_N[k].n.toLowerCase()).join(', ')+'.'});
   }
-  const est = 4*v('carb') + 4*v('prot') + 9*v('gt') + 2*v('fibra');
+  /* Factores de la Res. GMC 46/03: la fibra no aporta energía. */
+  const est = 4*v('carb') + 4*v('prot') + 9*v('gt');
   if(n('kcal') !== null && (v('kcal') > 0 || est > 0) && Math.abs(est - v('kcal')) > Math.max(25, .15*v('kcal')))
     r.push({nivel:'warn', txt:`La energía (${fmtN(v('kcal'))} kcal) no cierra con los macronutrientes (≈ ${fmtN(est)} kcal). Puede ser normal en polialcoholes, alcohol o ácidos orgánicos; si no, revisá el dato.`});
+  if(declaraAlgo && v('azu') > 0 && (n('azuAn') === null || n('azuAn') === '') && ing.tipo === 'ingrediente')
+    r.push({nivel:'warn', txt:'Tiene azúcares pero no está cargado cuántos son añadidos: ese dato define el sello de azúcares.'});
   if(v('azu') > v('carb') + .05) r.push({nivel:'err', txt:'Los azúcares superan a los carbohidratos.'});
   if(n('azu') !== null && v('azuAn') > v('azu') + .05)
     r.push(v('azuAn') - v('azu') > 1
@@ -1668,7 +1671,9 @@ const COLUMNAS = [
   ['trazas',   h => /puede contener|trazas/.test(h)],
   ['alergenos',h => /alergen/.test(h)],
   ['proveedor',h => /proveedor/.test(h)],
-  ['denominacion', h => /denominaci/.test(h)]
+  ['denominacion', h => /denominaci/.test(h)],
+  ['fuente',   h => /^fuente/.test(h)],
+  ['notas',    h => /^(referencia|notas?)/.test(h)]
 ];
 function leerPlanilla(texto){
   const filas = parsearCSV(texto);
@@ -1695,6 +1700,8 @@ function leerPlanilla(texto){
     items.push({nombre, nut, alergenos:alergenosDeTexto(txtA), trazas:alergenosDeTexto(txtT), txtA, txtT,
       proveedor: mapa.proveedor !== undefined ? (f[mapa.proveedor]||'').trim() : '',
       denominacion: mapa.denominacion !== undefined ? (f[mapa.denominacion]||'').trim() : '',
+      fuente: mapa.fuente !== undefined ? (f[mapa.fuente]||'').trim() : '',
+      notas: mapa.notas !== undefined ? (f[mapa.notas]||'').trim() : '',
       existe: ingPorNombre(nombre)});
   });
   return {items, columnas:Object.keys(mapa)};
@@ -1739,6 +1746,11 @@ function confirmarImport(){
     i.trazas = x.trazas.filter(k=>!x.alergenos.includes(k));
     if(x.proveedor) i.proveedor = x.proveedor;
     if(x.denominacion) i.denominacion = x.denominacion;
+    if(x.notas) i.notas = x.notas;
+    if(x.fuente){
+      const t = normalizar(x.fuente);
+      i.fuente = /usda|argenfoods|tabla/.test(t) ? 'tabla' : /analisis|laboratorio/.test(t) ? 'analisis' : /proveedor|ficha|rotulo/.test(t) ? 'proveedor' : i.fuente;
+    }
   });
   const n = IMPORT.length;
   IMPORT = null;
