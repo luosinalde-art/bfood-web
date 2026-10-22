@@ -26,6 +26,34 @@ Qué incluye:
 > **Respaldo:** los datos viven solo en ese navegador. Desde *Datos → Descargar respaldo* se
 > baja un `.json` que después se restaura desde la misma pantalla. Conviene hacerlo seguido.
 
+## Rótulos y fichas técnicas (`rotulos.html`)
+
+Herramienta interna para armar el rotulado de los productos de cada cliente según el Capítulo V
+del CAA (Res. GMC 26/03, 46/03 y 47/03) y la Ley 27.642 (Decreto 151/22). Igual que la plataforma
+de gestión: un único HTML que se abre con doble clic, guarda todo en el `localStorage` del navegador
+y está excluido del deploy y de la auditoría de SEO.
+
+- **Materias primas**: base compartida con valores cada 100 g, alérgenos, "puede contener", aditivos
+  (función + INS), ingredientes compuestos y aptitud Sin TACC. Se importa desde la planilla
+  "CALCULO TABLAS NUTRICIONALES" (hoja *1-Ingredientes*) pegando la hoja, con el CSV o con el link
+  público de Google Sheets. Cada materia prima se controla: energía que no cierra con los
+  macronutrientes, azúcares mayores que los carbohidratos, carbohidratos que incluyen la fibra,
+  ácidos grasos mayores que las grasas totales, alérgenos que faltan según el nombre, duplicados.
+- **Productos**: fórmula en gramos y rendimiento del proceso → tabla nutricional por porción con %VD,
+  redondeo y valores no significativos; sellos de advertencia y leyendas de edulcorantes y cafeína;
+  lista de ingredientes en orden decreciente (compuestos entre paréntesis, aditivos por función);
+  "CONTIENE…" / "PUEDE CONTENER…"; controles de datos obligatorios, Sin TACC y restricciones de
+  productos con sellos.
+- **Clientes**: datos del titular y su **logo**, que encabeza los documentos. La marca BFood no
+  aparece en ninguna salida.
+- **Salidas imprimibles** (`Ctrl+P` → PDF): maqueta del rótulo (cara principal y panel de
+  información, más los textos para el diseñador) y ficha técnica con especificaciones
+  fisicoquímicas y microbiológicas.
+- **Criterios**: umbrales de los sellos editables (por defecto, los valores finales del
+  Decreto 151/22).
+
+> **Respaldo:** igual que en gestión, desde *Datos → Descargar respaldo*.
+
 ## Auditoría automática de SEO/GEO
 
 El repositorio incluye un auditor de SEO y GEO (optimización para motores de IA) que revisa todas las páginas:

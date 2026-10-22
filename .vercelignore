@@ -1,3 +1,4 @@
-# Herramienta interna de gestión: se usa localmente (abrir el archivo con doble
-# clic) y no forma parte del sitio público, así que no se sube al deploy.
+# Herramientas internas: se usan localmente (abrir el archivo con doble clic) y
+# no forman parte del sitio público, así que no se suben al deploy.
 gestion.html
+rotulos.html

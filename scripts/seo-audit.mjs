@@ -33,7 +33,7 @@ function warn(page, msg) { warnings.push({ page, msg }); }
 
 // Herramientas internas: no se publican (ver .vercelignore) y por lo tanto no son
 // páginas del sitio — quedan fuera de la auditoría y del sitemap.
-const NO_PUBLICADAS = new Set(['gestion.html']);
+const NO_PUBLICADAS = new Set(['gestion.html', 'rotulos.html']);
 
 function findHtmlFiles(dir) {
   const out = [];
